@@ -4,10 +4,11 @@
  *
  */
 import { FontAwesome } from '@expo/vector-icons';
+import * as SecureStore from 'expo-secure-store';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ColorSchemeName, Pressable } from 'react-native';
 
 import Colors from '../constants/Colors';
@@ -20,15 +21,27 @@ import LoginScreen from '../screens/login/Login';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
 
-// Auth setup
-// const AuthContext = React.createContext();
-
-
 // main
+// route guarding (checked for logged in user) happens here
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
-  const [user, setUser] = useState(null);
+  const [userToken, setUserToken] = useState('');
 
-  return user ? (
+  useEffect(() => {
+
+    const getUserToken = async () => {
+
+      console.log('getUserToken called form index');
+
+      const token = await SecureStore.getItemAsync(`${process.env.USER_JWT_TOKEN}`);
+      setUserToken(`${token}`);
+      console.log(`user token is: ${token}`)
+    };
+
+    getUserToken();
+  });
+
+  // currently a check is only performed to see if userToken exists, but perhaps a check should be performed to see if it is verified by the server
+  return userToken !== '' ? (
     <NavigationContainer
       linking={LinkingConfiguration}
       theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
@@ -38,6 +51,8 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
     <LoginScreen />
   );
 }
+
+// TODO: implement a logout function that deletes the user token
 
 /**
  * A root stack navigator is often used for displaying modals on top of all other content.
