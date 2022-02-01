@@ -7,33 +7,43 @@ import { Text, View } from '../../components/Themed';
 import axios from 'axios';
 //import {TEST_VAR, LOGIN_URL} from '@env';
 
-const login = async (username: string, password: string) => {
-  console.log('login clicked');
-  console.log(`${username}, ${password}, ${process.env.REACT_APP_BLOOMINT_API}`);
+// const API_URL = process.env.REACT_APP_BLOOMINT_API;
+const API_URL = 'http://localhost:5000';
 
-  let res = await axios.post(
-    `${process.env.REACT_APP_BLOOMINT_API}/auth/login`,
-    {
-      username: username,
-      password: password
-    }
-  );
+const login = async (email: string, password: string) => {
+ 
+  try {
+    let res = await axios.post(
+      `${API_URL}/auth/login`,
+      {
+        email: email,
+        password: password
+      }
+    );
+  
+    const userToken = res.data.token;
+  
+    await SecureStore.setItemAsync(`${process.env.USER_JWT_TOKEN}`, userToken);
+  
+    let storedToken = await SecureStore.getItemAsync(`${process.env.USER_JWT_TOKEN}`);
+    console.log(storedToken)
 
-  console.log(res.data);
+  } catch (error) {
+    console.log(error);
+  }
+  
 };
 
 const LoginScreen = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-  console.log(`${process.env.REACT_APP_TEST_VAR}`)
 
   return (
     <View style={styles.container}>
       <TextInput
-        placeholder="Username"
-        onChangeText={text => setUsername(text)}
-        defaultValue={username}
+        placeholder="Email"
+        onChangeText={text => setEmail(text)}
+        defaultValue={email}
       />
       <TextInput
         secureTextEntry
@@ -43,7 +53,7 @@ const LoginScreen = () => {
       />
       <View>
         <Button
-          onPress={() => login(username, password)}
+          onPress={() => login(email, password)}
           title="Log In"
         />
       </View>
