@@ -20,20 +20,29 @@ import TabTwoScreen from '../screens/TabTwoScreen';
 import LoginScreen from '../screens/login/Login';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
+import SettingsScreen from '../screens/SettingsScreen';
 
 // main
 // route guarding (checked for logged in user) happens here
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   const [userToken, setUserToken] = useState('');
 
+  // const removeUserToken = () => {
+  //   setUserToken('');
+  // };
+
   useEffect(() => {
 
     const getUserToken = async () => {
 
-      console.log('getUserToken called form index');
+      console.log('getUserToken called from index');
 
-      const token = await SecureStore.getItemAsync(`${process.env.USER_JWT_TOKEN}`);
-      setUserToken(`${token}`);
+      const token = await SecureStore.getItemAsync('USER_JWT_TOKEN');
+      if (token === null) {
+        setUserToken('');
+      } else {
+        setUserToken(`${token}`);
+      }
       console.log(`user token is: ${token}`)
     };
 
@@ -45,7 +54,9 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
     <NavigationContainer
       linking={LinkingConfiguration}
       theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <RootNavigator />
+      <RootNavigator 
+        // removeUserToken={removeUserToken}
+        />
     </NavigationContainer>
   ) : (
     <LoginScreen />
@@ -60,10 +71,11 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
  */
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
+// function RootNavigator({removeUserToken}: {removeUserToken: Function}) {
 function RootNavigator() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
+      <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }}/>
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="Modal" component={ModalScreen} />
@@ -114,6 +126,14 @@ function BottomTabNavigator() {
         component={TabTwoScreen}
         options={{
           title: 'Tab Two',
+          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+        }}
+      />
+      <BottomTab.Screen 
+        name="Settings"
+        component={SettingsScreen}
+        options={{
+          title: 'Settings',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
         }}
       />
