@@ -1,0 +1,6 @@
+{
+	"appId": "com.bloomint.app",
+	"appName": "bloomint-frontend",
+	"webDir": "build",
+	"bundledWebRuntime": false
+}

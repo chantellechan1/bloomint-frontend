@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">bloomint-frontend</string>
+    <string name="title_activity_main">bloomint-frontend</string>
+    <string name="package_name">com.bloomint.app</string>
+    <string name="custom_url_scheme">com.bloomint.app</string>
+</resources>
