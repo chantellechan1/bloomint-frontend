@@ -50,3 +50,13 @@ To learn React, check out the [React documentation](https://reactjs.org/).
     * error of CocoaPods not installed
     * should follow [this guide](https://guides.cocoapods.org/using/getting-started.html#installation) to fix
     * android installation worked fine
+* to run on android [follow this guide](https://capacitorjs.com/docs/android#adding-the-android-platform)
+    * commands to run
+        1. `npm run build`
+        2. `npx cap sync`
+        3. `npx cap open android`
+        4. `npx cap run android`
+
+## Feature Requests
+* push notifications for watering plants
+* multiple photos of the same plant over time to track growth

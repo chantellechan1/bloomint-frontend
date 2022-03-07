@@ -1,30 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../services/AxiosService";
-
-const handleLogin = async (email: string, pw: string, setLoginErr: Function, nav: Function) => {
-
-    try {
-
-        // attempt login
-        let res = await axiosInstance.post(
-            `/auth/login`,
-            { email: email, password: pw },
-        );
-        
-        // store user token in temporary session storage
-        // TODO: figure out where to store this in capacitor on android
-        sessionStorage.setItem('userToken', res.data.token);
-
-        // navigate to home
-        nav('/');
-
-    } catch (error) {
-        console.error(error);
-        setLoginErr('Error Logging In')
-    }
-
-}
 
 const ErrorMessage = (props: any) => {
     return (
@@ -36,12 +11,36 @@ const ErrorMessage = (props: any) => {
     )
 }
 
-const Login = () => {
+const Login = (props: any) => {
     const [email, setEmail] = useState('');
     const [password, setPw] = useState('');
     const [loginErr, setLoginErr] = useState('');
 
-    const nav = useNavigate();
+    const handleLogin = async () => {
+        console.log('handleLoginCalled');
+
+        try {
+    
+            // attempt login
+            let res = await axiosInstance.post(
+                `/auth/login`,
+                { email: email, password: password },
+            );
+            
+            // store user token in local storage
+            // TODO: figure out where to store this in capacitor on android
+            localStorage.setItem('userToken', res.data.token);
+            console.log(`token in localStorage: ${localStorage.getItem('userToken')}`)
+
+            props.setUserToken(localStorage.getItem('userToken'));
+            console.log(`userToken set to ${props.userToken}`)
+    
+        } catch (error) {
+            console.error(error);
+            setLoginErr('Error Logging In')
+        }
+    
+    }
 
     return (
         <React.Fragment>
@@ -77,7 +76,7 @@ const Login = () => {
                             */}
                             <button
                                 type="button" className="w-100 btn btn-outline-primary"
-                                onClick={() => { handleLogin(email, password, setLoginErr, nav) }}
+                                onClick={() => { handleLogin() }}
                             >
                                 Sign In
                             </button>
