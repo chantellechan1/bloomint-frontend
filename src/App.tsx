@@ -55,8 +55,7 @@ function App() {
 
       <Router>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login userToken={userToken} setUserToken={setUserToken}/>} />
+          <Route path="/" element={<Home userToken={userToken} setUserToken={setUserToken}/>} />
         </Routes>
       </Router>
     </div>
