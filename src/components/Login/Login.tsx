@@ -17,7 +17,6 @@ const Login = (props: any) => {
     const [loginErr, setLoginErr] = useState('');
 
     const handleLogin = async () => {
-        console.log('handleLoginCalled');
 
         try {
     
@@ -30,10 +29,8 @@ const Login = (props: any) => {
             // store user token in local storage
             // TODO: figure out where to store this in capacitor on android
             localStorage.setItem('userToken', res.data.token);
-            console.log(`token in localStorage: ${localStorage.getItem('userToken')}`)
 
             props.setUserToken(localStorage.getItem('userToken'));
-            console.log(`userToken set to ${props.userToken}`)
     
         } catch (error) {
             console.error(error);
