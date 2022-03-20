@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import axiosInstance from "../../services/AxiosService";
+import { Link } from "react-router-dom";
+import axiosInstance from "../services/AxiosService";
 import { v4 as uuidv4 } from "uuid";
 
-import LoadingComponent from "../Loading/Loading";
+import LoadingComponent from "./Loading";
 
-import deafultPlantImg from "../../assets/images/default_plant.webp";
+import deafultPlantImg from "../assets/images/default_plant.webp";
 
 
 const getAllPlants = async () => {
@@ -61,10 +62,12 @@ const PlantsAll = () => {
                             :
                             allPlants.map((plant: any) => {
                                 return (
-                                    <div className="row" key={uuidv4()}>
+                                    <div className="row mb-3" key={uuidv4()}>
                                         <div className="col">
                                             <div className="card text-start">
-                                                <img src={deafultPlantImg} className="card-img-top" alt="..." />
+                                                <Link to={`/plant/${plant.id}`}>
+                                                    <img src={deafultPlantImg} className="card-img-top" alt="..." />
+                                                </Link>
                                                 <div className="card-body">
                                                     <h3 className="card-title">
                                                         {plant.plant_name}

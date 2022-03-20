@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import axiosInstance from "../../services/AxiosService";
+import axiosInstance from "../services/AxiosService";
 import { v4 as uuidv4 } from "uuid";
 
-import LoadingComponent from "../Loading/Loading";
+import LoadingComponent from "./Loading";
 
-import deafultPlantImg from "../../assets/images/default_plant.webp";
+import deafultPlantImg from "../assets/images/default_plant.webp";
 
 
 const getPlants = async (plantTypeID: number) => {
@@ -44,9 +44,14 @@ const PlantsInType = () => {
 
     return (
         <React.Fragment>
+            {typePlants.length === 0 ?
+            <React.Fragment>
+                <LoadingComponent />
+            </React.Fragment>
+            :
             <div className="container-fluid">
                 <div className="row text-center mb-3 mt-1">
-                    <h1>All Plants</h1>
+                    <h1>Plants in Type</h1>
                 </div>
 
                 <div className="row">
@@ -60,44 +65,41 @@ const PlantsInType = () => {
 
                 <div className="row">
                     {
-                        typePlants.length === 0 ?
-                            <React.Fragment>
-                                <LoadingComponent />
-                            </React.Fragment>
-                            :
-                            typePlants.map((plant: any) => {
-                                return (
-                                    <div className="row" key={uuidv4()}>
-                                        <div className="col">
-                                            <div className="card text-start">
+                        typePlants.map((plant: any) => {
+                            return (
+                                <div className="row mb-3" key={uuidv4()}>
+                                    <div className="col">
+                                        <div className="card text-start">
+                                            <Link to={`/plant/${plant.id}`}>
                                                 <img src={deafultPlantImg} className="card-img-top" alt="..." />
-                                                <div className="card-body">
-                                                    <h3 className="card-title">
-                                                        {plant.plant_name}
-                                                    </h3>
+                                            </Link>
+                                            <div className="card-body">
+                                                <h3 className="card-title">
+                                                    {plant.plant_name}
+                                                </h3>
+                                                <div className="card-text">
+                                                    <i>Created At: </i> {plant.created_at}
+                                                </div>
+                                                {
+                                                    plant.purchased_at !== null &&
                                                     <div className="card-text">
-                                                        <i>Created At: </i> {plant.created_at}
+                                                        <i>Purchased At: </i> {plant.purchased_at}
                                                     </div>
-                                                    {
-                                                        plant.purchased_at !== null &&
-                                                        <div className="card-text">
-                                                            <i>Purchased At: </i> {plant.purchased_at}
-                                                        </div>
-                                                    }
-                                                    <div className="card-text">
-                                                        <i>Notes: </i>
-                                                        <div>{plant.notes}</div>
-                                                    </div>
+                                                }
+                                                <div className="card-text">
+                                                    <i>Notes: </i>
+                                                    <div>{plant.notes}</div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                )
-                            }
+                                </div>
                             )
+                        }
+                        )
                     }
                 </div>
-            </div>
+            </div>}
         </React.Fragment>
     )
 };

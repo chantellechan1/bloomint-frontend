@@ -18,11 +18,13 @@ import { IconContext } from "react-icons";
 import logo from './logo.svg';
 import './App.css';
 
-import Home from './components/Home/Home';
-import Login from './components/Login/Login';
-import PlantTypes from './components/PlantTypes/PlantTypes';
-import PlantsAll from './components/PlantsAll/PlantsAll';
-import Settings from './components/Settings/Settings';
+import Home from './components/Home';
+import Login from './components/Login';
+import PlantTypes from './components/PlantTypes';
+import PlantsAll from './components/PlantsAll';
+import Settings from './components/Settings';
+import PlantsInType from './components/PlantsInType';
+import PlantIndividual from './components/PlantIndividual';
 
 function App() {
 
@@ -72,13 +74,16 @@ function App() {
             <Router>
                 <Routes>
                     <Route path="/" element={<Home />} />
-                    <Route path="/plants_by_type/*" element={<PlantTypes />} />
+                    <Route path="/plants_by_type" element={<PlantTypes />} />
+                    <Route path="/plants_by_type/:plantTypeID" element={<PlantsInType />} />
+                    <Route path="/plant/:plantID" element={<PlantIndividual />} />
                     <Route path="/all_plants" element={<PlantsAll />} />
                     <Route path="/settings" element={<Settings />} />
                 </Routes>
 
                 {/* spacer for bottom nav bar */}
-                <div style={{height: '80px'}}></div>
+                {/* TODO: have icons fill onclick, and be line styled icons otherwise */}
+                <div style={{ height: '80px' }}></div>
                 {/* bottom nav bar */}
                 <nav className="navbar fixed-bottom navbar-light bg-light">
                     <div className="container-fluid">
