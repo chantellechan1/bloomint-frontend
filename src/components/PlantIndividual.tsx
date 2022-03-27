@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
@@ -81,7 +81,7 @@ const PlantIndividual = () => {
                 <div className="float-end mt-2 me-2">
                     <IconContext.Provider value={{ size: "2em" }}>
                         <div>
-                            <BiPencil />
+                            <Link to={`/plant/${(plant as any).id}/edit`}><BiPencil /></Link>
                         </div>
                     </IconContext.Provider>
                 </div>
@@ -94,6 +94,16 @@ const PlantIndividual = () => {
                             <div className="col text-start">
                                 <img src={defaultPlantImg} className="card-img-top" alt="..." />
                                 <hr className="px-5" />
+                                <div>{(plant as any).plant_type_name} Stats:</div>
+                                <div>
+                                    <i>Temp Range: </i> {(plant as any).min_temp}°C to {(plant as any).max_temp}°C
+                                </div>
+                                <div><i>Sun: </i> {(plant as any).sunlight}</div>
+                                <div><i>Water: </i> Every {(plant as any).water_frequency} day(s)</div>
+
+                                <div className="mt-3">
+                                    {(plant as any).plant_name}'s Info:
+                                </div>
                                 <div className="card-text">
                                     <i>Created At: </i> {(plant as any).created_at}
                                 </div>
@@ -103,11 +113,6 @@ const PlantIndividual = () => {
                                         <i>Purchased At: </i> {(plant as any).purchased_at}
                                     </div>
                                 }
-                                <div>
-                                    <i>Temp Range: </i> {(plant as any).min_temp}°C to {(plant as any).max_temp}°C
-                                </div>
-                                <div><i>Sun: </i> {(plant as any).sunlight}</div>
-                                <div><i>Water: </i> Every {(plant as any).water_frequency} day(s)</div>
                                 <div>
                                     <i>Notes: </i>
                                     <div>{(plant as any).notes}</div>
