@@ -11,6 +11,7 @@ import {
     RiPlantFill, RiPlantLine,
     RiLeafLine, RiLeafFill,
     RiSettings4Line, RiSettings4Fill,
+    RiAddCircleLine, RiAddCircleFill
 } from "react-icons/ri";
 import { IconContext } from "react-icons";
 
@@ -23,6 +24,7 @@ import Settings from './components/Settings';
 import PlantsInType from './components/PlantsInType';
 import PlantIndividual from './components/PlantIndividual';
 import PlantIndividualEdit from './components/PlantIndividualEdit';
+import PlantIndividualNew from './components/PlantIndividualNew';
 
 function App() {
 
@@ -70,6 +72,7 @@ function App() {
                     <Route path="/" element={<PlantTypes />} />
                     <Route path="/plants_by_type" element={<PlantTypes />} />
                     <Route path="/plants_by_type/:plantTypeID" element={<PlantsInType />} />
+                    <Route path='/plant/new' element={<PlantIndividualNew />} />
                     <Route path="/plant/:plantID" element={<PlantIndividual />} />
                     <Route path="/plant/:plantID/edit" element={<PlantIndividualEdit />} />
                     <Route path="/all_plants" element={<PlantsAll />} />
@@ -123,6 +126,25 @@ function App() {
                                 </div>
                             </IconContext.Provider>
                         </Link>
+
+                        <Link to="/plant/new" className="nav-link"
+                            onClick={() => {
+                                setSelectedBottomNav('new')
+                            }}
+                        >
+                            <IconContext.Provider value={{ size: "2em" }}>
+                                <div>
+                                    {
+                                        selectedBottomNav === 'new'
+                                            ?
+                                            <RiAddCircleFill />
+                                            :
+                                            <RiAddCircleLine />
+                                    }
+                                </div>
+                            </IconContext.Provider>
+                        </Link>
+
                         <Link to="/settings" className="nav-link"
                             onClick={() => {
                                 setSelectedBottomNav('settings')

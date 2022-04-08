@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
-import { Routes, Route, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import axiosInstance from "../services/AxiosService";
 import LoadingComponent from "./Loading";
 
 import deafultPlantImg from "../assets/images/default_plant.webp";
-import PlantsInType from "./PlantsInType";
 
 const getPlantsByType = async () => {
     let res = await axiosInstance.get(
