@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axiosInstance from "../services/AxiosService";
+import { useNavigate } from "react-router-dom";
 
 const ErrorMessage = (props: any) => {
     return (
@@ -12,6 +13,7 @@ const ErrorMessage = (props: any) => {
 }
 
 const Login = (props: any) => {
+    let navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPw] = useState('');
     const [loginErr, setLoginErr] = useState('');
@@ -36,6 +38,16 @@ const Login = (props: any) => {
             setLoginErr('Error Logging In')
         }
     
+    }
+
+    const handleCreateAccount = async () => {
+
+        try {
+            navigate(`/create_account`);
+        } catch (error) {
+            console.error(error);
+            setLoginErr('Error navigating to create account page')
+        }
     }
 
     return (
@@ -77,6 +89,14 @@ const Login = (props: any) => {
                                 Sign In
                             </button>
                         </form>
+                    </div>
+                    <div className="col-xs-12 offset-md-3 col-md-6 offset-lg-4 col-lg-4 mt-3">
+                    <button
+                        type="button" className="w-100 btn btn-outline-primary"
+                        onClick={() => { handleCreateAccount() }}
+                    >
+                        Create Account
+                    </button>
                     </div>
                 </div>
             </div>
