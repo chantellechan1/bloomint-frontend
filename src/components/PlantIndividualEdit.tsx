@@ -112,14 +112,12 @@ const PlantIndividualEdit = () => {
     }
 
     const deletePlant = async () => {
-        console.log('delete plant called')
         setLoading(true);
         const res = await axios.post(
             '/plants/user/delete',
             {user_plant_ids: [plantID]},
             axoisOptions
         );
-        console.log(res)
         navigate(`/plants_by_type/${(plantType as any).id}`);
     }
 
