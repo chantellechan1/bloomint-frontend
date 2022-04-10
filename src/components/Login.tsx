@@ -25,13 +25,12 @@ const Login = (props: any) => {
                 `/auth/login`,
                 { email: email, password: password },
             );
-            
+
             // store user token in local storage
             // TODO: figure out where to store this in capacitor on android
-            localStorage.setItem('userToken', res.data.token);
+            localStorage.setItem('userToken', res.data.jwt);
 
             props.setUserToken(localStorage.getItem('userToken'));
-    
         } catch (error) {
             console.error(error);
             setLoginErr('Error Logging In')
