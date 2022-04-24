@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import axiosInstance from "../services/AxiosService";
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
+import * as AxiosService from '../services/AxiosService';
 
 const ErrorMessage = (props: any) => {
     return (
@@ -23,9 +24,10 @@ const Login = (props: any) => {
         try {
     
             // attempt login
-            let res = await axiosInstance.post(
+            let res = await axios.post(
                 `/auth/login`,
                 { email: email, password: password },
+                AxiosService.getOptions()
             );
 
             // store user token in local storage

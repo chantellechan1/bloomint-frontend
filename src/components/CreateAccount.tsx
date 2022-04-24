@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import axiosInstance from "../services/AxiosService";
+import axios from "axios";
+import * as AxiosService from "../services/AxiosService";
 
 const CreateAccount = (props: any) => {
     const [email, setEmail] = useState('');
@@ -7,9 +8,10 @@ const CreateAccount = (props: any) => {
 
     const handleCreateAccount = async () => {
         try {
-            let res = await axiosInstance.post(
+            let res = await axios.post(
                 `/auth/create_user`,
                 { email: email },
+                AxiosService.getOptions()
             );
         } catch (error) {
             console.error(error);

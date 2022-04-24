@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 import axios from 'axios';
+import * as AxiosService from '../services/AxiosService';
 import { v4 as uuidv4 } from 'uuid';
 
 import TextField from '@mui/material/TextField';
@@ -25,13 +26,6 @@ import LoadingComponent from "./Loading";
 import { IconContext } from "react-icons";
 import { BiSave } from "react-icons/bi";
 
-const axoisOptions = {
-    headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('userToken')}`
-    }
-};
-
 const getSinglePlant = async (plantID: number) => {
 
     const res = await axios.post(
@@ -39,7 +33,7 @@ const getSinglePlant = async (plantID: number) => {
         {
             plant_ids: [plantID]
         },
-        axoisOptions
+        AxiosService.getOptionsAuthed()
     );
 
     const plant = res.data[0]; // will be returned as array of plants with length 1
@@ -53,7 +47,7 @@ const getPlantTypeInformation = async (plantTypeID: number) => {
         {
             plant_type_ids: [plantTypeID]
         },
-        axoisOptions
+        AxiosService.getOptionsAuthed()
     );
 
     const plantTypeInfo = res.data[0];
@@ -63,7 +57,7 @@ const getPlantTypeInformation = async (plantTypeID: number) => {
 const getAllPlantTypes = async () => {
     const res = await axios.get(
         '/plants/plant_types/all',
-        axoisOptions
+        AxiosService.getOptionsAuthed()
     );
 
     return res.data;
@@ -106,7 +100,7 @@ const PlantIndividualEdit = () => {
         const res = await axios.post(
             '/plants/user/update',
             [plant],
-            axoisOptions
+            AxiosService.getOptionsAuthed()
         );
         navigate(`/plant/${(plant as any).id}`);
     }
@@ -116,7 +110,7 @@ const PlantIndividualEdit = () => {
         const res = await axios.post(
             '/plants/user/delete',
             {user_plant_ids: [plantID]},
-            axoisOptions
+            AxiosService.getOptionsAuthed()
         );
         navigate(`/plants_by_type/${(plantType as any).id}`);
     }

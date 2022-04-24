@@ -1,14 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import * as AxiosService from '../services/AxiosService';
 import { RiLogoutBoxLine } from "react-icons/ri";
 import LoadingComponent from "./Loading";
-
-const axoisOptions = {
-    headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('userToken')}`
-    }
-};
 
 const Settings = (props: any) => {
 
@@ -18,7 +12,7 @@ const Settings = (props: any) => {
 
     useEffect(() => {
         const getUserInfo = async () => {
-            const res = await axios.get('/auth/get_user', axoisOptions);
+            const res = await axios.get('/auth/get_user', AxiosService.getOptionsAuthed());
 
             setUserInfo(res.data);
             setLoading(false);

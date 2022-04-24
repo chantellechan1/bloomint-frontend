@@ -2,19 +2,13 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import axios from 'axios';
+import * as AxiosService from '../services/AxiosService';
 import { v4 as uuidv4 } from 'uuid';
 
 import defaultPlantImg from '../assets/images/default_plant.webp'
 import LoadingComponent from "./Loading";
 import { IconContext } from "react-icons";
 import { BiPencil } from "react-icons/bi";
-
-const axoisOptions = {
-    headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('userToken')}`
-    }
-};
 
 const getSinglePlant = async (plantID: number) => {
 
@@ -23,7 +17,7 @@ const getSinglePlant = async (plantID: number) => {
         {
             plant_ids: [plantID]
         },
-        axoisOptions
+        AxiosService.getOptionsAuthed()
     );
 
     const plant = res.data[0]; // will be returned as array of plants with length 1
@@ -37,7 +31,7 @@ const getPlantTypeInformation = async (plantTypeID: number) => {
         {
             plant_type_ids: [plantTypeID]
         },
-        axoisOptions
+        AxiosService.getOptionsAuthed()
     );
 
     const plantTypeInfo = res.data[0];

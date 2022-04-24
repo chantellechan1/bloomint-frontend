@@ -1,32 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import axiosInstance from "../services/AxiosService";
+import * as AxiosService from "../services/AxiosService";
 import { v4 as uuidv4 } from "uuid";
 
 import LoadingComponent from "./Loading";
 
 import deafultPlantImg from "../assets/images/default_plant.webp";
+import axios from "axios";
 
 
 const getAllPlants = async () => {
-    const axoisOptions = {
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem('userToken')}`
-        }
-    };
 
-    let res = await axiosInstance.get(
+    let res = await axios.get(
         '/plants/user/get_plant_ids',
-        axoisOptions
+        AxiosService.getOptionsAuthed()
     );
     let plantIDs = res.data;
 
-    res = await axiosInstance.post(
+    res = await axios.post(
         '/plants/user/get_plants',
         {
             plant_ids: plantIDs
         },
-        axoisOptions
+        AxiosService.getOptionsAuthed()
     );
     const allPlants = res.data;
 

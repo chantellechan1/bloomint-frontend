@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import axios from 'axios';
+import * as AxiosService from '../services/AxiosService';
 import { v4 as uuidv4 } from 'uuid';
 
 import TextField from '@mui/material/TextField';
@@ -19,6 +20,7 @@ import LoadingComponent from "./Loading";
 import { IconContext } from "react-icons";
 import { BiSave } from "react-icons/bi";
 
+// TODO: move these interfaces to a models folder
 interface Plant {
     plant_id: number,
     plant_name: string,
@@ -35,13 +37,6 @@ interface plantType {
     sunlight: string,
     water_frequency: number
 }
-
-const axoisOptions = {
-    headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('userToken')}`
-    }
-};
 
 const PlantTypeStatsComponent = (props: {selectedPlantType: plantType}) => {
     const selectedPlantType: plantType = props.selectedPlantType;
@@ -72,7 +67,7 @@ const PlantIndividualNew = () => {
 
             const res = await axios.get(
                 '/plants/plant_types/all',
-                axoisOptions
+                AxiosService.getOptionsAuthed()
             );
             const plantTypesFromAPI = res.data;
 
@@ -88,7 +83,7 @@ const PlantIndividualNew = () => {
         const res = await axios.post(
             '/plants/user/create',
             [plant],
-            axoisOptions
+            AxiosService.getOptionsAuthed()
         );
 
         // data here is an array of created user_plant_ids

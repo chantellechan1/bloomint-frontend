@@ -1,10 +1,27 @@
-import axios from "axios";
 
-const axiosInstance = axios.create({
-    // baseURL: process.env.REACT_APP_BLOOMINT_API,
+interface Options {
+    headers: {
+        'Content-Type': string,
+        'Authorization'?: string
+    },
+    baseURL: string
+}
+
+const axiosOptions: Options = {
     headers: {
         'Content-Type': 'application/json',
-    }
-})
+    },
+    baseURL: 'https://api.bloomint.net'
+};
 
-export default axiosInstance;
+export const getOptions = () => axiosOptions;
+
+export const getOptionsAuthed = () => {
+    const optionsWithAuth = {
+        ... axiosOptions
+    }
+
+    optionsWithAuth.headers['Authorization'] = `Bearer ${localStorage.getItem('userToken')}`;
+
+    return optionsWithAuth;
+}
