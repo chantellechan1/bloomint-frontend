@@ -6,7 +6,6 @@ import * as AxiosService from '../services/AxiosService';
 import { v4 as uuidv4 } from 'uuid';
 
 import defaultPlantImg from '../assets/images/default_plant.webp'
-import LoadingComponent from "./Loading";
 import { IconContext } from "react-icons";
 import { BiPencil } from "react-icons/bi";
 
@@ -38,84 +37,83 @@ const getPlantTypeInformation = async (plantTypeID: number) => {
     return plantTypeInfo;
 };
 
-const PlantIndividual = () => {
+const PlantIndividual = (props: { setLoading: any }) => {
     let params = useParams();
     const plantID = Number(params.plantID);
     const [plant, setPlant] = useState({});
-    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const loadPlant = async () => {
-            const apiPlant = await getSinglePlant(plantID);
-            const plantTypeInfo = await getPlantTypeInformation(apiPlant.plant_id);
+            try {
+                props.setLoading(true);
 
-            // append properties of plant type to individual plant
-            apiPlant.min_temp = plantTypeInfo.min_temp;
-            apiPlant.max_temp = plantTypeInfo.max_temp;
-            apiPlant.plant_type_name = plantTypeInfo.name;
-            apiPlant.sunlight = plantTypeInfo.sunlight;
-            apiPlant.water_frequency = plantTypeInfo.water_frequency;
+                const apiPlant = await getSinglePlant(plantID);
+                const plantTypeInfo = await getPlantTypeInformation(apiPlant.plant_id);
 
-            setPlant(apiPlant);
-            setLoading(false);
+                // append properties of plant type to individual plant
+                apiPlant.min_temp = plantTypeInfo.min_temp;
+                apiPlant.max_temp = plantTypeInfo.max_temp;
+                apiPlant.plant_type_name = plantTypeInfo.name;
+                apiPlant.sunlight = plantTypeInfo.sunlight;
+                apiPlant.water_frequency = plantTypeInfo.water_frequency;
+
+                setPlant(apiPlant);
+            } catch (e) {
+                console.log(e)
+            } finally {
+                props.setLoading(false);
+            }
         };
 
         loadPlant();
     }, []);
 
     return (
-        loading ?
-            <React.Fragment>
-                <div className='mt-5'>
-                    <LoadingComponent />
-                </div>
-            </React.Fragment>
-            :
-            <React.Fragment>
-                <div className="float-end mt-2 me-2">
-                    <IconContext.Provider value={{ size: "2em" }}>
-                        <div>
-                            <Link to={`/plant/${(plant as any).id}/edit`}><BiPencil /></Link>
-                        </div>
-                    </IconContext.Provider>
-                </div>
-                <div className="container-fluid">
-                    <div className="row text-center mb-3 mt-1">
-                        <h1>{(plant as any).plant_name}</h1>
+        <React.Fragment>
+            <div className="float-end mt-2 me-2">
+                <IconContext.Provider value={{ size: "2em" }}>
+                    <div>
+                        <Link to={`/plant/${(plant as any).id}/edit`}><BiPencil /></Link>
                     </div>
-                    <div className="row">
-                        <div className="row mb-3" key={uuidv4()}>
-                            <div className="col text-start">
-                                <img src={defaultPlantImg} className="card-img-top" alt="..." />
-                                <hr className="px-5" />
-                                <div>{(plant as any).plant_type_name} Stats:</div>
-                                <div>
-                                    <i>Temp Range: </i> {(plant as any).min_temp}°C to {(plant as any).max_temp}°C
-                                </div>
-                                <div><i>Sun: </i> {(plant as any).sunlight}</div>
-                                <div><i>Water: </i> Every {(plant as any).water_frequency} day(s)</div>
+                </IconContext.Provider>
+            </div>
+            <div className="container-fluid">
+                <div className="row text-center mb-3 mt-1">
+                    <h1>{(plant as any).plant_name}</h1>
+                </div>
+                <div className="row">
+                    <div className="row mb-3" key={uuidv4()}>
+                        <div className="col text-start">
+                            <img src={defaultPlantImg} className="card-img-top" alt="..." />
+                            <hr className="px-5" />
+                            <div>{(plant as any).plant_type_name} Stats:</div>
+                            <div>
+                                <i>Temp Range: </i> {(plant as any).min_temp}°C to {(plant as any).max_temp}°C
+                            </div>
+                            <div><i>Sun: </i> {(plant as any).sunlight}</div>
+                            <div><i>Water: </i> Every {(plant as any).water_frequency} day(s)</div>
 
-                                <div className="mt-3">
-                                    {(plant as any).plant_name}'s Info:
-                                </div>
+                            <div className="mt-3">
+                                {(plant as any).plant_name}'s Info:
+                            </div>
+                            <div className="card-text">
+                                <i>Created At: </i> {(plant as any).created_at}
+                            </div>
+                            {
+                                (plant as any).purchased_at !== null &&
                                 <div className="card-text">
-                                    <i>Created At: </i> {(plant as any).created_at}
+                                    <i>Purchased At: </i> {(plant as any).purchased_at}
                                 </div>
-                                {
-                                    (plant as any).purchased_at !== null &&
-                                    <div className="card-text">
-                                        <i>Purchased At: </i> {(plant as any).purchased_at}
-                                    </div>
-                                }
-                                <div>
-                                    <i>Notes: </i>
-                                    <div>{(plant as any).notes}</div>
-                                </div>
+                            }
+                            <div>
+                                <i>Notes: </i>
+                                <div>{(plant as any).notes}</div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </React.Fragment>
+            </div>
+        </React.Fragment>
     )
 };
 

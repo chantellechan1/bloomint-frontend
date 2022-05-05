@@ -3,8 +3,6 @@ import { Link } from "react-router-dom";
 import * as AxiosService from "../services/AxiosService";
 import { v4 as uuidv4 } from "uuid";
 
-import LoadingComponent from "./Loading";
-
 import deafultPlantImg from "../assets/images/default_plant.webp";
 import axios from "axios";
 
@@ -35,12 +33,19 @@ const updateAllPlants = async (setAllPlants: any) => {
     setAllPlants(allPlants);
 }
 
-const PlantsAll = () => {
+const PlantsAll = (props: { setLoading: any }) => {
 
     const [allPlants, setAllPlants] = useState([]);
 
     useEffect(() => {
-        updateAllPlants(setAllPlants);
+        try {
+            props.setLoading(true);
+            updateAllPlants(setAllPlants);
+        } catch (e) {
+            console.log(e)
+        } finally {
+            props.setLoading(false);
+        }
     }, [])
 
     return (
@@ -51,42 +56,37 @@ const PlantsAll = () => {
                 </div>
                 <div className="row">
                     {
-                        allPlants.length === 0 ?
-                            <React.Fragment>
-                                <LoadingComponent />
-                            </React.Fragment>
-                            :
-                            allPlants.map((plant: any) => {
-                                return (
-                                    <div className="row mb-3" key={uuidv4()}>
-                                        <div className="col">
-                                            <div className="card text-start">
-                                                <Link to={`/plant/${plant.id}`}>
-                                                    <img src={deafultPlantImg} className="card-img-top" alt="..." />
-                                                </Link>
-                                                <div className="card-body">
-                                                    <h3 className="card-title">
-                                                        {plant.plant_name}
-                                                    </h3>
+                        allPlants.map((plant: any) => {
+                            return (
+                                <div className="row mb-3" key={uuidv4()}>
+                                    <div className="col">
+                                        <div className="card text-start">
+                                            <Link to={`/plant/${plant.id}`}>
+                                                <img src={deafultPlantImg} className="card-img-top" alt="..." />
+                                            </Link>
+                                            <div className="card-body">
+                                                <h3 className="card-title">
+                                                    {plant.plant_name}
+                                                </h3>
+                                                <div className="card-text">
+                                                    <i>Created At: </i> {plant.created_at}
+                                                </div>
+                                                {
+                                                    plant.purchased_at !== null &&
                                                     <div className="card-text">
-                                                        <i>Created At: </i> {plant.created_at}
+                                                        <i>Purchased At: </i> {plant.purchased_at}
                                                     </div>
-                                                    {
-                                                        plant.purchased_at !== null &&
-                                                        <div className="card-text">
-                                                            <i>Purchased At: </i> {plant.purchased_at}
-                                                        </div>
-                                                    }
-                                                    <div className="card-text">
-                                                        <i>Notes: </i>
-                                                        <div>{plant.notes}</div>
-                                                    </div>
+                                                }
+                                                <div className="card-text">
+                                                    <i>Notes: </i>
+                                                    <div>{plant.notes}</div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                )
-                            })
+                                </div>
+                            )
+                        })
                     }
                 </div>
             </div>

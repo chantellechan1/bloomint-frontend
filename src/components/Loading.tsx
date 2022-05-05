@@ -2,15 +2,10 @@ import React from "react";
 
 const LoadingComponent = () => {
     return (
-        <React.Fragment>
-            <div className="row">
-                <div className="col text-center">
-                    <div className="spinner-border text-success" role="status">
-                        <span className="visually-hidden">Loading...</span>
-                    </div>
-                </div>
+        <div className="d-flex justify-content-center align-items-center h-100">
+            <div className="spinner-border text-success" role="status">
             </div>
-        </React.Fragment>
+        </div>
     )
 }
 

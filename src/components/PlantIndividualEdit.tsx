@@ -22,7 +22,6 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
 import defaultPlantImg from '../assets/images/default_plant.webp'
-import LoadingComponent from "./Loading";
 import { IconContext } from "react-icons";
 import { BiSave } from "react-icons/bi";
 
@@ -63,11 +62,10 @@ const getAllPlantTypes = async () => {
     return res.data;
 };
 
-const PlantIndividualEdit = () => {
+const PlantIndividualEdit = (props: { setLoading: any }) => {
     let params = useParams();
     let navigate = useNavigate();
     const plantID = Number(params.plantID);
-    const [loading, setLoading] = useState(true);
     const [plant, setPlant] = useState({});
     const [plantType, setPlantType] = useState({});
     const [allPlantTypes, setAllPlantTypes] = useState([]);
@@ -76,43 +74,65 @@ const PlantIndividualEdit = () => {
 
     useEffect(() => {
         const apiCalls = async () => {
-            const apiPlant = await getSinglePlant(plantID);
+            try {
+                props.setLoading(true);
+                const apiPlant = await getSinglePlant(plantID);
 
-            // TODO: refactor with Promsie.allSettled
-            Promise.all([
-                getPlantTypeInformation(apiPlant.plant_id),
-                getAllPlantTypes()
-            ]).then(results => {
-                const plantTypeInfo = results[0];
-                const plantTypesFromAPI = results[1];
+                // TODO: refactor with Promsie.allSettled
+                Promise.all([
+                    getPlantTypeInformation(apiPlant.plant_id),
+                    getAllPlantTypes()
+                ]).then(results => {
+                    const plantTypeInfo = results[0];
+                    const plantTypesFromAPI = results[1];
 
-                setPlant(apiPlant);
-                setPlantType((plantTypeInfo as any));
-                setAllPlantTypes((plantTypesFromAPI as any));
-                setLoading(false);
-            })
+                    setPlant(apiPlant);
+                    setPlantType((plantTypeInfo as any));
+                    setAllPlantTypes((plantTypesFromAPI as any));
+                })
+            } catch (e) {
+                console.log(e)
+            } finally {
+                props.setLoading(false);
+            }
+
         };
         apiCalls();
     }, []);
 
     const postUpdatePlant = async () => {
-        setLoading(true);
-        const res = await axios.post(
-            '/plants/user/update',
-            [plant],
-            AxiosService.getOptionsAuthed()
-        );
-        navigate(`/plant/${(plant as any).id}`);
+        try {
+            props.setLoading(true);
+            const res = await axios.post(
+                '/plants/user/update',
+                [plant],
+                AxiosService.getOptionsAuthed()
+            );
+            props.setLoading(false);
+            navigate(`/plant/${(plant as any).id}`);
+        } catch (e) {
+            console.log(e)
+        } finally {
+            props.setLoading(false);
+        }
+
     }
 
     const deletePlant = async () => {
-        setLoading(true);
-        const res = await axios.post(
-            '/plants/user/delete',
-            {user_plant_ids: [plantID]},
-            AxiosService.getOptionsAuthed()
-        );
-        navigate(`/plants_by_type/${(plantType as any).id}`);
+        try {
+            props.setLoading(true);
+            const res = await axios.post(
+                '/plants/user/delete',
+                { user_plant_ids: [plantID] },
+                AxiosService.getOptionsAuthed()
+            );
+            props.setLoading(false);
+            navigate(`/plants_by_type/${(plantType as any).id}`);
+        } catch (e) {
+            console.log(e)
+        } finally {
+            props.setLoading(false);
+        }
     }
 
     const toggleDeleteModal = () => {
@@ -120,149 +140,142 @@ const PlantIndividualEdit = () => {
     }
 
     return (
-        loading ?
-            <React.Fragment>
-                <div className='mt-5'>
-                    <LoadingComponent />
-                </div>
-            </React.Fragment>
-            :
-            <React.Fragment>
-                <Dialog
-                    open={openDeleteModal}
-                    onClose={toggleDeleteModal}
-                    aria-labelledby="alert-dialog-title"
-                    aria-describedby="alert-dialog-description"
-                >
-                    <DialogTitle id="alert-dialog-title">
-                        Are you sure you want to delete this plant?
-                    </DialogTitle>
-                    <DialogContent>
-                        <DialogContentText id="alert-dialog-description">
-                            This action cannot be undone.
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <div className="btn btn-outline-secondary" onClick={toggleDeleteModal}>Cancel</div>
-                        <div className="btn btn-outline-danger" onClick={deletePlant}>Confirm Delete</div>
-                    </DialogActions>
-                </Dialog>
-                <div className="float-end mt-2 me-2 btn btn-link">
-                    <IconContext.Provider value={{ size: "2em" }}>
-                        <BiSave onClick={() => {
-                            postUpdatePlant();
-                        }} />
-                    </IconContext.Provider>
-                </div>
-                <div className="container-fluid">
-                    <div className="row">
-                        <div className="row mb-3" key={uuidv4()}>
-                            <div className="col text-start">
-                                <img src={defaultPlantImg} className="card-img-top" alt="..." />
-                                <hr className="px-5" />
-                                <div>
-                                    <FormControl fullWidth>
-                                        <InputLabel id="demo-simple-select-label">Plant Type</InputLabel>
-                                        <Select
-                                            labelId="select-plant-type-label"
-                                            id="select-plant-type"
-                                            value={(plantType as any).id}
-                                            label="Plant Type"
-                                            onChange={(event) => {
-                                                let targetID = event.target.value;
-                                                const newPlantType: any = allPlantTypes.find(type => {
-                                                    let currPlantTypeID = (type as any).id;
-                                                    return targetID == currPlantTypeID;
-                                                });
+        <React.Fragment>
+            <Dialog
+                open={openDeleteModal}
+                onClose={toggleDeleteModal}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    Are you sure you want to delete this plant?
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        This action cannot be undone.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <div className="btn btn-outline-secondary" onClick={toggleDeleteModal}>Cancel</div>
+                    <div className="btn btn-outline-danger" onClick={deletePlant}>Confirm Delete</div>
+                </DialogActions>
+            </Dialog>
+            <div className="float-end mt-2 me-2 btn btn-link">
+                <IconContext.Provider value={{ size: "2em" }}>
+                    <BiSave onClick={() => {
+                        postUpdatePlant();
+                    }} />
+                </IconContext.Provider>
+            </div>
+            <div className="container-fluid">
+                <div className="row">
+                    <div className="row mb-3" key={uuidv4()}>
+                        <div className="col text-start">
+                            <img src={defaultPlantImg} className="card-img-top" alt="..." />
+                            <hr className="px-5" />
+                            <div>
+                                <FormControl fullWidth>
+                                    <InputLabel id="demo-simple-select-label">Plant Type</InputLabel>
+                                    <Select
+                                        labelId="select-plant-type-label"
+                                        id="select-plant-type"
+                                        value={(plantType as any).id}
+                                        label="Plant Type"
+                                        onChange={(event) => {
+                                            let targetID = event.target.value;
+                                            const newPlantType: any = allPlantTypes.find(type => {
+                                                let currPlantTypeID = (type as any).id;
+                                                return targetID == currPlantTypeID;
+                                            });
 
-                                                let updated = {
-                                                    ...plant,
-                                                    plant_id: newPlantType.id
-                                                }
-
-                                                setPlantType(newPlantType);
-                                                setPlant(updated);
-                                            }}
-                                        >
-                                            {
-                                                allPlantTypes.map(type => (<MenuItem key={uuidv4()} value={(type as any).id}>{(type as any).name}</MenuItem>))
-                                            }
-                                        </Select>
-                                    </FormControl>
-                                </div>
-                                <div>
-                                    <i>Temp Range: </i> {(plantType as any).min_temp}°C to {(plantType as any).max_temp}°C
-                                </div>
-                                <div><i>Sun: </i> {(plantType as any).sunlight}</div>
-                                <div><i>Water: </i> Every {(plantType as any).water_frequency} day(s)</div>
-
-                                <div className="mt-3">
-                                    <i>Plant Name: </i>
-                                    <input type='text' className="form-control" defaultValue={(plant as any).plant_name}
-                                        onBlur={(event) => {
                                             let updated = {
                                                 ...plant,
-                                                plant_name: event.target.value
+                                                plant_id: newPlantType.id
+                                            }
+
+                                            setPlantType(newPlantType);
+                                            setPlant(updated);
+                                        }}
+                                    >
+                                        {
+                                            allPlantTypes.map(type => (<MenuItem key={uuidv4()} value={(type as any).id}>{(type as any).name}</MenuItem>))
+                                        }
+                                    </Select>
+                                </FormControl>
+                            </div>
+                            <div>
+                                <i>Temp Range: </i> {(plantType as any).min_temp}°C to {(plantType as any).max_temp}°C
+                            </div>
+                            <div><i>Sun: </i> {(plantType as any).sunlight}</div>
+                            <div><i>Water: </i> Every {(plantType as any).water_frequency} day(s)</div>
+
+                            <div className="mt-3">
+                                <i>Plant Name: </i>
+                                <input type='text' className="form-control" defaultValue={(plant as any).plant_name}
+                                    onBlur={(event) => {
+                                        let updated = {
+                                            ...plant,
+                                            plant_name: event.target.value
+                                        }
+                                        setPlant(updated);
+                                    }}
+                                />
+                            </div>
+                            <div className="card-text my-3">
+                                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                    <DatePicker
+                                        label="Created At"
+                                        value={(plant as any).created_at}
+                                        onChange={(newValue) => {
+                                            let updated = {
+                                                ...plant,
+                                                created_at: newValue.toGMTString()
                                             }
                                             setPlant(updated);
                                         }}
+                                        renderInput={(params) => <TextField {...params} />}
                                     />
-                                </div>
-                                <div className="card-text my-3">
-                                    <LocalizationProvider dateAdapter={AdapterDateFns}>
-                                        <DatePicker
-                                            label="Created At"
-                                            value={(plant as any).created_at}
-                                            onChange={(newValue) => {
-                                                let updated = {
-                                                    ...plant,
-                                                    created_at: newValue.toGMTString()
-                                                }
-                                                setPlant(updated);
-                                            }}
-                                            renderInput={(params) => <TextField {...params} />}
-                                        />
-                                    </LocalizationProvider>
-                                </div>
-                                <div className="card-text">
+                                </LocalizationProvider>
+                            </div>
+                            <div className="card-text">
 
-                                    <LocalizationProvider dateAdapter={AdapterDateFns}>
-                                        <DatePicker
-                                            label="Purchased At"
-                                            value={(plant as any).purchased_at}
-                                            onChange={(newValue) => {
-                                                let updated = {
-                                                    ...plant,
-                                                    purchased_at: newValue.toGMTString()
-                                                }
-                                                setPlant(updated);
-                                            }}
-                                            renderInput={(params) => <TextField {...params} />}
-                                        />
-                                    </LocalizationProvider>
-
-                                </div>
-                                <div className="mb-3">
-                                    <i>Notes: </i>
-                                    <textarea className="form-control" defaultValue={(plant as any).notes}
-                                        onBlur={(event) => {
+                                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                    <DatePicker
+                                        label="Purchased At"
+                                        value={(plant as any).purchased_at}
+                                        onChange={(newValue) => {
                                             let updated = {
                                                 ...plant,
-                                                notes: event.target.value
+                                                purchased_at: newValue.toGMTString()
                                             }
                                             setPlant(updated);
                                         }}
+                                        renderInput={(params) => <TextField {...params} />}
                                     />
-                                </div>
-                                <div className="text-center">
-                                    <div className="btn btn-outline-danger" onClick={toggleDeleteModal}>Delete Plant</div>
-                                </div>
+                                </LocalizationProvider>
 
                             </div>
+                            <div className="mb-3">
+                                <i>Notes: </i>
+                                <textarea className="form-control" defaultValue={(plant as any).notes}
+                                    onBlur={(event) => {
+                                        let updated = {
+                                            ...plant,
+                                            notes: event.target.value
+                                        }
+                                        setPlant(updated);
+                                    }}
+                                />
+                            </div>
+                            <div className="text-center">
+                                <div className="btn btn-outline-danger" onClick={toggleDeleteModal}>Delete Plant</div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
-            </React.Fragment>
+            </div>
+        </React.Fragment>
     )
 };
 
