@@ -1,30 +1,54 @@
 import React, { useState } from "react";
 import axios from "axios";
 import * as AxiosService from "../services/AxiosService";
+import { Link } from "react-router-dom";
 
-const CreateAccount = (props: any) => {
+const CreateAccount = (props: { setLoading: any }) => {
     const [email, setEmail] = useState('');
-    const [password, setPw] = useState('');
+    const [errorText, setErrorText] = useState('');
+    const [showConfirm, setShowConfirm] = useState(false);
 
     const handleCreateAccount = async () => {
         try {
+            props.setLoading(true);
             let res = await axios.post(
                 `/auth/create_user`,
                 { email: email },
                 AxiosService.getOptions()
             );
+            setShowConfirm(true);
         } catch (error) {
             console.error(error);
+            setErrorText('Account creation failed, check console for details.');
+        } finally {
+            props.setLoading(false);
         }
     }
 
     return (
         <React.Fragment>
-            <div className="text-center mt-5 pt-5">
+
+            <div className="text-center mt-5 pt-5 px-5">
+                {
+                    errorText != '' ?
+                        <div className="alert alert-danger mb-3" role="alert">
+                            {errorText}
+                        </div>
+                        :
+                        <div></div>
+                }
+                {
+                    showConfirm ?
+                        <div className="alert alert-success mb-3" role="alert">
+                            Thanks for signing up! Please check your email for next steps.
+                        </div>
+                        :
+                        <div></div>
+                }
                 <div className="row">
                     <div className="col-xs-12 offset-md-3 col-md-6 offset-lg-4 col-lg-4">
                         <form>
-                            <h1 className="h3 mb-3 fw-normal">New Account Page</h1>
+                            <h1 className="h3 mb-3 fw-normal">Create New Account</h1>
                             <div className="form-floating mb-3">
                                 <input
                                     type="email" className="form-control" id="floatingInput" placeholder="name@email.com"
@@ -40,6 +64,13 @@ const CreateAccount = (props: any) => {
                             </button>
                         </form>
                     </div>
+                </div>
+                <div className="row mt-3">
+                    <Link to="/">
+                        <div className="w-100 btn btn-outline-primary">
+                            Go Back
+                        </div>
+                    </Link>
                 </div>
             </div>
         </React.Fragment>

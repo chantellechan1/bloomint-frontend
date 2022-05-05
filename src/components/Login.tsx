@@ -13,7 +13,7 @@ const ErrorMessage = (props: any) => {
     )
 }
 
-const Login = (props: any) => {
+const Login = (props: {setLoading: any, setUserToken: any, userToken: string | null}) => {
     let navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPw] = useState('');
@@ -22,7 +22,7 @@ const Login = (props: any) => {
     const handleLogin = async () => {
 
         try {
-    
+            props.setLoading(true);
             // attempt login
             let res = await axios.post(
                 `/auth/login`,
@@ -31,13 +31,14 @@ const Login = (props: any) => {
             );
 
             // store user token in local storage
-            // TODO: figure out where to store this in capacitor on android
             localStorage.setItem('userToken', res.data.jwt);
-
+            props.setLoading(false);
             props.setUserToken(localStorage.getItem('userToken'));
         } catch (error) {
             console.error(error);
             setLoginErr('Error Logging In')
+        } finally {
+            props.setLoading(false);
         }
     
     }
@@ -57,7 +58,7 @@ const Login = (props: any) => {
             {
                 loginErr !== '' && <ErrorMessage loginErr={loginErr} />
             }
-            <div className="text-center mt-5 pt-5">
+            <div className="text-center mt-5 pt-5 px-5">
                 <div className="row">
                     <div className="col-xs-12 offset-md-3 col-md-6 offset-lg-4 col-lg-4">
                         <form>
