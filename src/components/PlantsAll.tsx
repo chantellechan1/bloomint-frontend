@@ -27,25 +27,26 @@ const getAllPlants = async () => {
     return allPlants;
 };
 
-const updateAllPlants = async (setAllPlants: any) => {
-    const allPlants = await getAllPlants();
-
-    setAllPlants(allPlants);
-}
-
 const PlantsAll = (props: { setLoading: any }) => {
 
     const [allPlants, setAllPlants] = useState([]);
 
     useEffect(() => {
-        try {
-            props.setLoading(true);
-            updateAllPlants(setAllPlants);
-        } catch (e) {
-            console.log(e)
-        } finally {
-            props.setLoading(false);
-        }
+
+        const updateAllPlants = async (setAllPlants: any) => {
+            try {
+                props.setLoading(true);
+                const allPlants = await getAllPlants();
+                setAllPlants(allPlants);
+            } catch (e) {
+                console.log(e)
+            } finally {
+                props.setLoading(false);
+            }
+        };
+
+        updateAllPlants(setAllPlants);
+
     }, [])
 
     return (

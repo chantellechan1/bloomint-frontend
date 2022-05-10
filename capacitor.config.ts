@@ -2,7 +2,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.bloomint.app',
-  appName: 'bloomint-frontend',
+  appName: 'Bloomint',
   webDir: 'build',
   bundledWebRuntime: false
 };

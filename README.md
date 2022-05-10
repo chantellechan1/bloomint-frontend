@@ -1,6 +1,12 @@
-# Getting Started with Create React App
+# Bloomint (Frontend)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+With the increase of time spent at home during the pandemic, many people have turned to houseplants to greenify their living spaces. Bloomint aims to assist new plant owners by providing an easy way to catalogue houseplants, find care instructions, and receive reminders of when to water or fertilize their plants. Project is currently at MVP stage, future planned releases include handling image upload, push notifications to mobile devices for watering, and search functionality for plant types.
+
+See the sister repository containing backend code [here](https://github.com/chantellechan1/bloomint-backend).
+
+| Sign In | Home | All Plants | Single Plant | Edit Plant |
+| :---: | :---: | :---: | :---: | :---: |
+| ![sign in page](https://github.com/chantellechan1/bloomint-frontend/blob/main/docs/images/sign_in.png) | ![home page](https://github.com/chantellechan1/bloomint-frontend/blob/main/docs/images/home.png) | ![all plants page](https://github.com/chantellechan1/bloomint-frontend/blob/main/docs/images/all_plants.png) | ![single plant page](https://github.com/chantellechan1/bloomint-frontend/blob/main/docs/images/single_plant.png) | ![edit page](https://github.com/chantellechan1/bloomint-frontend/blob/main/docs/images/edit_plant.png) |
 
 ## Available Scripts
 
@@ -25,38 +31,16 @@ Builds the app for production to the `build` folder.\
 It correctly bundles React in production mode and optimizes the build for the best performance.
 
 The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Your app is ready to be deployed!  
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-## Notes
-* Capacitor iOS install failed at step `npx cap add ios` following [this guide](https://capacitorjs.com/solution/react)
-    * error of CocoaPods not installed
-    * should follow [this guide](https://guides.cocoapods.org/using/getting-started.html#installation) to fix
-    * android installation worked fine
-* to run on android [follow this guide](https://capacitorjs.com/docs/android#adding-the-android-platform)
-    * commands to run
-        1. `npm run build`
-        2. `npx cap sync`
-        3. `npx cap open android`
-        4. `npx cap run android`
-
-## Feature Requests
-* push notifications for watering plants
-* multiple photos of the same plant over time to track growth
+#### Android Deployment (Compile to APK)
+To run on android [follow this guide](https://capacitorjs.com/docs/android#adding-the-android-platform). Once installation is complete, run the following commands.  
+* commands to run
+    1. `npm run build`
+    2. `npx cap sync`
+    3. `npx cap open android`
+    4. `npx cap run android`  
+    
+Once Android Studio is open, navigate to Build > Build Bundle(s) / APK (s) > Build APK(s). This will build an APK file and creates a notification when the build process is complete.
