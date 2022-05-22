@@ -21,9 +21,10 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
-import defaultPlantImg from '../assets/images/default_plant.webp'
 import { IconContext } from "react-icons";
 import { BiSave } from "react-icons/bi";
+
+import * as plantModels from '../models/plantModels';
 
 const getSinglePlant = async (plantID: number) => {
 
@@ -62,6 +63,17 @@ const getAllPlantTypes = async () => {
     return res.data;
 };
 
+const getPlantImages = async (plantID: number) => {
+    const res = await axios.post(
+        '/plants/images/getByUserPlantIds',
+        [plantID],
+        AxiosService.getOptionsAuthed()
+    );
+
+    const plantImages: Array<plantModels.PlantImage> = res.data;
+    return plantImages;
+}
+
 const PlantIndividualEdit = (props: { setLoading: any }) => {
     let params = useParams();
     let navigate = useNavigate();
@@ -69,6 +81,8 @@ const PlantIndividualEdit = (props: { setLoading: any }) => {
     const [plant, setPlant] = useState({});
     const [plantType, setPlantType] = useState({});
     const [allPlantTypes, setAllPlantTypes] = useState([]);
+    const [plantImages, setPlantImages] = useState([] as plantModels.PlantImage[])
+    const [activePlantImageIdx, setActivePlantImageIdx] = useState(0);
 
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
@@ -81,14 +95,17 @@ const PlantIndividualEdit = (props: { setLoading: any }) => {
                 // TODO: refactor with Promsie.allSettled
                 Promise.all([
                     getPlantTypeInformation(apiPlant.plant_id),
-                    getAllPlantTypes()
+                    getAllPlantTypes(),
+                    getPlantImages(plantID)
                 ]).then(results => {
                     const plantTypeInfo = results[0];
                     const plantTypesFromAPI = results[1];
+                    const plantImagesFromAPI: plantModels.PlantImage[] = results[2];
 
                     setPlant(apiPlant);
                     setPlantType((plantTypeInfo as any));
                     setAllPlantTypes((plantTypesFromAPI as any));
+                    setPlantImages(plantImagesFromAPI);
                 })
             } catch (e) {
                 console.log(e)
@@ -171,8 +188,47 @@ const PlantIndividualEdit = (props: { setLoading: any }) => {
                 <div className="row">
                     <div className="row mb-3" key={uuidv4()}>
                         <div className="col text-start">
-                            <img src={defaultPlantImg} className="card-img-top" alt="..." />
+                            {/* user plant image carousel */}
+                            <div id="userPlantImageCarousel" className="carousel carousel-dark slide" data-bs-ride="carousel">
+                                <div className="carousel-inner">
+                                    {
+                                        plantImages.map((plantImage: plantModels.PlantImage, index: number) => {
+                                            return (
+                                                <div key={uuidv4()} className={`carousel-item ${index == activePlantImageIdx ? 'active' : ''}`}>
+                                                    <img src={`data:image/jpg;base64,${plantImage.image_data}`} className="d-block w-100" alt="..." />
+                                                </div>
+                                            )
+                                        })
+                                    }
+
+                                </div>
+                                <button className="carousel-control-prev" type="button" data-bs-target="#userPlantImageCarousel" data-bs-slide="prev"
+                                    onClick={() => {
+                                        if (activePlantImageIdx < plantImages.length - 1) {
+                                            setActivePlantImageIdx(activePlantImageIdx + 1);
+                                        } else {
+                                            setActivePlantImageIdx(0);
+                                        }
+                                    }}
+                                >
+                                    <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span className="visually-hidden">Previous</span>
+                                </button>
+                                <button className="carousel-control-next" type="button" data-bs-target="#userPlantImageCarousel" data-bs-slide="next"
+                                    onClick={() => {
+                                        if (activePlantImageIdx > 0) {
+                                            setActivePlantImageIdx(activePlantImageIdx - 1);
+                                        } else {
+                                            setActivePlantImageIdx(plantImages.length - 1);
+                                        }
+                                    }}
+                                >
+                                    <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span className="visually-hidden">Next</span>
+                                </button>
+                            </div>
                             <hr className="px-5" />
+
                             <div>
                                 <FormControl fullWidth>
                                     <InputLabel id="demo-simple-select-label">Plant Type</InputLabel>

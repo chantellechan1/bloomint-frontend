@@ -19,26 +19,10 @@ import defaultPlantImg from '../assets/images/default_plant.webp'
 import { IconContext } from "react-icons";
 import { BiSave } from "react-icons/bi";
 
-// TODO: move these interfaces to a models folder
-interface Plant {
-    plant_id: number,
-    plant_name: string,
-    created_at: string
-}
+import * as plantModels from '../models/plantModels';
 
-interface plantType {
-    created_at: string,
-    id: number,
-    max_temp: number,
-    min_temp: number,
-    name: string,
-    num_owned: number,
-    sunlight: string,
-    water_frequency: number
-}
-
-const PlantTypeStatsComponent = (props: { selectedPlantType: plantType }) => {
-    const selectedPlantType: plantType = props.selectedPlantType;
+const PlantTypeStatsComponent = (props: { selectedPlantType: plantModels.plantType }) => {
+    const selectedPlantType: plantModels.plantType = props.selectedPlantType;
     return (
         <React.Fragment>
             <div>
@@ -52,12 +36,12 @@ const PlantTypeStatsComponent = (props: { selectedPlantType: plantType }) => {
 
 const PlantIndividualNew = (props: { setLoading: any }) => {
     let navigate = useNavigate();
-    const [plant, setPlant] = useState<Plant>({
+    const [plant, setPlant] = useState<plantModels.Plant>({
         plant_id: 1, // default id for first plant type in db
         plant_name: '',
         created_at: (new Date()).toUTCString()
     });
-    const [selectedPlantType, setSelectedPlantType] = useState<plantType>(
+    const [selectedPlantType, setSelectedPlantType] = useState<plantModels.plantType>(
         {
             created_at: "Sun, 13 Feb 2022 00:00:00 GMT",
             id: 1,
@@ -69,7 +53,7 @@ const PlantIndividualNew = (props: { setLoading: any }) => {
             water_frequency: 1
         } // hardcoded for values for mint as a default
     );
-    const [allPlantTypes, setAllPlantTypes] = useState<plantType[]>([]);
+    const [allPlantTypes, setAllPlantTypes] = useState<plantModels.plantType[]>([]);
 
     useEffect(() => {
         const apiCalls = async () => {
@@ -136,14 +120,14 @@ const PlantIndividualNew = (props: { setLoading: any }) => {
                                     <Select
                                         labelId="select-plant-type-label"
                                         id="select-plant-type"
-                                        value={(selectedPlantType as plantType).id}
+                                        value={(selectedPlantType as plantModels.plantType).id}
                                         label="Plant Type"
                                         onChange={(event) => {
                                             let targetID = event.target.value;
-                                            const newPlantType: plantType = allPlantTypes.find(type => {
+                                            const newPlantType: plantModels.plantType = allPlantTypes.find(type => {
                                                 let currPlantTypeID = (type as any).id;
                                                 return targetID == currPlantTypeID;
-                                            }) as plantType;
+                                            }) as plantModels.plantType;
 
                                             setSelectedPlantType(newPlantType);
 
@@ -160,7 +144,7 @@ const PlantIndividualNew = (props: { setLoading: any }) => {
                                     </Select>
                                 </FormControl>
                             </div>
-                            <PlantTypeStatsComponent selectedPlantType={selectedPlantType as plantType} />
+                            <PlantTypeStatsComponent selectedPlantType={selectedPlantType as plantModels.plantType} />
 
                             <div className="mt-3">
                                 <i>Plant Name: </i>
