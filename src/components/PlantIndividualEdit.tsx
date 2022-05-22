@@ -25,6 +25,22 @@ import defaultPlantImg from '../assets/images/default_plant.webp'
 import { IconContext } from "react-icons";
 import { BiSave } from "react-icons/bi";
 
+import { Camera, CameraResultType } from '@capacitor/camera';
+
+const takePicture = async (plantID: number) => {
+  const image = await Camera.getPhoto({
+    quality: 90,
+    allowEditing: true,
+    resultType: CameraResultType.Base64
+  });
+axios.post(
+    '/plants/images/create',
+      [{image_base_64: image.base64String, user_plant_id: plantID}]
+    ,
+    AxiosService.getOptionsAuthed()
+  ).then(res => {console.log(res)});
+};
+
 const getSinglePlant = async (plantID: number) => {
 
     const res = await axios.post(
@@ -254,6 +270,9 @@ const PlantIndividualEdit = (props: { setLoading: any }) => {
                                     />
                                 </LocalizationProvider>
 
+                            </div>
+                            <div className="text-center">
+                                <div className="btn btn-outline-primary" onClick={() => {takePicture(plantID)}}>Add Image</div>
                             </div>
                             <div className="mb-3">
                                 <i>Notes: </i>
