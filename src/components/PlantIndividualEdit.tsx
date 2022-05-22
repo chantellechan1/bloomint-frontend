@@ -24,6 +24,8 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { IconContext } from "react-icons";
 import { BiSave } from "react-icons/bi";
 
+import { Camera, CameraResultType } from '@capacitor/camera';
+ 
 import * as plantModels from '../models/plantModels';
 
 const getSinglePlant = async (plantID: number) => {
@@ -73,6 +75,20 @@ const getPlantImages = async (plantID: number) => {
     const plantImages: Array<plantModels.PlantImage> = res.data;
     return plantImages;
 }
+  
+const takePicture = async (plantID: number) => {
+  const image = await Camera.getPhoto({
+    quality: 90,
+    allowEditing: true,
+    resultType: CameraResultType.Base64
+  });
+  axios.post(
+    '/plants/images/create',
+      [{image_base_64: image.base64String, user_plant_id: plantID}]
+    ,
+    AxiosService.getOptionsAuthed()
+  ).then(res => {console.log(res)});
+};
 
 const PlantIndividualEdit = (props: { setLoading: any }) => {
     let params = useParams();
@@ -310,6 +326,9 @@ const PlantIndividualEdit = (props: { setLoading: any }) => {
                                     />
                                 </LocalizationProvider>
 
+                            </div>
+                            <div className="text-center">
+                                <div className="btn btn-outline-primary" onClick={() => {takePicture(plantID)}}>Add Image</div>
                             </div>
                             <div className="mb-3">
                                 <i>Notes: </i>
