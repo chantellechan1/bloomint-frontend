@@ -17,5 +17,6 @@ export interface plantType {
 
 export interface PlantImage {
     image_id: number,
+    user_plant_id: number,
     image_data: string // is a base64 encoded string representation of the image
 }

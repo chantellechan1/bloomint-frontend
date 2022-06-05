@@ -9,6 +9,8 @@ import defaultPlantImg from '../assets/images/default_plant.webp'
 import { IconContext } from "react-icons";
 import { BiPencil } from "react-icons/bi";
 
+import * as plantModels from '../models/plantModels';
+
 const getSinglePlant = async (plantID: number) => {
 
     const res = await axios.post(
@@ -37,10 +39,21 @@ const getPlantTypeInformation = async (plantTypeID: number) => {
     return plantTypeInfo;
 };
 
+const getPlantImages = async (plantID: number) => {
+    const res = await axios.post(
+        '/plants/images/getByUserPlantIds',
+        [plantID],
+        AxiosService.getOptionsAuthed()
+    )
+    const plantImages = res.data;
+    return plantImages;
+}
+
 const PlantIndividual = (props: { setLoading: any }) => {
     let params = useParams();
     const plantID = Number(params.plantID);
     const [plant, setPlant] = useState({});
+    const [plantImages, setPlantImages] = useState([] as plantModels.PlantImage[]);
 
     useEffect(() => {
         const loadPlant = async () => {
@@ -48,7 +61,10 @@ const PlantIndividual = (props: { setLoading: any }) => {
                 props.setLoading(true);
 
                 const apiPlant = await getSinglePlant(plantID);
-                const plantTypeInfo = await getPlantTypeInformation(apiPlant.plant_id);
+
+                // TODO: refactor these API calls to run async
+                const plantTypeInfo = await getPlantTypeInformation(apiPlant.plant_id); 
+                const plantImages = await getPlantImages(plantID);
 
                 // append properties of plant type to individual plant
                 apiPlant.min_temp = plantTypeInfo.min_temp;
@@ -58,6 +74,7 @@ const PlantIndividual = (props: { setLoading: any }) => {
                 apiPlant.water_frequency = plantTypeInfo.water_frequency;
 
                 setPlant(apiPlant);
+                setPlantImages(plantImages);
             } catch (e) {
                 console.log(e)
             } finally {
@@ -84,7 +101,7 @@ const PlantIndividual = (props: { setLoading: any }) => {
                 <div className="row">
                     <div className="row mb-3" key={uuidv4()}>
                         <div className="col text-start">
-                            <img src={defaultPlantImg} className="card-img-top" alt="..." />
+                            <img src={`data:image/png;base64,${plantImages.at(-1)?.image_data}`} className="card-img-top" alt="..." />
                             <hr className="px-5" />
                             <div>{(plant as any).plant_type_name} Stats:</div>
                             <div>
