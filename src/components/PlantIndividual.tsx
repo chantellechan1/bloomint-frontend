@@ -5,7 +5,7 @@ import axios from 'axios';
 import * as AxiosService from '../services/AxiosService';
 import { v4 as uuidv4 } from 'uuid';
 
-import defaultPlantImg from '../assets/images/default_plant.webp'
+import cactus from "../assets/images/cactus_b64.json";
 import { IconContext } from "react-icons";
 import { BiPencil } from "react-icons/bi";
 
@@ -62,9 +62,9 @@ const PlantIndividual = (props: { setLoading: any }) => {
 
                 const apiPlant = await getSinglePlant(plantID);
 
-                // TODO: refactor these API calls to run async
-                const plantTypeInfo = await getPlantTypeInformation(apiPlant.plant_id); 
-                const plantImages = await getPlantImages(plantID);
+                const results = await Promise.allSettled([getPlantTypeInformation(apiPlant.plant_id), getPlantImages(plantID)]);
+
+                let [plantTypeInfo, plantImages] = results.map((res: any) => res.value);
 
                 // append properties of plant type to individual plant
                 apiPlant.min_temp = plantTypeInfo.min_temp;
@@ -101,7 +101,20 @@ const PlantIndividual = (props: { setLoading: any }) => {
                 <div className="row">
                     <div className="row mb-3" key={uuidv4()}>
                         <div className="col text-start">
-                            <img src={`data:image/png;base64,${plantImages.at(-1)?.image_data}`} className="card-img-top" alt="..." />
+                            {/* plant images */}
+                            {
+                                plantImages.length > 0 ?
+                                    <div className="container-fluid">
+                                        <div className={`row ${plantImages.length <= 3 ? `row-cols-${plantImages.length}` : `row-cols-4`}`}>
+                                            {
+                                                plantImages.map(plantImage => <img src={`data:image/jpg;base64,${plantImage.image_data}`} alt="..." className="col"/>)
+                                            }
+                                        </div>
+                                    </div>
+                                    :
+                                    <img src={`data:image/jpg;base64,${cactus.b64}`} className="d-block w-100" alt="..." />
+                            }
+
                             <hr className="px-5" />
                             <div>{(plant as any).plant_type_name} Stats:</div>
                             <div>
