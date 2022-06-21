@@ -4,7 +4,9 @@ import axios from "axios";
 import * as AxiosService from "../services/AxiosService";
 import { v4 as uuidv4 } from "uuid";
 
-import deafultPlantImg from "../assets/images/default_plant.webp";
+import cactus from "../assets/images/cactus_b64.json";
+import getMostRecentPlantImage from "../services/PlantImageService";
+import * as plantModels from "../models/plantModels";
 
 
 const getPlants = async (plantTypeID: number) => {
@@ -23,7 +25,7 @@ const getPlants = async (plantTypeID: number) => {
 
 const PlantsInType = (props: { setLoading: any }) => {
 
-    const [typePlants, setTypePlants] = useState([]);
+    const [typePlants, setTypePlants] = useState<Array<plantModels.Plant>>([]);
     let { plantTypeID } = useParams();
 
     useEffect(() => {
@@ -32,6 +34,15 @@ const PlantsInType = (props: { setLoading: any }) => {
                 props.setLoading(true);
                 const typePlants = await getPlants(plantTypeID);
 
+                const results = await Promise.allSettled(
+                    typePlants.map((plant: plantModels.Plant) => getMostRecentPlantImage(plant.plant_id))
+                )
+
+                results.forEach((res: any, idx) => {
+                    if (res.value) {
+                        typePlants[idx].most_recent_image = res.value as plantModels.PlantImage
+                    }
+                })
                 setTypePlants(typePlants);
             } catch (e) {
                 console.log(e);
@@ -66,7 +77,7 @@ const PlantsInType = (props: { setLoading: any }) => {
                                 <div className="col">
                                     <div className="card text-start">
                                         <Link to={`/plant/${plant.id}`}>
-                                            <img src={deafultPlantImg} className="card-img-top" alt="..." />
+                                            <img src={`data:image/jpg;base64,${plant.most_recent_image.image_data}`} className="d-block w-100" alt="..." />
                                         </Link>
                                         <div className="card-body">
                                             <h3 className="card-title">
