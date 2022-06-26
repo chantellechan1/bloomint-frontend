@@ -107,7 +107,7 @@ const PlantIndividual = (props: { setLoading: any }) => {
                                     <div className="container-fluid">
                                         <div className={`row ${plantImages.length <= 3 ? `row-cols-${plantImages.length}` : `row-cols-4`}`}>
                                             {
-                                                plantImages.map(plantImage => <img src={`data:image/jpg;base64,${plantImage.image_data}`} alt="..." className="col"/>)
+                                                plantImages.map(plantImage => <img key={uuidv4()} src={`data:image/jpg;base64,${plantImage.image_data}`} alt="..." className="col"/>)
                                             }
                                         </div>
                                     </div>
