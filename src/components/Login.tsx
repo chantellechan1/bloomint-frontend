@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from 'axios';
-import * as AxiosService from '../services/AxiosService';
+import { server } from "../server";
 
 const ErrorMessage = (props: any) => {
     return (
@@ -24,14 +23,10 @@ const Login = (props: {setLoading: any, setUserToken: any, userToken: string | n
         try {
             props.setLoading(true);
             // attempt login
-            let res = await axios.post(
-                `/auth/login`,
-                { email: email, password: password },
-                AxiosService.getOptions()
-            );
+            const { jwt } = await server.Login({email, password})
 
             // store user token in local storage
-            localStorage.setItem('userToken', res.data.jwt);
+            localStorage.setItem('userToken', jwt);
             props.setLoading(false);
             props.setUserToken(localStorage.getItem('userToken'));
         } catch (error) {

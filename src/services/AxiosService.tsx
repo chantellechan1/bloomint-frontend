@@ -14,9 +14,9 @@ const axiosOptions: Options = {
     baseURL: 'https://api.bloomint.net'
 };
 
-export const getOptions = () => axiosOptions;
+export const getOptions = (): Options => axiosOptions;
 
-export const getOptionsAuthed = () => {
+export const getOptionsAuthed = (): Options => {
     const optionsWithAuth = {
         ... axiosOptions
     }

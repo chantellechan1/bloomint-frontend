@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import axios from "axios";
-import * as AxiosService from "../services/AxiosService";
 import { Link } from "react-router-dom";
+import { server } from "../server";
 
 const CreateAccount = (props: { setLoading: any }) => {
     const [email, setEmail] = useState('');
@@ -11,11 +10,7 @@ const CreateAccount = (props: { setLoading: any }) => {
     const handleCreateAccount = async () => {
         try {
             props.setLoading(true);
-            let res = await axios.post(
-                `/auth/create_user`,
-                { email: email },
-                AxiosService.getOptions()
-            );
+            await server.CreateAccount({email});
             setShowConfirm(true);
         } catch (error) {
             console.error(error);
@@ -30,20 +25,18 @@ const CreateAccount = (props: { setLoading: any }) => {
 
             <div className="text-center mt-5 pt-5 px-5">
                 {
-                    errorText != '' ?
-                        <div className="alert alert-danger mb-3" role="alert">
-                            {errorText}
-                        </div>
-                        :
-                        <div></div>
+                    errorText !== ''
+                    &&
+                    <div className="alert alert-danger mb-3" role="alert">
+                        {errorText}
+                    </div>
                 }
                 {
-                    showConfirm ?
-                        <div className="alert alert-success mb-3" role="alert">
-                            Thanks for signing up! Please check your email for next steps.
-                        </div>
-                        :
-                        <div></div>
+                    showConfirm
+                    &&
+                    <div className="alert alert-success mb-3" role="alert">
+                        Thanks for signing up! Please check your email for next steps.
+                    </div>
                 }
                 <div className="row">
                     <div className="col-xs-12 offset-md-3 col-md-6 offset-lg-4 col-lg-4">
@@ -58,7 +51,7 @@ const CreateAccount = (props: { setLoading: any }) => {
                             </div>
                             <button
                                 type="button" className="w-100 btn btn-outline-primary"
-                                onClick={() => { handleCreateAccount() }}
+                                onClick={handleCreateAccount}
                             >
                                 Confirm Email
                             </button>

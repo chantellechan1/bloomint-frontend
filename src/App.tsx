@@ -69,12 +69,11 @@ function App() {
         <React.Fragment>
             {/* loading indicator */}
             {
-                loading ?
-                    <div style={{ height: '100vh', width: '100vw' }}>
-                        <LoadingComponent />
-                    </div>
-                    :
-                    <div></div>
+                loading
+                &&
+                <div style={{ height: '100vh', width: '100vw' }}>
+                    <LoadingComponent />
+                </div>
             }
 
             {/* main content */}
