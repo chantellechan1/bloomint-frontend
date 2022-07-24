@@ -27,9 +27,10 @@ const getPlantImages = async (userPlantID: number) => {
 
 interface individualPlant extends plantModels.Plant, plantModels.plantType {}
 
-const PlantIndividual = (props: { setLoading: any }) => {
+const PlantIndividual = (props: { setLoading: (val: boolean) => void }) => {
     let params = useParams();
     const plantID = Number(params.plantID);
+    const {setLoading} = props;
 
     const [plant, setPlant] = useState<individualPlant>();
     const [plantImages, setPlantImages] = useState<Array<plantModels.PlantImage>>();
@@ -37,7 +38,7 @@ const PlantIndividual = (props: { setLoading: any }) => {
     useEffect(() => {
         const loadPlant = async () => {
             try {
-                props.setLoading(true);
+                setLoading(true);
 
                 const userPlant = await getSinglePlant(plantID);
 
@@ -50,25 +51,25 @@ const PlantIndividual = (props: { setLoading: any }) => {
             } catch (e) {
                 console.log(e)
             } finally {
-                props.setLoading(false);
+                setLoading(false);
             }
         };
 
         loadPlant();
-    }, []);
+    }, [setLoading, plantID]);
 
     return (
         <React.Fragment>
             <div className="float-end mt-2 me-2">
                 <IconContext.Provider value={{ size: "2em" }}>
                     <div>
-                        <Link to={`/plant/${(plant as any).id}/edit`}><BiPencil /></Link>
+                        <Link to={`/plant/${plant?.id}/edit`}><BiPencil /></Link>
                     </div>
                 </IconContext.Provider>
             </div>
             <div className="container-fluid">
                 <div className="row text-center mb-3 mt-1">
-                    <h1>{(plant as any).plant_name}</h1>
+                    <h1>{plant?.plant_name}</h1>
                 </div>
                 <div className="row">
                     <div className="row mb-3" key={uuidv4()}>
@@ -88,28 +89,28 @@ const PlantIndividual = (props: { setLoading: any }) => {
                             }
 
                             <hr className="px-5" />
-                            <div>{(plant as any).plant_type_name} Stats:</div>
+                            <div>{plant?.name} Stats:</div>
                             <div>
-                                <i>Temp Range: </i> {(plant as any).min_temp}°C to {(plant as any).max_temp}°C
+                                <i>Temp Range: </i> {plant?.min_temp}°C to {plant?.max_temp}°C
                             </div>
-                            <div><i>Sun: </i> {(plant as any).sunlight}</div>
-                            <div><i>Water: </i> Every {(plant as any).water_frequency} day(s)</div>
+                            <div><i>Sun: </i> {plant?.sunlight}</div>
+                            <div><i>Water: </i> Every {plant?.water_frequency} day(s)</div>
 
                             <div className="mt-3">
-                                {(plant as any).plant_name}'s Info:
+                                {plant?.plant_name}'s Info:
                             </div>
                             <div className="card-text">
-                                <i>Created At: </i> {(plant as any).created_at}
+                                <i>Created At: </i> {plant?.created_at}
                             </div>
                             {
-                                (plant as any).purchased_at !== null &&
+                                plant?.purchased_at &&
                                 <div className="card-text">
-                                    <i>Purchased At: </i> {(plant as any).purchased_at}
+                                    <i>Purchased At: </i> {plant?.purchased_at}
                                 </div>
                             }
                             <div>
                                 <i>Notes: </i>
-                                <div>{(plant as any).notes}</div>
+                                <div>{plant?.notes}</div>
                             </div>
                         </div>
                     </div>

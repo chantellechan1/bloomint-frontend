@@ -1,3 +1,6 @@
+/**
+ * User Plant Model
+ */
 export interface Plant {
     plant_id: number,
     plant_name: string,

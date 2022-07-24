@@ -19,7 +19,7 @@ export const getOptions = (): Options => axiosOptions;
 
 export const getOptionsAuthed = (): Options => {
     const optionsWithAuth = {
-        ... axiosOptions
+        ...axiosOptions
     }
 
     optionsWithAuth.headers['Authorization'] = `Bearer ${localStorage.getItem('userToken')}`;
