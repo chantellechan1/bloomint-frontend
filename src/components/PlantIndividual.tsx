@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
-import axios from 'axios';
-import * as AxiosService from '../services/AxiosService';
 import { v4 as uuidv4 } from 'uuid';
 
 import cactus from "../assets/images/cactus_b64.json";
@@ -10,70 +8,44 @@ import { IconContext } from "react-icons";
 import { BiPencil } from "react-icons/bi";
 
 import * as plantModels from '../models/plantModels';
+import { server } from "../server";
 
 const getSinglePlant = async (plantID: number) => {
-
-    const res = await axios.post(
-        '/plants/user/get_plants',
-        {
-            plant_ids: [plantID]
-        },
-        AxiosService.getOptionsAuthed()
-    );
-
-    const plant = res.data[0]; // will be returned as array of plants with length 1
-
+    const [plant] = await server.GetUserPlant({userPlantID: plantID});
     return plant;
 };
 
 const getPlantTypeInformation = async (plantTypeID: number) => {
-    const res = await axios.post(
-        '/plants/plant_types',
-        {
-            plant_type_ids: [plantTypeID]
-        },
-        AxiosService.getOptionsAuthed()
-    );
-
-    const plantTypeInfo = res.data[0];
+    const [plantTypeInfo] = await server.GetPlantType({plantTypeID})
     return plantTypeInfo;
 };
 
-const getPlantImages = async (plantID: number) => {
-    const res = await axios.post(
-        '/plants/images/getByUserPlantIds',
-        [plantID],
-        AxiosService.getOptionsAuthed()
-    )
-    const plantImages = res.data;
+const getPlantImages = async (userPlantID: number) => {
+    const plantImages = await server.GetPlantImages({userPlantID})
     return plantImages;
 }
+
+interface individualPlant extends plantModels.Plant, plantModels.plantType {}
 
 const PlantIndividual = (props: { setLoading: any }) => {
     let params = useParams();
     const plantID = Number(params.plantID);
-    const [plant, setPlant] = useState({});
-    const [plantImages, setPlantImages] = useState([] as plantModels.PlantImage[]);
+
+    const [plant, setPlant] = useState<individualPlant>();
+    const [plantImages, setPlantImages] = useState<Array<plantModels.PlantImage>>();
 
     useEffect(() => {
         const loadPlant = async () => {
             try {
                 props.setLoading(true);
 
-                const apiPlant = await getSinglePlant(plantID);
+                const userPlant = await getSinglePlant(plantID);
 
-                const results = await Promise.allSettled([getPlantTypeInformation(apiPlant.plant_id), getPlantImages(plantID)]);
+                const results = await Promise.allSettled([getPlantTypeInformation(userPlant.plant_id), getPlantImages(plantID)]);
 
                 let [plantTypeInfo, plantImages] = results.map((res: any) => res.value);
 
-                // append properties of plant type to individual plant
-                apiPlant.min_temp = plantTypeInfo.min_temp;
-                apiPlant.max_temp = plantTypeInfo.max_temp;
-                apiPlant.plant_type_name = plantTypeInfo.name;
-                apiPlant.sunlight = plantTypeInfo.sunlight;
-                apiPlant.water_frequency = plantTypeInfo.water_frequency;
-
-                setPlant(apiPlant);
+                setPlant({...userPlant, ...plantTypeInfo});
                 setPlantImages(plantImages);
             } catch (e) {
                 console.log(e)
@@ -103,7 +75,7 @@ const PlantIndividual = (props: { setLoading: any }) => {
                         <div className="col text-start">
                             {/* plant images */}
                             {
-                                plantImages.length > 0 ?
+                                plantImages && plantImages.length > 0 ?
                                     <div className="container-fluid">
                                         <div className={`row ${plantImages.length <= 3 ? `row-cols-${plantImages.length}` : `row-cols-4`}`}>
                                             {
