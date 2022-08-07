@@ -92,6 +92,17 @@ export const GetPlantType = async (req: GetPlantTypeRequest): Promise<GetPlantTy
     return res.data;
 }
 
+export interface GetAllPlantTypesResponse extends Array<plantType> {}
+
+export const GetAllPlantTypes = async (): Promise<GetAllPlantTypesResponse> => {
+    const res = await axios.get(
+        '/plants/plant_types/all',
+        AxiosService.getOptionsAuthed()
+    );
+
+    return res.data;
+}
+
 export interface GetPlantImagesRequest {
     userPlantID: number
 }
@@ -106,3 +117,66 @@ export const GetPlantImages = async (req: GetPlantImagesRequest): Promise<GetPla
     )
     return res.data;
 }
+
+export interface UploadPlantImageRequest {
+    imageB64: string,
+    userPlantID: number
+}
+
+export interface UploadPlantImageResponse extends GenericResponse{}
+
+export const UploadPlantImage = async (req: UploadPlantImageRequest): Promise<UploadPlantImageResponse> => {
+    const res = await axios.post(
+        '/plants/images/create',
+          [{image_base_64: req.imageB64, user_plant_id: req.userPlantID}]
+        ,
+        AxiosService.getOptionsAuthed()
+      )
+    
+    if (res.data === 'success') {
+        return {status: 'success'}
+    } else {
+        throw new Error('error uploading new image')
+    }
+
+}
+
+export interface UpdatePlantRequest extends Plant {}
+
+export interface UpdatePlantResponse extends GenericResponse {}
+
+export const UpdatePlant = async (req: UpdatePlantRequest): Promise<UpdatePlantResponse> => {
+    const res = await axios.post(
+        '/plants/user/update',
+        [req],
+        AxiosService.getOptionsAuthed()
+    );
+
+    if (res.data === 'success') {
+        return {status: 'success'}
+    } else {
+        throw new Error('error updating plant')
+    }
+}
+
+export interface DeletePlantRequest {
+    plantID: number
+}
+
+//TODO: verify this uses the generic response
+export interface DeletePlantResponse extends GenericResponse {}
+
+export const DeletePlant = async (req: DeletePlantRequest) => {
+    const res = await axios.post(
+        '/plants/user/delete',
+        { user_plant_ids: [req.plantID] },
+        AxiosService.getOptionsAuthed()
+    );
+
+    if (res.data === 'success') {
+        return {status: 'success'}
+    } else {
+        throw new Error('error deleting plant')
+    }
+}
+

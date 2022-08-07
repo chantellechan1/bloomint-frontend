@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
-import axios from 'axios';
-import * as AxiosService from '../services/AxiosService';
 import { v4 as uuidv4 } from 'uuid';
 
 import TextField from '@mui/material/TextField';
@@ -25,124 +23,96 @@ import { IconContext } from "react-icons";
 import { BiSave } from "react-icons/bi";
 
 import { Camera, CameraResultType } from '@capacitor/camera';
- 
-import * as plantModels from '../models/plantModels';
 
-const getSinglePlant = async (plantID: number) => {
+import { server } from "../server";
+import { Plant, PlantImage, plantType } from "../models/plantModels";
 
-    const res = await axios.post(
-        '/plants/user/get_plants',
-        {
-            plant_ids: [plantID]
-        },
-        AxiosService.getOptionsAuthed()
-    );
-
-    const plant = res.data[0]; // will be returned as array of plants with length 1
-
+const getSinglePlant = async (userPlantID: number) => {
+    const [plant] = await server.GetUserPlant({ userPlantID })
     return plant;
 };
 
 const getPlantTypeInformation = async (plantTypeID: number) => {
-    const res = await axios.post(
-        '/plants/plant_types',
-        {
-            plant_type_ids: [plantTypeID]
-        },
-        AxiosService.getOptionsAuthed()
-    );
-
-    const plantTypeInfo = res.data[0];
+    const [plantTypeInfo] = await server.GetPlantType({ plantTypeID })
     return plantTypeInfo;
 };
 
 const getAllPlantTypes = async () => {
-    const res = await axios.get(
-        '/plants/plant_types/all',
-        AxiosService.getOptionsAuthed()
-    );
-
-    return res.data;
+    const allPlantTypess = await server.GetAllPlantTypes();
+    return allPlantTypess
 };
 
-const getPlantImages = async (plantID: number) => {
-    const res = await axios.post(
-        '/plants/images/getByUserPlantIds',
-        [plantID],
-        AxiosService.getOptionsAuthed()
-    );
-
-    const plantImages: Array<plantModels.PlantImage> = res.data;
+const getPlantImages = async (userPlantID: number) => {
+    const plantImages = await server.GetPlantImages({ userPlantID });
     return plantImages;
 }
-  
-const takePicture = async (plantID: number) => {
-  const image = await Camera.getPhoto({
-    quality: 90,
-    allowEditing: true,
-    resultType: CameraResultType.Base64
-  });
-  axios.post(
-    '/plants/images/create',
-      [{image_base_64: image.base64String, user_plant_id: plantID}]
-    ,
-    AxiosService.getOptionsAuthed()
-  ).then(res => {console.log(res)});
-};
 
-const PlantIndividualEdit = (props: { setLoading: any }) => {
+const takePicture = async (userPlantID: number) => {
+
+    try {
+        const image = await Camera.getPhoto({
+            quality: 90,
+            allowEditing: true,
+            resultType: CameraResultType.Base64
+        });
+
+        if (!image.base64String) throw new Error("No image found");
+
+        await server.UploadPlantImage({ imageB64: image.base64String, userPlantID })
+
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+const PlantIndividualEdit = (props: { setLoading: (val: boolean) => void }) => {
     let params = useParams();
     let navigate = useNavigate();
     const plantID = Number(params.plantID);
-    const [plant, setPlant] = useState({});
-    const [plantType, setPlantType] = useState({});
-    const [allPlantTypes, setAllPlantTypes] = useState([]);
-    const [plantImages, setPlantImages] = useState([] as plantModels.PlantImage[])
+    const [plant, setPlant] = useState<Plant>();
+    const [plantType, setPlantType] = useState<plantType>();
+    const [allPlantTypes, setAllPlantTypes] = useState<Array<plantType>>();
+    const [plantImages, setPlantImages] = useState<Array<PlantImage>>()
     const [activePlantImageIdx, setActivePlantImageIdx] = useState(0);
 
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
+    const { setLoading } = props;
+
     useEffect(() => {
         const apiCalls = async () => {
             try {
-                props.setLoading(true);
-                const apiPlant = await getSinglePlant(plantID);
+                setLoading(true);
+                const userPlant = await getSinglePlant(plantID);
 
-                // TODO: refactor with Promsie.allSettled
-                Promise.all([
-                    getPlantTypeInformation(apiPlant.plant_id),
+                const [plantTypeInfo, plantTypesFromAPI, plantImagesFromAPI] = await Promise.all([
+                    getPlantTypeInformation(userPlant.plant_id),
                     getAllPlantTypes(),
                     getPlantImages(plantID)
-                ]).then(results => {
-                    const plantTypeInfo = results[0];
-                    const plantTypesFromAPI = results[1];
-                    const plantImagesFromAPI: plantModels.PlantImage[] = results[2];
+                ])
 
-                    setPlant(apiPlant);
-                    setPlantType((plantTypeInfo as any));
-                    setAllPlantTypes((plantTypesFromAPI as any));
-                    setPlantImages(plantImagesFromAPI);
-                })
+                setPlant(userPlant);
+                setPlantType(plantTypeInfo);
+                setAllPlantTypes(plantTypesFromAPI);
+                setPlantImages(plantImagesFromAPI);
+
             } catch (e) {
                 console.log(e)
             } finally {
-                props.setLoading(false);
+                setLoading(false);
             }
 
         };
         apiCalls();
-    }, []);
+    }, [setLoading, plantID]);
 
     const postUpdatePlant = async () => {
+        if (!plant) { return } // if plant is undefined, don't try to update it
         try {
             props.setLoading(true);
-            const res = await axios.post(
-                '/plants/user/update',
-                [plant],
-                AxiosService.getOptionsAuthed()
-            );
+            await server.UpdatePlant(plant)
             props.setLoading(false);
-            navigate(`/plant/${(plant as any).id}`);
+            navigate(`/plant/${plant.plant_id}`);
         } catch (e) {
             console.log(e)
         } finally {
@@ -154,13 +124,9 @@ const PlantIndividualEdit = (props: { setLoading: any }) => {
     const deletePlant = async () => {
         try {
             props.setLoading(true);
-            const res = await axios.post(
-                '/plants/user/delete',
-                { user_plant_ids: [plantID] },
-                AxiosService.getOptionsAuthed()
-            );
+            await server.DeletePlant({ plantID })
             props.setLoading(false);
-            navigate(`/plants_by_type/${(plantType as any).id}`);
+            navigate(`/plants_by_type/${plantType?.id}`);
         } catch (e) {
             console.log(e)
         } finally {
@@ -208,7 +174,7 @@ const PlantIndividualEdit = (props: { setLoading: any }) => {
                             <div id="userPlantImageCarousel" className="carousel carousel-dark slide" data-bs-ride="carousel">
                                 <div className="carousel-inner">
                                     {
-                                        plantImages.map((plantImage: plantModels.PlantImage, index: number) => {
+                                        plantImages?.map((plantImage: PlantImage, index: number) => {
                                             return (
                                                 <div key={uuidv4()} className={`carousel-item ${index == activePlantImageIdx ? 'active' : ''}`}>
                                                     <img src={`data:image/jpg;base64,${plantImage.image_data}`} className="d-block w-100" alt="..." />
@@ -220,7 +186,7 @@ const PlantIndividualEdit = (props: { setLoading: any }) => {
                                 </div>
                                 <button className="carousel-control-prev" type="button" data-bs-target="#userPlantImageCarousel" data-bs-slide="prev"
                                     onClick={() => {
-                                        if (activePlantImageIdx < plantImages.length - 1) {
+                                        if (plantImages && activePlantImageIdx < plantImages.length - 1) {
                                             setActivePlantImageIdx(activePlantImageIdx + 1);
                                         } else {
                                             setActivePlantImageIdx(0);
@@ -235,7 +201,7 @@ const PlantIndividualEdit = (props: { setLoading: any }) => {
                                         if (activePlantImageIdx > 0) {
                                             setActivePlantImageIdx(activePlantImageIdx - 1);
                                         } else {
-                                            setActivePlantImageIdx(plantImages.length - 1);
+                                            setActivePlantImageIdx(plantImages!.length - 1);
                                         }
                                     }}
                                 >
@@ -251,44 +217,42 @@ const PlantIndividualEdit = (props: { setLoading: any }) => {
                                     <Select
                                         labelId="select-plant-type-label"
                                         id="select-plant-type"
-                                        value={(plantType as any).id}
+                                        value={plantType?.id}
                                         label="Plant Type"
                                         onChange={(event) => {
                                             let targetID = event.target.value;
-                                            const newPlantType: any = allPlantTypes.find(type => {
-                                                let currPlantTypeID = (type as any).id;
-                                                return targetID == currPlantTypeID;
-                                            });
+                                            const newPlantType = allPlantTypes?.find(type => {
+                                                let currPlantTypeID = type.id;
+                                                return targetID === currPlantTypeID;
+                                            }) as plantType;
 
-                                            let updated = {
-                                                ...plant,
-                                                plant_id: newPlantType.id
-                                            }
+                                            const updated = { ...plant } as Plant;
+                                            updated.plant_id = newPlantType?.id;
 
                                             setPlantType(newPlantType);
                                             setPlant(updated);
                                         }}
                                     >
                                         {
-                                            allPlantTypes.map(type => (<MenuItem key={uuidv4()} value={(type as any).id}>{(type as any).name}</MenuItem>))
+                                            allPlantTypes?.map(type => (<MenuItem key={uuidv4()} value={type.id}>{type.name}</MenuItem>))
                                         }
                                     </Select>
                                 </FormControl>
                             </div>
                             <div>
-                                <i>Temp Range: </i> {(plantType as any).min_temp}°C to {(plantType as any).max_temp}°C
+                                <i>Temp Range: </i> {plantType?.min_temp}°C to {plantType?.max_temp}°C
                             </div>
-                            <div><i>Sun: </i> {(plantType as any).sunlight}</div>
-                            <div><i>Water: </i> Every {(plantType as any).water_frequency} day(s)</div>
+                            <div><i>Sun: </i> {plantType?.sunlight}</div>
+                            <div><i>Water: </i> Every {plantType?.water_frequency} day(s)</div>
 
                             <div className="mt-3">
                                 <i>Plant Name: </i>
-                                <input type='text' className="form-control" defaultValue={(plant as any).plant_name}
+                                <input type='text' className="form-control" defaultValue={plant?.plant_name}
                                     onBlur={(event) => {
                                         let updated = {
                                             ...plant,
                                             plant_name: event.target.value
-                                        }
+                                        } as Plant; 
                                         setPlant(updated);
                                     }}
                                 />
@@ -297,12 +261,12 @@ const PlantIndividualEdit = (props: { setLoading: any }) => {
                                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                                     <DatePicker
                                         label="Created At"
-                                        value={(plant as any).created_at}
+                                        value={plant?.created_at}
                                         onChange={(newValue) => {
                                             let updated = {
                                                 ...plant,
-                                                created_at: newValue.toGMTString()
-                                            }
+                                                created_at: (newValue as any).toUTCString()
+                                            } as Plant;
                                             setPlant(updated);
                                         }}
                                         renderInput={(params) => <TextField {...params} />}
@@ -314,12 +278,13 @@ const PlantIndividualEdit = (props: { setLoading: any }) => {
                                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                                     <DatePicker
                                         label="Purchased At"
-                                        value={(plant as any).purchased_at}
+                                        value={plant?.purchased_at}
                                         onChange={(newValue) => {
+                                            if (!newValue) {return}
                                             let updated = {
                                                 ...plant,
-                                                purchased_at: newValue.toGMTString()
-                                            }
+                                                purchased_at: (newValue as any).toUTCString()
+                                            } as Plant;
                                             setPlant(updated);
                                         }}
                                         renderInput={(params) => <TextField {...params} />}
@@ -328,16 +293,16 @@ const PlantIndividualEdit = (props: { setLoading: any }) => {
 
                             </div>
                             <div className="text-center">
-                                <div className="btn btn-outline-primary" onClick={() => {takePicture(plantID)}}>Add Image</div>
+                                <div className="btn btn-outline-primary" onClick={() => { takePicture(plantID) }}>Add Image</div>
                             </div>
                             <div className="mb-3">
                                 <i>Notes: </i>
-                                <textarea className="form-control" defaultValue={(plant as any).notes}
+                                <textarea className="form-control" defaultValue={plant?.notes}
                                     onBlur={(event) => {
                                         let updated = {
                                             ...plant,
                                             notes: event.target.value
-                                        }
+                                        } as Plant;
                                         setPlant(updated);
                                     }}
                                 />

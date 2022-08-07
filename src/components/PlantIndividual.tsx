@@ -11,28 +11,26 @@ import * as plantModels from '../models/plantModels';
 import { server } from "../server";
 
 const getSinglePlant = async (plantID: number) => {
-    const [plant] = await server.GetUserPlant({userPlantID: plantID});
+    const [plant] = await server.GetUserPlant({ userPlantID: plantID });
     return plant;
 };
 
 const getPlantTypeInformation = async (plantTypeID: number) => {
-    const [plantTypeInfo] = await server.GetPlantType({plantTypeID})
+    const [plantTypeInfo] = await server.GetPlantType({ plantTypeID })
     return plantTypeInfo;
 };
 
 const getPlantImages = async (userPlantID: number) => {
-    const plantImages = await server.GetPlantImages({userPlantID})
+    const plantImages = await server.GetPlantImages({ userPlantID })
     return plantImages;
 }
-
-interface individualPlant extends plantModels.Plant, plantModels.plantType {}
 
 const PlantIndividual = (props: { setLoading: (val: boolean) => void }) => {
     let params = useParams();
     const plantID = Number(params.plantID);
-    const {setLoading} = props;
+    const { setLoading } = props;
 
-    const [plant, setPlant] = useState<individualPlant>();
+    const [plant, setPlant] = useState<plantModels.individualPlant>();
     const [plantImages, setPlantImages] = useState<Array<plantModels.PlantImage>>();
 
     useEffect(() => {
@@ -46,7 +44,7 @@ const PlantIndividual = (props: { setLoading: (val: boolean) => void }) => {
 
                 let [plantTypeInfo, plantImages] = results.map((res: any) => res.value);
 
-                setPlant({...userPlant, ...plantTypeInfo});
+                setPlant({ ...userPlant, ...plantTypeInfo });
                 setPlantImages(plantImages);
             } catch (e) {
                 console.log(e)
@@ -80,7 +78,7 @@ const PlantIndividual = (props: { setLoading: (val: boolean) => void }) => {
                                     <div className="container-fluid">
                                         <div className={`row ${plantImages.length <= 3 ? `row-cols-${plantImages.length}` : `row-cols-4`}`}>
                                             {
-                                                plantImages.map(plantImage => <img key={uuidv4()} src={`data:image/jpg;base64,${plantImage.image_data}`} alt="..." className="col"/>)
+                                                plantImages.map(plantImage => <img key={uuidv4()} src={`data:image/jpg;base64,${plantImage.image_data}`} alt="..." className="col" />)
                                             }
                                         </div>
                                     </div>

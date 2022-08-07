@@ -22,6 +22,11 @@ export interface plantType {
     water_frequency: number
 }
 
+/**
+ * join type with all properties of plant (userPlant) and plantType
+ */
+export interface individualPlant extends Plant, plantType { }
+
 export interface PlantImage {
     image_id: number,
     user_plant_id: number,
