@@ -37,7 +37,10 @@ const PlantTypeStatsComponent = (props: { selectedPlantType: plantType }) => {
   );
 };
 
-const PlantIndividualNew = (props: { setLoading: any }) => {
+const PlantIndividualNew = (props: {
+  setLoading: (loading: boolean) => void;
+  loading: boolean;
+}) => {
   let navigate = useNavigate();
   const [plant, setPlant] = useState<Plant>({
     plant_id: 1, // default id for first plant type in db
@@ -79,127 +82,137 @@ const PlantIndividualNew = (props: { setLoading: any }) => {
 
   return (
     <React.Fragment>
-      <div className="float-end mt-2 me-2 btn btn-link">
-        <IconContext.Provider value={{ size: "2em" }}>
-          <BiSave onClick={postNewPlant} />
-        </IconContext.Provider>
-      </div>
-      <div className="container-fluid">
-        <div className="row text-center mb-3 mt-1">
-          <h1>New Plant</h1>
-        </div>
-        <div className="row">
-          <div className="row mb-3" key={uuidv4()}>
-            <div className="col text-start">
-              <img src={defaultPlantImg} className="card-img-top" alt="..." />
-              <hr className="px-5" />
-              <div>
-                <FormControl fullWidth>
-                  <InputLabel id="demo-simple-select-label">
-                    Plant Type
-                  </InputLabel>
-                  <Select
-                    labelId="select-plant-type-label"
-                    id="select-plant-type"
-                    value={(selectedPlantType as plantType).id}
-                    label="Plant Type"
-                    onChange={(event) => {
-                      let targetID = event.target.value;
-                      const newPlantType: plantType = allPlantTypes.find(
-                        (type) => {
-                          let currPlantTypeID = type.id;
-                          return targetID === currPlantTypeID;
-                        }
-                      ) as plantType;
-
-                      setSelectedPlantType(newPlantType);
-
-                      let updated = {
-                        ...plant,
-                        plant_id: newPlantType.id,
-                      };
-                      setPlant(updated);
-                    }}
-                  >
-                    {allPlantTypes.map((type) => (
-                      <MenuItem key={uuidv4()} value={type.id}>
-                        {type.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </div>
-              <PlantTypeStatsComponent
-                selectedPlantType={selectedPlantType as plantType}
-              />
-
-              <div className="mt-3">
-                <i>Plant Name: </i>
-                <input
-                  type="text"
-                  className="form-control"
-                  defaultValue={plant?.plant_name}
-                  onBlur={(event) => {
-                    let updated = {
-                      ...plant,
-                      plant_name: event.target.value,
-                    };
-                    setPlant(updated);
-                  }}
-                />
-              </div>
-              <div className="card-text my-3">
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                  <DatePicker
-                    label="Created At"
-                    value={plant?.created_at}
-                    onChange={(newValue) => {
-                      let updated = {
-                        ...plant,
-                        created_at: (newValue as unknown as Date).toUTCString(),
-                      };
-                      setPlant(updated);
-                    }}
-                    renderInput={(params) => <TextField {...params} />}
+      {!props.loading && selectedPlantType && (
+        <>
+          <div className="float-end mt-2 me-2 btn btn-link">
+            <IconContext.Provider value={{ size: "2em" }}>
+              <BiSave onClick={postNewPlant} />
+            </IconContext.Provider>
+          </div>
+          <div className="container-fluid">
+            <div className="row text-center mb-3 mt-1">
+              <h1>New Plant</h1>
+            </div>
+            <div className="row">
+              <div className="row mb-3" key={uuidv4()}>
+                <div className="col text-start">
+                  <img
+                    src={defaultPlantImg}
+                    className="card-img-top"
+                    alt="..."
                   />
-                </LocalizationProvider>
-              </div>
-              <div className="card-text">
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                  <DatePicker
-                    label="Purchased At"
-                    value={plant?.purchased_at}
-                    onChange={(newValue) => {
-                      let updated = {
-                        ...plant,
-                        purchased_at: (
-                          newValue as unknown as Date
-                        ).toUTCString(),
-                      };
-                      setPlant(updated);
-                    }}
-                    renderInput={(params) => <TextField {...params} />}
+                  <hr className="px-5" />
+                  <div>
+                    <FormControl fullWidth>
+                      <InputLabel id="demo-simple-select-label">
+                        Plant Type
+                      </InputLabel>
+                      <Select
+                        labelId="select-plant-type-label"
+                        id="select-plant-type"
+                        value={selectedPlantType?.id}
+                        label="Plant Type"
+                        onChange={(event) => {
+                          let targetID = event.target.value;
+                          const newPlantType: plantType = allPlantTypes.find(
+                            (type) => {
+                              let currPlantTypeID = type.id;
+                              return targetID === currPlantTypeID;
+                            }
+                          ) as plantType;
+
+                          setSelectedPlantType(newPlantType);
+
+                          let updated = {
+                            ...plant,
+                            plant_id: newPlantType.id,
+                          };
+                          setPlant(updated);
+                        }}
+                      >
+                        {allPlantTypes.map((type) => (
+                          <MenuItem key={uuidv4()} value={type.id}>
+                            {type.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </div>
+                  <PlantTypeStatsComponent
+                    selectedPlantType={selectedPlantType as plantType}
                   />
-                </LocalizationProvider>
-              </div>
-              <div>
-                <i>Notes: </i>
-                <textarea
-                  className="form-control"
-                  defaultValue={plant?.notes}
-                  onBlur={(event) => {
-                    let updated = {
-                      ...plant,
-                      notes: event.target.value,
-                    };
-                    setPlant(updated);
-                  }}
-                />
+
+                  <div className="mt-3">
+                    <i>Plant Name: </i>
+                    <input
+                      type="text"
+                      className="form-control"
+                      defaultValue={plant?.plant_name}
+                      onBlur={(event) => {
+                        let updated = {
+                          ...plant,
+                          plant_name: event.target.value,
+                        };
+                        setPlant(updated);
+                      }}
+                    />
+                  </div>
+                  <div className="card-text my-3">
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                      <DatePicker
+                        label="Created At"
+                        value={plant?.created_at}
+                        onChange={(newValue) => {
+                          let updated = {
+                            ...plant,
+                            created_at: (
+                              newValue as unknown as Date
+                            ).toUTCString(),
+                          };
+                          setPlant(updated);
+                        }}
+                        renderInput={(params) => <TextField {...params} />}
+                      />
+                    </LocalizationProvider>
+                  </div>
+                  <div className="card-text">
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                      <DatePicker
+                        label="Purchased At"
+                        value={plant?.purchased_at}
+                        onChange={(newValue) => {
+                          let updated = {
+                            ...plant,
+                            purchased_at: (
+                              newValue as unknown as Date
+                            ).toUTCString(),
+                          };
+                          setPlant(updated);
+                        }}
+                        renderInput={(params) => <TextField {...params} />}
+                      />
+                    </LocalizationProvider>
+                  </div>
+                  <div>
+                    <i>Notes: </i>
+                    <textarea
+                      className="form-control"
+                      defaultValue={plant?.notes}
+                      onBlur={(event) => {
+                        let updated = {
+                          ...plant,
+                          notes: event.target.value,
+                        };
+                        setPlant(updated);
+                      }}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </>
+      )}
     </React.Fragment>
   );
 };
