@@ -8,6 +8,10 @@ See the sister repository containing backend code [here](https://github.com/chan
 | :---: | :---: | :---: | :---: | :---: |
 | ![sign in page](https://github.com/chantellechan1/bloomint-frontend/blob/main/docs/images/sign_in.png) | ![home page](https://github.com/chantellechan1/bloomint-frontend/blob/main/docs/images/home.png) | ![all plants page](https://github.com/chantellechan1/bloomint-frontend/blob/main/docs/images/all_plants.png) | ![single plant page](https://github.com/chantellechan1/bloomint-frontend/blob/main/docs/images/single_plant.png) | ![edit page](https://github.com/chantellechan1/bloomint-frontend/blob/main/docs/images/edit_plant.png) |
 
+## Changing location of the server
+look in
+src/services/AxiosService.tsx
+
 ## Available Scripts
 
 In the project directory, you can run:

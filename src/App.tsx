@@ -11,7 +11,10 @@ import {
   RiSettings4Fill,
   RiAddCircleLine,
   RiAddCircleFill,
+  RiTaskFill,
+  RiTaskLine,
 } from "react-icons/ri";
+
 import { IconContext } from "react-icons";
 
 import "./App.css";
@@ -19,6 +22,7 @@ import "./App.css";
 import Login from "./components/Login";
 import CreateAccount from "./components/CreateAccount";
 
+import Tasks from "./components/Tasks";
 import PlantTypes from "./components/PlantTypes";
 import PlantsAll from "./components/PlantsAll";
 import Settings from "./components/Settings";
@@ -82,6 +86,10 @@ function App() {
                   element={<PlantTypes setLoading={setLoading} />}
                 />
                 <Route
+                  path="/tasks"
+                  element={<Tasks setLoading={setLoading} />}
+                />
+                <Route
                   path="/plants_by_type"
                   element={<PlantTypes setLoading={setLoading} />}
                 />
@@ -128,17 +136,25 @@ function App() {
               <nav className="navbar fixed-bottom navbar-light bg-light">
                 <div className="container-fluid">
                   <Link
-                    to="/"
-                    className="navbar-brand"
+                    to="/tasks"
+                    className="navbar-link active"
                     onClick={() => {
-                      setSelectedBottomNav("plantsByType");
+                      setSelectedBottomNav("tasks");
                     }}
                   >
-                    Bloom
+                    <IconContext.Provider value={{ size: "2em" }}>
+                      <div>
+                        {selectedBottomNav === "tasks" ? (
+                          <RiTaskFill />
+                        ) : (
+                          <RiTaskLine />
+                        )}
+                      </div>
+                    </IconContext.Provider>
                   </Link>
                   <Link
                     to="/plants_by_type"
-                    className="nav-link active"
+                    className="nav-link"
                     aria-current="page"
                     onClick={() => {
                       setSelectedBottomNav("plantsByType");
