@@ -101,10 +101,16 @@ export const GetAllUserPlants = async (): Promise<GetAllUserPlantsResponse> => {
     }
   });
 
-  const allPlants = allPlantsRes.value as unknown as Plant[];
-  allPlants.forEach((plant, index) => {
-    plant.most_recent_image = plantImages[index];
-  });
+  let allPlants = allPlantsRes.value as unknown as Plant[];
+  try {
+    allPlants.forEach((plant, index) => {
+      plant.most_recent_image = plantImages[index];
+    });
+  } catch (e) {
+    // usually wind up here if user has no plants
+    console.warn(e);
+    allPlants = [];
+  }
 
   return { status: "success", allPlants };
 };
@@ -129,7 +135,11 @@ export const GetUserPlant = async (
     AxiosService.getOptionsAuthed()
   );
 
-  return res.data; // will be returned as array of plants with length 1
+  const userPlants = res.data.map((server_plant: any) => ({
+    ...server_plant,
+    user_plant_id: server_plant.id,
+  }));
+  return userPlants; // will be returned as array of plants with length 1
 };
 
 export interface GetPlantTypeRequest {
@@ -249,7 +259,7 @@ export const UpdatePlant = async (
 };
 
 export interface DeletePlantRequest {
-  plantID: number;
+  plantID: number; // user plant id
 }
 
 //TODO: verify this uses the generic response
@@ -267,4 +277,36 @@ export const DeletePlant = async (req: DeletePlantRequest) => {
   } else {
     throw new Error("error deleting plant");
   }
+};
+
+export interface getPlantsResponseItem {
+  created_at: "Mon, 05 Sep 2022 19:13:35 GMT";
+  id: 1;
+  notes: null;
+  plant_id: 2;
+  plant_name: "Bing Bong";
+  purchased_at: null;
+  user_id: 4;
+}
+
+export const getUserPlantsInPlantType = async (plantTypeID: number) => {
+  let res = await axios.post(
+    "/plants/user/plants_by_type",
+    {
+      plant_type_id: plantTypeID,
+    },
+    AxiosService.getOptionsAuthed()
+  );
+  const typePlants: getPlantsResponseItem[] = res.data;
+
+  const userPlantsInType = typePlants.map(
+    (rawPlant: getPlantsResponseItem) => ({
+      ...rawPlant,
+      user_plant_id: rawPlant.id,
+      purchased_at: rawPlant.purchased_at ? rawPlant.purchased_at : undefined,
+      notes: rawPlant.notes ? rawPlant.notes : undefined,
+    })
+  );
+
+  return userPlantsInType as Plant[];
 };

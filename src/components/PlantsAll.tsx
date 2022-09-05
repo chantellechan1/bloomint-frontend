@@ -33,17 +33,17 @@ const PlantsAll = (props: { setLoading: any }) => {
         </div>
         <div className="row">
           {allPlants &&
-            allPlants.map((plant: any) => {
+            allPlants.map((plant) => {
               return (
                 <div className="row mb-3" key={uuidv4()}>
                   <div className="col">
                     <div className="card text-start">
                       <Link
-                        to={`/plant/${plant.id}`}
+                        to={`/plant/${plant.plant_id}`}
                         style={{ textDecoration: "none", color: "black" }}
                       >
                         <img
-                          src={`data:image/jpg;base64,${plant.most_recent_image.image_data}`}
+                          src={`data:image/jpg;base64,${plant.most_recent_image?.image_data}`}
                           className="d-block w-100"
                           alt="..."
                         />
