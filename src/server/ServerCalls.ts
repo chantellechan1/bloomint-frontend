@@ -101,7 +101,7 @@ export const GetAllUserPlants = async (): Promise<GetAllUserPlantsResponse> => {
     }
   });
 
-  let allPlants = allPlantsRes.value as unknown as Plant[];
+  let allPlants = allPlantsRes.value.data as unknown as Plant[];
   try {
     allPlants.forEach((plant, index) => {
       plant.most_recent_image = plantImages[index];
