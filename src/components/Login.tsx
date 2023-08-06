@@ -39,7 +39,6 @@ const Login = (props: {setLoading: any, setUserToken: any, userToken: string | n
     }
 
     const handleCreateAccount = async () => {
-
         try {
             navigate(`/create_account`);
         } catch (error) {

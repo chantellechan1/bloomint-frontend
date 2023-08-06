@@ -57,13 +57,14 @@ const CreateAccount = (props: { setLoading: any }) => {
                             </button>
                         </form>
                     </div>
-                </div>
-                <div className="row mt-3">
-                    <Link to="/">
-                        <div className="w-100 btn btn-outline-primary">
-                            Go Back
-                        </div>
-                    </Link>
+
+                    <div className="col-xs-12 offset-md-3 col-md-6 offset-lg-4 col-lg-4 mt-3">
+                        <Link to="/">
+                            <div className="w-100 btn btn-outline-primary">
+                                Go Back
+                            </div>
+                        </Link>
+                    </div>
                 </div>
             </div>
         </React.Fragment>

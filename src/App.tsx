@@ -30,7 +30,7 @@ import LoadingComponent from "./components/Loading";
 
 function App() {
   const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
-  const [selectedBottomNav, setSelectedBottomNav] = useState("plantsByType");
+  const [selectedBottomNav, setSelectedBottomNav] = useState("tasks");
   const [loading, setLoading] = useState(false);
 
   const isExpired = (token: string): boolean => {
@@ -128,25 +128,16 @@ function App() {
               <nav className="navbar fixed-bottom navbar-light bg-light">
                 <div className="container-fluid">
                   <Link
-                    to="/"
-                    className="navbar-brand"
-                    onClick={() => {
-                      setSelectedBottomNav("plantsByType");
-                    }}
-                  >
-                    Bloom
-                  </Link>
-                  <Link
-                    to="/plants_by_type"
+                    to="/tasks"
                     className="nav-link active"
                     aria-current="page"
                     onClick={() => {
-                      setSelectedBottomNav("plantsByType");
+                      setSelectedBottomNav("tasks");
                     }}
                   >
                     <IconContext.Provider value={{ size: "2em" }}>
                       <div>
-                        {selectedBottomNav === "plantsByType" ? (
+                        {selectedBottomNav === "tasks" ? (
                           <RiLeafFill />
                         ) : (
                           <RiLeafLine />
@@ -155,15 +146,15 @@ function App() {
                     </IconContext.Provider>
                   </Link>
                   <Link
-                    to="/all_plants"
+                    to="/my_plants"
                     className="nav-link"
                     onClick={() => {
-                      setSelectedBottomNav("allPlants");
+                      setSelectedBottomNav("my_plants");
                     }}
                   >
                     <IconContext.Provider value={{ size: "2em" }}>
                       <div>
-                        {selectedBottomNav === "allPlants" ? (
+                        {selectedBottomNav === "my_plants" ? (
                           <RiPlantFill />
                         ) : (
                           <RiPlantLine />
@@ -173,15 +164,15 @@ function App() {
                   </Link>
 
                   <Link
-                    to="/plant/new"
+                    to="/add_plant"
                     className="nav-link"
                     onClick={() => {
-                      setSelectedBottomNav("new");
+                      setSelectedBottomNav("add_plant");
                     }}
                   >
                     <IconContext.Provider value={{ size: "2em" }}>
                       <div>
-                        {selectedBottomNav === "new" ? (
+                        {selectedBottomNav === "add_plant" ? (
                           <RiAddCircleFill />
                         ) : (
                           <RiAddCircleLine />
