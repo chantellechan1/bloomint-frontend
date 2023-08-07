@@ -1,0 +1,6 @@
+source ~/.screenrc
+sessionname bloomint_frontend
+screen -t 'vim' 0 bash -c 'vim src'
+screen -t 'npm' 1 bash -c 'npm start'
+screen -t 'bash' 2 bash
+select 0

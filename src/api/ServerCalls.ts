@@ -1,13 +1,12 @@
-import * as AxiosService from "../services/AxiosService";
+import * as AxiosService from "./AxiosService";
 import {
   DefaultPlantImage,
   Plant,
   PlantImage,
-  plantType,
-} from "../models/plantModels";
+  PlantType,
+} from "../models/PlantModels";
 import cactus from "../assets/images/cactus_b64.json";
 import axios from "axios";
-import getMostRecentPlantImage from "../services/PlantImageService";
 
 export interface GenericResponse {
   status: string;
@@ -64,6 +63,24 @@ const GetAllUserPlantIDs = async (): Promise<number[]> => {
   return plantIDs;
 };
 
+const GetMostRecentPlantImage = async (plantID: number) => {
+    const res = await axios.post(
+        '/plants/images/getByUserPlantIds',
+        [plantID],
+        AxiosService.getOptionsAuthed()
+    );
+
+    const plantImages: Array<PlantImage> = res.data;
+
+    // return last element in the array (most recent image)
+    if (plantImages.length > 0) {
+        return plantImages.at(-1) as PlantImage;
+    } else {
+        return { image_data: cactus.b64 } as DefaultPlantImage;
+    }
+
+}
+
 export interface GetAllUserPlantsResponse extends GenericResponse {
   allPlants: Plant[];
 }
@@ -71,7 +88,7 @@ export interface GetAllUserPlantsResponse extends GenericResponse {
 export const GetAllUserPlants = async (): Promise<GetAllUserPlantsResponse> => {
   const userPlantIDs = await GetAllUserPlantIDs();
   const allPlantImgPromises = userPlantIDs.map((userPlantID) =>
-    getMostRecentPlantImage(userPlantID)
+    GetMostRecentPlantImage(userPlantID)
   );
   const getAllPlantsPromise = axios.post(
     "/plants/user/get_plants",
@@ -146,7 +163,7 @@ export interface GetPlantTypeRequest {
   plantTypeID: number;
 }
 
-export interface GetPlantTypeResponse extends Array<plantType> {}
+export interface GetPlantTypeResponse extends Array<PlantType> {}
 
 /**
  * get single plant type
@@ -166,7 +183,7 @@ export const GetPlantType = async (
   return res.data;
 };
 
-export interface GetAllPlantTypesResponse extends Array<plantType> {}
+export interface GetAllPlantTypesResponse extends Array<PlantType> {}
 
 export const GetAllPlantTypes = async (): Promise<GetAllPlantTypesResponse> => {
   const res = await axios.get(

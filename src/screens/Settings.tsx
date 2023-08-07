@@ -1,26 +1,31 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import * as AxiosService from '../services/AxiosService';
+import { useNavigate } from "react-router-dom";
+import * as AxiosService from '../api/AxiosService';
 import { RiLogoutBoxLine } from "react-icons/ri";
 
-const Settings = (props: { setLoading: any, handleLogout: any }) => {
+const Settings = (props: { setUserToken: any }) => {
+    let navigate = useNavigate();
 
-    const handleLogout = props.handleLogout;
+    const handleLogout = () => {
+        localStorage.setItem("userToken", "");
+        props.setUserToken(localStorage.getItem("userToken"));
+
+        // take us back to home page
+        navigate("/");
+    };
+
     const [userInfo, setUserInfo] = useState({ email: '', created_at: '' });
 
     useEffect(() => {
         const getUserInfo = async () => {
             try {
-                props.setLoading(true);
                 const res = await axios.get('/auth/get_user', AxiosService.getOptionsAuthed());
 
                 setUserInfo(res.data);
             } catch (e) {
                 console.log(e)
-            } finally {
-                props.setLoading(false);
-            }
-            
+            }            
         }
 
         getUserInfo();
@@ -51,7 +56,7 @@ const Settings = (props: { setLoading: any, handleLogout: any }) => {
                 </div>
             </div>
         </React.Fragment>
-    )
+    );
 };
 
 export default Settings;

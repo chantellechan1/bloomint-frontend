@@ -12,7 +12,7 @@ export interface Plant {
   most_recent_image?: PlantImage | DefaultPlantImage;
 }
 
-export interface plantType {
+export interface PlantType {
   created_at: string;
   id: number; // id of plant type
   max_temp: number;
@@ -24,9 +24,9 @@ export interface plantType {
 }
 
 /**
- * join type with all properties of plant (userPlant) and plantType
+ * join type with all properties of plant (userPlant) and PlantType
  */
-export interface individualPlant extends Plant, plantType {}
+export interface IndividualPlant extends Plant, PlantType {}
 
 export interface PlantImage {
   image_id: number;

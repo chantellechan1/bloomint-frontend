@@ -1,28 +1,24 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { server } from "../server";
+import { CreateAccount as ServerCreateAccount } from "../api/ServerCalls";
 
-const CreateAccount = (props: { setLoading: any }) => {
+const CreateAccount = () => {
     const [email, setEmail] = useState('');
     const [errorText, setErrorText] = useState('');
     const [showConfirm, setShowConfirm] = useState(false);
 
     const handleCreateAccount = async () => {
         try {
-            props.setLoading(true);
-            await server.CreateAccount({email});
+            await ServerCreateAccount({email});
             setShowConfirm(true);
         } catch (error) {
             console.error(error);
             setErrorText('Account creation failed, check console for details.');
-        } finally {
-            props.setLoading(false);
         }
     }
 
     return (
         <React.Fragment>
-
             <div className="text-center mt-5 pt-5 px-5">
                 {
                     errorText !== ''
@@ -70,4 +66,5 @@ const CreateAccount = (props: { setLoading: any }) => {
         </React.Fragment>
     )
 }
+
 export default CreateAccount;
