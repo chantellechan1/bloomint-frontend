@@ -19,6 +19,7 @@ function Tasks() {
   useEffect(() => {
     const getTasks = async () => {
       try {
+        // TODO: move this to api/servercalls for consistency
         const res = await axios.get('/tasks/get_tasks', AxiosService.getOptionsAuthed());
         const currentDate: Date = new Date();
         const firstTaskdate: Date = new Date(res.data[0].due_at);
