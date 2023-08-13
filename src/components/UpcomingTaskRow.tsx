@@ -9,6 +9,9 @@ function UpcomingTaskRow(props: {task: ModelTask}) {
 
   return (
     <React.Fragment>
+      <img
+        src={`data:image/jpg;base64,${props.task.encoded_thumbnail}`}
+      />
       {props.task.due_at.toString()}
     </React.Fragment>
   );
