@@ -4,8 +4,8 @@ import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import {
   RiPlantFill,
   RiPlantLine,
-  RiLeafLine,
-  RiLeafFill,
+  RiCheckboxCircleFill,
+  RiCheckboxCircleLine,
   RiSettings4Line,
   RiSettings4Fill,
   RiAddCircleLine,
@@ -29,9 +29,9 @@ const BottomNavigationBar = () => {
           <IconContext.Provider value={{ size: "2em" }}>
             <div>
               {selectedBottomNav === "tasks" ? (
-                <RiLeafFill />
+                <RiCheckboxCircleFill />
               ) : (
-                <RiLeafLine />
+                <RiCheckboxCircleLine />
               )}
             </div>
           </IconContext.Provider>
