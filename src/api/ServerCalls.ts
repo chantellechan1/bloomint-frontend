@@ -320,7 +320,7 @@ export interface UndoCompleteTaskRequest {
 
 export const UndoCompleteTask = async (req: CompleteTaskRequest) => {
   const res = await axios.post(
-    "/tasks/uncomplete_tasks",
+    "/tasks/undo_complete_tasks",
     { task_ids: [req.taskID] },
     AxiosService.getOptionsAuthed()
   );

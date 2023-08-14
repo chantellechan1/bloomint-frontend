@@ -35,13 +35,13 @@ function Tasks() {
           }
         }
 
-        const dueTasks: Array<ModelTask> = res.data.filter((x: ModelTask) => x.due_at <= currentDate && !x.completed_at);
-        const upcomingTasks: Array<ModelTask> = res.data.filter((x: ModelTask) => x.due_at > currentDate);
-        const completedTasks: Array<ModelTask> = res.data.filter((x: ModelTask) => x.completed_at);
+        const _dueTasks: Array<ModelTask> = res.data.filter((x: ModelTask) => x.due_at <= currentDate && !x.completed_at);
+        const _upcomingTasks: Array<ModelTask> = res.data.filter((x: ModelTask) => x.due_at > currentDate);
+        const _completedTasks: Array<ModelTask> = res.data.filter((x: ModelTask) => x.completed_at);
 
-        setDueTasks(dueTasks);
-        setUpcomingTasks(upcomingTasks);
-        setCompletedTasks(completedTasks);
+        setDueTasks(_dueTasks);
+        setUpcomingTasks(_upcomingTasks);
+        setCompletedTasks(_completedTasks);
       } catch (e) {
         console.log(e)
       }
@@ -86,7 +86,7 @@ function Tasks() {
                                           tasks={upcomingTasks}/>}
         {selectedButton === "completed" && <CompletedTasks
                                            tasks={completedTasks}
-                                           setTasks={setDueTasks}/>}
+                                           setTasks={setCompletedTasks}/>}
       </div>
     </React.Fragment>
   );
