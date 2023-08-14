@@ -13,14 +13,14 @@ function DueTasks(props: {dueTasks: Array<ModelTask>, tasks: Array<ModelTask>, s
     const taskIndex = props.tasks.findIndex(task => task.id === taskID);
 
       if (taskIndex !== -1) {
-        const updatedTasks = [...props.tasks];
-        updatedTasks[taskIndex] = { ...updatedTasks[taskIndex], completed_at: new Date() };
-        props.setTasks(updatedTasks);
-
         const completeTaskRequest: CompleteTaskRequest = {
           taskID: taskID
         };
-        CompleteTask(completeTaskRequest);
+        CompleteTask(completeTaskRequest, () => {
+          const updatedTasks = [...props.tasks];
+          updatedTasks[taskIndex] = { ...updatedTasks[taskIndex], completed_at: new Date() };
+          props.setTasks(updatedTasks);
+        });
       }
   }
 

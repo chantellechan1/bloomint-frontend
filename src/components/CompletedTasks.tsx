@@ -13,14 +13,15 @@ function CompletedTasks(props: {completedTasks: Array<ModelTask>, tasks: Array<M
     const taskIndex = props.tasks.findIndex(task => task.id === taskID);
 
       if (taskIndex !== -1) {
-        const updatedTasks = [...props.tasks];
-        updatedTasks[taskIndex] = { ...updatedTasks[taskIndex], completed_at: null };
-        props.setTasks(updatedTasks);
-
         const completeTaskRequest: UndoCompleteTaskRequest = {
           taskID: taskID
         };
-        UndoCompleteTask(completeTaskRequest);
+        UndoCompleteTask(completeTaskRequest,
+          () => {
+            const updatedTasks = [...props.tasks];
+            updatedTasks[taskIndex] = { ...updatedTasks[taskIndex], completed_at: null };
+            props.setTasks(updatedTasks);
+        });
       }
   }
 

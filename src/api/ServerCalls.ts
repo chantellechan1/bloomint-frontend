@@ -1,4 +1,5 @@
 import * as AxiosService from "./AxiosService";
+import {AxiosResponse} from "axios";
 import {
   DefaultPlantImage,
   UserPlant,
@@ -300,34 +301,28 @@ export interface CompleteTaskRequest {
   taskID: number;
 }
 
-export const CompleteTask = async (req: CompleteTaskRequest) => {
+export const CompleteTask = async (req: CompleteTaskRequest, handleResponse: () => void) => {
   const res = await axios.post(
     "/tasks/complete_tasks",
     { task_ids: [req.taskID] },
     AxiosService.getOptionsAuthed()
-  );
-
-  if (res.data === "success") {
-    return { status: "success" };
-  } else {
-    throw new Error("error completing task");
-  }
+  ).then(response => {
+    handleResponse();
+  });
+  // TODO: basic error handling/logging
 };
 
 export interface UndoCompleteTaskRequest {
   taskID: number;
 }
 
-export const UndoCompleteTask = async (req: CompleteTaskRequest) => {
+export const UndoCompleteTask = async (req: CompleteTaskRequest, handleResponse: () => void) => {
   const res = await axios.post(
     "/tasks/undo_complete_tasks",
     { task_ids: [req.taskID] },
     AxiosService.getOptionsAuthed()
-  );
-
-  if (res.data === "success") {
-    return { status: "success" };
-  } else {
-    throw new Error("error completing task");
-  }
+  ).then(response => {
+    handleResponse();
+  });
+  // TODO: basic error handling/logging
 };
