@@ -313,3 +313,21 @@ export const CompleteTask = async (req: CompleteTaskRequest) => {
     throw new Error("error completing task");
   }
 };
+
+export interface UndoCompleteTaskRequest {
+  taskID: number;
+}
+
+export const UndoCompleteTask = async (req: CompleteTaskRequest) => {
+  const res = await axios.post(
+    "/tasks/uncomplete_tasks",
+    { task_ids: [req.taskID] },
+    AxiosService.getOptionsAuthed()
+  );
+
+  if (res.data === "success") {
+    return { status: "success" };
+  } else {
+    throw new Error("error completing task");
+  }
+};

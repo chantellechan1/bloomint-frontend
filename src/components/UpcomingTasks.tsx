@@ -16,24 +16,24 @@ function UpcomingTasks(props: {tasks: Array<ModelTask>}) {
   threeDaysFromNow.setDate(today.getDate()+3);
 
   // この３つでいいはずだ
-  const tomorrowsTasks = props.tasks
+  const tomorrowsTaskRows = props.tasks
     .filter(task => DatesAreSame(task.due_at, tomorrow))
     .map(task => <UpcomingTaskRow key={task.id.toString()} task={task}/>);
-  const twoDaysTasks = props.tasks
+  const twoDaysTaskRows = props.tasks
     .filter(task => DatesAreSame(task.due_at, twoDaysFromNow))
     .map(task => <UpcomingTaskRow key={task.id.toString()} task={task}/>);
 
   // This is for tasks within one week from today.
   // the server side should make sure I dont see tasks that are super far into the future.
-  const thisWeeksTasks = props.tasks
+  const thisWeeksTaskRows = props.tasks
     .filter(task => DatesAreSame(task.due_at, threeDaysFromNow) || task.due_at > threeDaysFromNow)
     .map(task => <UpcomingTaskRow key={task.id.toString()} task={task}/>);
 
   return (
     <React.Fragment>
-      {tomorrowsTasks.length > 0 && (<><p>Tomorrow</p><ul>{tomorrowsTasks}</ul></>)}
-      {twoDaysTasks.length > 0 && (<><p>In 2 days</p><ul>{twoDaysTasks}</ul></>)}
-      {thisWeeksTasks.length > 0 && (<><p>This week</p><ul>{thisWeeksTasks}</ul></>)}
+      {tomorrowsTaskRows.length > 0 && (<><p>Tomorrow</p><ul>{tomorrowsTaskRows}</ul></>)}
+      {twoDaysTaskRows.length > 0 && (<><p>In 2 days</p><ul>{twoDaysTaskRows}</ul></>)}
+      {thisWeeksTaskRows.length > 0 && (<><p>This week</p><ul>{thisWeeksTaskRows}</ul></>)}
     </React.Fragment>
   );
 };

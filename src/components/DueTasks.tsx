@@ -9,8 +9,8 @@ function DueTasks(props: {tasks: Array<ModelTask>, setTasks: Function}) {
    * Displays all tasks that are due.
    * Tasks from today, and tasks from the past that werent done
    */
-  function onComplete(task_id: number): void {
-    const taskIndex = props.tasks.findIndex(task => task.id === task_id);
+  function onComplete(taskID: number): void {
+    const taskIndex = props.tasks.findIndex(task => task.id === taskID);
 
       if (taskIndex !== -1) {
         const updatedTasks = [...props.tasks];
@@ -18,7 +18,7 @@ function DueTasks(props: {tasks: Array<ModelTask>, setTasks: Function}) {
         props.setTasks(updatedTasks);
 
         const completeTaskRequest: CompleteTaskRequest = {
-          taskID: task_id
+          taskID: taskID
         };
         CompleteTask(completeTaskRequest);
       }
@@ -26,23 +26,21 @@ function DueTasks(props: {tasks: Array<ModelTask>, setTasks: Function}) {
 
   const today = new Date();
 
-  const todaysTasks = props.tasks
+  const todaysTaskRows = props.tasks
     .filter(task => !task.completed_at && DatesAreSame(task.due_at, today))
     .map(task => <DueTaskRow key={task.id.toString()} task={task} onComplete={onComplete}/>);
 
   // the check for task.due_at < today shouldnt be necessary
   // because the parent isnt passing in future tasks, but for clarity and consistency
   // i will do this check
-  const pastDueTasks = props.tasks
+  const pastDueTaskRows = props.tasks
     .filter(task => !task.completed_at && !DatesAreSame(task.due_at, today) && task.due_at < today)
     .map(task => <DueTaskRow key={task.id.toString()} task={task} onComplete={onComplete}/>);
 
   return (
     <React.Fragment>
-      <div>
-        {<ul>{todaysTasks}</ul>}
-        {<ul>{pastDueTasks}</ul>}
-      </div>
+      {<ul>{todaysTaskRows}</ul>}
+      {<ul>{pastDueTaskRows}</ul>}
     </React.Fragment>
   );
 };
