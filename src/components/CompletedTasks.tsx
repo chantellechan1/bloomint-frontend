@@ -3,7 +3,7 @@ import {Task as ModelTask} from "../models/TaskModels"
 import { UndoCompleteTask, UndoCompleteTaskRequest } from "../api/ServerCalls"
 import CompletedTaskRow from "../components/CompletedTaskRow"
 
-function CompletedTasks(props: {tasks: Array<ModelTask>, setTasks: Function}) {
+function CompletedTasks(props: {completedTasks: Array<ModelTask>, tasks: Array<ModelTask>, setTasks: Function}) {
   /*
    * Displays all tasks that are due.
    * Also has functionality to allow a user to undo a completed task,
@@ -24,7 +24,7 @@ function CompletedTasks(props: {tasks: Array<ModelTask>, setTasks: Function}) {
       }
   }
 
-  const completedTaskRows = props.tasks
+  const completedTaskRows = props.completedTasks
     .map(task => <CompletedTaskRow key={task.id.toString()} task={task} onUndoComplete={onUndoComplete}/>);
 
   return (

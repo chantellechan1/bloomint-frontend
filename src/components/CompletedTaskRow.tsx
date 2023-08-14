@@ -13,7 +13,7 @@ function CompletedTaskRow(props: {task: ModelTask, onUndoComplete: Function}) {
         src={`data:image/jpg;base64,${props.task.encoded_thumbnail}`}
         alt=""
       />
-      {props.task.userplant.plant_name}
+      {props.task.userplant.plant_name} was due at: {props.task.due_at.toString()}
       <button onClick={() => props.onUndoComplete(props.task.id)}></button>
     </li>
   );

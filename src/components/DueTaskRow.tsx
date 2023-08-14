@@ -13,7 +13,7 @@ function DueTaskRow(props: {task: ModelTask, onComplete: Function}) {
         src={`data:image/jpg;base64,${props.task.encoded_thumbnail}`}
         alt=""
       />
-      {props.task.userplant.plant_name}
+      {props.task.userplant.plant_name} due at: {props.task.due_at.toString()}
       <button onClick={() => props.onComplete(props.task.id)}></button>
     </li>
   );

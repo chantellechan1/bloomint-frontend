@@ -12,10 +12,9 @@ function Tasks() {
    * for you plant(s), including watering, fertilizing, etc
    */
   // TODO: remove hardcoded strings
-  const [selectedButton, setSelectedButton] = useState("today");
-  const [dueTasks, setDueTasks] = useState<ModelTask[]>([]);
-  const [upcomingTasks, setUpcomingTasks] = useState<ModelTask[]>([]);
-  const [completedTasks, setCompletedTasks] = useState<ModelTask[]>([]);
+  const [selectedButton, setSelectedButton] = useState("due");
+  const [tasks, setTasks] = useState<ModelTask[]>([]);
+  const currentDate: Date = new Date();
 
   // Get all tasks from server, for today and upcoming
   useEffect(() => {
@@ -23,7 +22,6 @@ function Tasks() {
       try {
         // TODO: move this to api/servercalls for consistency
         const res = await axios.get('/tasks/get_tasks', AxiosService.getOptionsAuthed());
-        const currentDate: Date = new Date();
 
         // some fix up: convert the date string into an actual
         // date object
@@ -35,13 +33,7 @@ function Tasks() {
           }
         }
 
-        const _dueTasks: Array<ModelTask> = res.data.filter((x: ModelTask) => x.due_at <= currentDate && !x.completed_at);
-        const _upcomingTasks: Array<ModelTask> = res.data.filter((x: ModelTask) => x.due_at > currentDate);
-        const _completedTasks: Array<ModelTask> = res.data.filter((x: ModelTask) => x.completed_at);
-
-        setDueTasks(_dueTasks);
-        setUpcomingTasks(_upcomingTasks);
-        setCompletedTasks(_completedTasks);
+        setTasks(res.data);
       } catch (e) {
         console.log(e)
       }
@@ -50,14 +42,18 @@ function Tasks() {
     getTasks();
   }, []);
 
+  const getDueTasks = (): Array<ModelTask> => {return tasks.filter((x: ModelTask) => x.due_at <= currentDate && !x.completed_at);};
+  const getUpcomingTasks = (): Array<ModelTask> => {return tasks.filter((x: ModelTask) => x.due_at > currentDate);};
+  const getCompletedTasks = (): Array<ModelTask> => {return tasks.filter((x: ModelTask) => x.completed_at);};
+
   return (
     <React.Fragment>
       <div className="row justify-content-evenly">
         <div className="col-4">
           <button
             type="button"
-            className={selectedButton === "today" ? "w-100 btn btn-primary" : "w-100 btn btn-outline"}
-            onClick={() => {setSelectedButton("today")}}>
+            className={selectedButton === "due" ? "w-100 btn btn-primary" : "w-100 btn btn-outline"}
+            onClick={() => {setSelectedButton("due")}}>
             Today
           </button>
         </div>
@@ -79,14 +75,16 @@ function Tasks() {
         </div>
       </div>
       <div>
-        {selectedButton === "today" && <DueTasks
-                                          tasks={dueTasks}
-                                          setTasks={setDueTasks}/>}
+        {selectedButton === "due" && <DueTasks
+                                          tasks={tasks}
+                                          dueTasks={getDueTasks()}
+                                          setTasks={setTasks}/>}
         {selectedButton === "upcoming" && <UpcomingTasks
-                                          tasks={upcomingTasks}/>}
+                                          tasks={getUpcomingTasks()}/>}
         {selectedButton === "completed" && <CompletedTasks
-                                           tasks={completedTasks}
-                                           setTasks={setCompletedTasks}/>}
+                                           tasks={tasks}
+                                           completedTasks={getCompletedTasks()}
+                                           setTasks={setTasks}/>}
       </div>
     </React.Fragment>
   );
