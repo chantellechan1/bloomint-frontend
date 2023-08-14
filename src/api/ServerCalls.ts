@@ -1,7 +1,7 @@
 import * as AxiosService from "./AxiosService";
 import {
   DefaultPlantImage,
-  Plant,
+  UserPlant,
   PlantImage,
   PlantType,
 } from "../models/PlantModels";
@@ -82,7 +82,7 @@ const GetMostRecentPlantImage = async (plantID: number) => {
 }
 
 export interface GetAllUserPlantsResponse extends GenericResponse {
-  allPlants: Plant[];
+  allPlants: UserPlant[];
 }
 
 export const GetAllUserPlants = async (): Promise<GetAllUserPlantsResponse> => {
@@ -118,7 +118,7 @@ export const GetAllUserPlants = async (): Promise<GetAllUserPlantsResponse> => {
     }
   });
 
-  let allPlants = allPlantsRes.value as unknown as Plant[];
+  let allPlants = allPlantsRes.value as unknown as UserPlant[];
   try {
     allPlants.forEach((plant, index) => {
       plant.most_recent_image = plantImages[index];
@@ -139,7 +139,7 @@ export interface GetUserPlantRequest {
 /**
  * returns array with one element: the single requested plant
  */
-export interface GetUserPlantResponse extends Array<Plant> {}
+export interface GetUserPlantResponse extends Array<UserPlant> {}
 
 export const GetUserPlant = async (
   req: GetUserPlantRequest
@@ -233,7 +233,7 @@ export const UploadPlantImage = async (
     throw new Error("error uploading new image");
   }
 };
-export interface CreateNewPlantRequest extends Plant {}
+export interface CreateNewPlantRequest extends UserPlant {}
 
 export interface CreateNewPlantResponse extends GenericResponse {
   id: number; // the UserPlant id of the new plant
@@ -255,7 +255,7 @@ export const CreateNewPlant = async (req: CreateNewPlantRequest) => {
   }
 };
 
-export interface UpdatePlantRequest extends Plant {}
+export interface UpdatePlantRequest extends UserPlant {}
 
 export interface UpdatePlantResponse extends GenericResponse {}
 
@@ -294,36 +294,4 @@ export const DeletePlant = async (req: DeletePlantRequest) => {
   } else {
     throw new Error("error deleting plant");
   }
-};
-
-export interface getPlantsResponseItem {
-  created_at: "Mon, 05 Sep 2022 19:13:35 GMT";
-  id: 1;
-  notes: null;
-  plant_id: 2;
-  plant_name: "Bing Bong";
-  purchased_at: null;
-  user_id: 4;
-}
-
-export const getUserPlantsInPlantType = async (plantTypeID: number) => {
-  let res = await axios.post(
-    "/plants/user/plants_by_type",
-    {
-      plant_type_id: plantTypeID,
-    },
-    AxiosService.getOptionsAuthed()
-  );
-  const typePlants: getPlantsResponseItem[] = res.data;
-
-  const userPlantsInType = typePlants.map(
-    (rawPlant: getPlantsResponseItem) => ({
-      ...rawPlant,
-      user_plant_id: rawPlant.id,
-      purchased_at: rawPlant.purchased_at ? rawPlant.purchased_at : undefined,
-      notes: rawPlant.notes ? rawPlant.notes : undefined,
-    })
-  );
-
-  return userPlantsInType as Plant[];
 };

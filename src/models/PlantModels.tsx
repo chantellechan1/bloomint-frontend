@@ -1,14 +1,13 @@
 /**
  * User Plant Model
  */
-export interface Plant {
-  user_plant_id?: number; // id of individual user plant
-  plant_id: number; // id of plant type
+export interface UserPlant {
+  id?: number; // id of individual user plant
+  planttype_id: number; // id of plant type
   plant_name: string;
   created_at: string;
   purchased_at?: string;
   notes?: string;
-  user_id?: number;
   most_recent_image?: PlantImage | DefaultPlantImage;
 }
 
@@ -22,11 +21,6 @@ export interface PlantType {
   sunlight: string;
   water_frequency: number;
 }
-
-/**
- * join type with all properties of plant (userPlant) and PlantType
- */
-export interface IndividualPlant extends Plant, PlantType {}
 
 export interface PlantImage {
   image_id: number;
