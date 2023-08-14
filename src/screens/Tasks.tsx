@@ -22,7 +22,6 @@ function Tasks() {
         // TODO: move this to api/servercalls for consistency
         const res = await axios.get('/tasks/get_tasks', AxiosService.getOptionsAuthed());
         const currentDate: Date = new Date();
-        const firstTaskdate: Date = new Date(res.data[0].due_at);
 
         // some fix up: convert the date string into an actual
         // date object
@@ -34,7 +33,7 @@ function Tasks() {
           }
         }
 
-        const dueTasks: Array<ModelTask> = res.data.filter((x: ModelTask) => x.due_at <= currentDate);
+        const dueTasks: Array<ModelTask> = res.data.filter((x: ModelTask) => x.due_at <= currentDate && !x.completed_at);
         const upcomingTasks: Array<ModelTask> = res.data.filter((x: ModelTask) => x.due_at > currentDate);
 
         setDueTasks(dueTasks);
@@ -69,7 +68,8 @@ function Tasks() {
       </div>
       <div>
         {selectedButton === "today" && <DueTasks
-                                          tasks={dueTasks}/>}
+                                          tasks={dueTasks}
+                                          setTasks={setDueTasks}/>}
         {selectedButton === "upcoming" && <UpcomingTasks
                                           tasks={upcomingTasks}/>}
       </div>

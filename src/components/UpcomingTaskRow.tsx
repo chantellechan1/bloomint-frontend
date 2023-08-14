@@ -6,15 +6,14 @@ function UpcomingTaskRow(props: {task: ModelTask}) {
    * Displays a single row on the tasks page with a small
    * image of the plant, the name of the plant,
    */
-  console.log(props.task)
-
   return (
-    <React.Fragment>
+    <li>
       <img
         src={`data:image/jpg;base64,${props.task.encoded_thumbnail}`}
+        alt=""
       />
       {props.task.userplant.plant_name}
-    </React.Fragment>
+    </li>
   );
 };
 

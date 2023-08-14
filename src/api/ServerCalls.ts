@@ -295,3 +295,21 @@ export const DeletePlant = async (req: DeletePlantRequest) => {
     throw new Error("error deleting plant");
   }
 };
+
+export interface CompleteTaskRequest {
+  taskID: number;
+}
+
+export const CompleteTask = async (req: CompleteTaskRequest) => {
+  const res = await axios.post(
+    "/tasks/complete_tasks",
+    { task_ids: [req.taskID] },
+    AxiosService.getOptionsAuthed()
+  );
+
+  if (res.data === "success") {
+    return { status: "success" };
+  } else {
+    throw new Error("error completing task");
+  }
+};

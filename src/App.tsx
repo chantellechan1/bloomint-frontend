@@ -12,7 +12,7 @@ function App() {
 
   const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
 
-  const isLoggedIn = (token: any): boolean => {
+  const isLoggedIn = (token: string | null): boolean => {
     if (token === "" || token === null) {
 	    return false;
     }

@@ -1,18 +1,12 @@
 import React from "react";
 import { Task as ModelTask } from "../models/TaskModels"
 import UpcomingTaskRow from "./UpcomingTaskRow"
+import { DatesAreSame } from "../utils/Utils"
 
 function UpcomingTasks(props: {tasks: Array<ModelTask>}) {
   /*
    * Displays all the upcoming tasks.
    */
-  function areSameDate(date1: Date, date2: Date): boolean {
-    return (
-      date1.getFullYear() === date2.getFullYear() &&
-      date1.getMonth() === date2.getMonth() &&
-      date1.getDate() === date2.getDate()
-    );
-  };
   const today = new Date();
   let tomorrow = new Date();
   tomorrow.setDate(today.getDate()+1);
@@ -23,16 +17,16 @@ function UpcomingTasks(props: {tasks: Array<ModelTask>}) {
 
   // この３つでいいはずだ
   const tomorrowsTasks = props.tasks
-    .filter(task => areSameDate(task.due_at, tomorrow))
+    .filter(task => DatesAreSame(task.due_at, tomorrow))
     .map(task => <UpcomingTaskRow key={task.id.toString()} task={task}/>);
   const twoDaysTasks = props.tasks
-    .filter(task => areSameDate(task.due_at, twoDaysFromNow))
+    .filter(task => DatesAreSame(task.due_at, twoDaysFromNow))
     .map(task => <UpcomingTaskRow key={task.id.toString()} task={task}/>);
 
   // This is for tasks within one week from today.
   // the server side should make sure I dont see tasks that are super far into the future.
   const thisWeeksTasks = props.tasks
-    .filter(task => areSameDate(task.due_at, threeDaysFromNow) || task.due_at > threeDaysFromNow)
+    .filter(task => DatesAreSame(task.due_at, threeDaysFromNow) || task.due_at > threeDaysFromNow)
     .map(task => <UpcomingTaskRow key={task.id.toString()} task={task}/>);
 
   return (
