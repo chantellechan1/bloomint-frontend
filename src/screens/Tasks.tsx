@@ -4,6 +4,7 @@ import * as AxiosService from '../api/AxiosService';
 import {Task as ModelTask} from "../models/TaskModels"
 import UpcomingTasks from "../components/UpcomingTasks"
 import DueTasks from "../components/DueTasks"
+import CompletedTasks from "../components/CompletedTasks"
 
 function Tasks() {
   /*
@@ -14,6 +15,7 @@ function Tasks() {
   const [selectedButton, setSelectedButton] = useState("today");
   const [dueTasks, setDueTasks] = useState<ModelTask[]>([]);
   const [upcomingTasks, setUpcomingTasks] = useState<ModelTask[]>([]);
+  const [completedTasks, setCompletedTasks] = useState<ModelTask[]>([]);
 
   // Get all tasks from server, for today and upcoming
   useEffect(() => {
@@ -35,9 +37,11 @@ function Tasks() {
 
         const dueTasks: Array<ModelTask> = res.data.filter((x: ModelTask) => x.due_at <= currentDate && !x.completed_at);
         const upcomingTasks: Array<ModelTask> = res.data.filter((x: ModelTask) => x.due_at > currentDate);
+        const completedTasks: Array<ModelTask> = res.data.filter((x: ModelTask) => x.completed_at);
 
         setDueTasks(dueTasks);
         setUpcomingTasks(upcomingTasks);
+        setCompletedTasks(completedTasks);
       } catch (e) {
         console.log(e)
       }
@@ -65,6 +69,14 @@ function Tasks() {
             Upcoming
           </button>
         </div>
+        <div className="col-4">
+          <button
+            type="button"
+            className={selectedButton === "completed" ? "w-100 btn btn-primary" : "w-100 btn btn-outline"}
+            onClick={() => {setSelectedButton("completed")}}>
+            Completed
+          </button>
+        </div>
       </div>
       <div>
         {selectedButton === "today" && <DueTasks
@@ -72,6 +84,9 @@ function Tasks() {
                                           setTasks={setDueTasks}/>}
         {selectedButton === "upcoming" && <UpcomingTasks
                                           tasks={upcomingTasks}/>}
+        {selectedButton === "completed" && <CompletedTasks
+                                           tasks={completedTasks}
+                                           setTasks={setDueTasks}/>}
       </div>
     </React.Fragment>
   );
