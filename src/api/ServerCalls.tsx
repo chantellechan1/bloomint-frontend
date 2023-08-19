@@ -27,6 +27,12 @@ export interface UndoCompleteTaskRequest {
   taskID: number
 }
 
+export interface CreateUserPlantRequest {
+  planttype_id: number
+  plant_name?: string
+  notes?: string
+}
+
 export const CreateAccount = async (req: CreateAccountRequest): Promise<GenericResponse> => {
   await axios.post<string>(
     '/auth/create_user',
@@ -61,6 +67,16 @@ export const UndoCompleteTask = async (req: CompleteTaskRequest): Promise<Generi
   await axios.post(
     '/tasks/undo_complete_tasks',
     { task_ids: [req.taskID] },
+    AxiosService.getOptionsAuthed()
+  )
+
+  return { status: 'success' }
+}
+
+export const CreateUserPlant = async (req: CreateUserPlantRequest): Promise<GenericResponse> => {
+  await axios.post(
+    '/plants/user/create',
+    [req],
     AxiosService.getOptionsAuthed()
   )
 

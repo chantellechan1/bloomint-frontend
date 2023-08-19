@@ -1,16 +1,13 @@
-import React, { useState } from 'react'
+import React from 'react'
 import BottomNavigationBar from '../components/BottomNavigationBar'
 
-const Home = (props: { setUserToken: any }) => {
-  const [selectedBottomNav, setSelectedBottomNav] = useState('tasks')
-
+const Home = (): JSX.Element => {
   return (
-      <React.Fragment>
-
-        {/* spacer for bottom nav bar */}
-        <div style={{ height: '80px' }}></div>
-        <BottomNavigationBar />
-      </React.Fragment>
+    <React.Fragment>
+      {/* spacer for bottom nav bar */}
+      <div style={{ height: '80px' }}></div>
+      <BottomNavigationBar />
+    </React.Fragment>
   )
 }
 

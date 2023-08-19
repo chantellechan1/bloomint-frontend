@@ -2,13 +2,13 @@
  * User Plant Model
  */
 export interface UserPlant {
-  id?: number // id of individual user plant
+  id: number // id of individual user plant
   planttype_id: number // id of plant type
   plant_name: string
   created_at: string
   purchased_at?: string
   notes?: string
-  most_recent_image?: PlantImage | DefaultPlantImage
+  encoded_thumbnail: string
 }
 
 export interface PlantType {
@@ -17,9 +17,9 @@ export interface PlantType {
   max_temp: number
   min_temp: number
   name: string
-  num_owned: number
   sunlight: string
   water_frequency: number
+  encoded_thumbnail: string
 }
 
 export interface PlantImage {

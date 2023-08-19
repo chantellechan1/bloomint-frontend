@@ -1,7 +1,7 @@
 import React from 'react'
 import Tasks from '../screens/Tasks'
 import Settings from '../screens/Settings'
-import AddPlant from '../screens/AddPlant'
+import UserPlantNavigation from '../navigation/UserPlantNavigation'
 import BottomNavigationBar from '../components/BottomNavigationBar'
 import { BrowserRouter, Navigate, Routes, Route } from 'react-router-dom'
 
@@ -19,8 +19,8 @@ const HomeNavigation = (props: { setUserToken: any, userToken: string | null }):
         element={<Tasks />}
       />
       <Route
-        path="/add_plant"
-        element={<AddPlant />}
+        path="/user_plants/*"
+        element={<UserPlantNavigation />}
       />
       <Route
         path="/settings"
