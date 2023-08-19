@@ -1,28 +1,31 @@
-
 interface Options {
-    headers: {
-        'Content-Type': string,
-        'Authorization'?: string
-    },
-    baseURL: string
+  headers: {
+    'Content-Type': string
+    'Authorization'?: string
+  }
+  baseURL: string
 }
 
 const axiosOptions: Options = {
-    headers: {
-        'Content-Type': 'application/json',
-    },
-    //baseURL: 'https://api.bloomint.net'
-    baseURL: 'http://localhost:5000'
-};
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  // baseURL: 'https://api.bloomint.net'
+  baseURL: 'http://localhost:5000'
+}
 
-export const getOptions = (): Options => axiosOptions;
+export const getOptions = (): Options => axiosOptions
 
 export const getOptionsAuthed = (): Options => {
-    const optionsWithAuth = {
-        ...axiosOptions
-    }
+  const optionsWithAuth = {
+    ...axiosOptions
+  }
 
-    optionsWithAuth.headers['Authorization'] = `Bearer ${localStorage.getItem('userToken')}`;
+  const userToken = localStorage.getItem('userToken')
 
-    return optionsWithAuth;
+  if (userToken !== null) {
+    optionsWithAuth.headers.Authorization = `Bearer ${userToken}`
+  }
+
+  return optionsWithAuth
 }

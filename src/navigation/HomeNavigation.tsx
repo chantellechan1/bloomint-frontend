@@ -1,11 +1,11 @@
-import React from "react";
-import Tasks from "../screens/Tasks"
-import Settings from "../screens/Settings"
-import AddPlant from "../screens/AddPlant"
-import BottomNavigationBar from "../components/BottomNavigationBar"
-import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
+import React from 'react'
+import Tasks from '../screens/Tasks'
+import Settings from '../screens/Settings'
+import AddPlant from '../screens/AddPlant'
+import BottomNavigationBar from '../components/BottomNavigationBar'
+import { BrowserRouter, Navigate, Routes, Route } from 'react-router-dom'
 
-const HomeNavigation = (props: {setUserToken: any, userToken: string | null}) => {
+const HomeNavigation = (props: { setUserToken: any, userToken: string | null }): JSX.Element => {
   return (
   <BrowserRouter>
     <Routes>
@@ -32,11 +32,11 @@ const HomeNavigation = (props: {setUserToken: any, userToken: string | null}) =>
     </Routes>
 
     {/* spacer for bottom nav bar */}
-    <div style={{ height: "80px" }}></div>
+    <div style={{ height: '80px' }}></div>
 
-		<BottomNavigationBar />
-  </BrowserRouter>   
-  );
-};
+    <BottomNavigationBar />
+  </BrowserRouter>
+  )
+}
 
-export default HomeNavigation;
+export default HomeNavigation
