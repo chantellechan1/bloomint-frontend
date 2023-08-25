@@ -5,7 +5,7 @@ import { type UserPlant } from '../models/PlantModels'
 import UserPlantRow from '../components/UserPlantRow'
 import { useNavigate } from 'react-router-dom'
 
-const UserPlants = (): JSX.Element => {
+const UserPlants = (props: { setUserPlantToEdit: (userPlantToEdit: UserPlant) => void }): JSX.Element => {
   const [userPlants, setUserPlants] = useState<UserPlant[]>([])
   const navigate = useNavigate()
 
@@ -23,7 +23,7 @@ const UserPlants = (): JSX.Element => {
     getUserPlants()
   }, [])
 
-  const userPlantRows = userPlants.map(userPlant => <UserPlantRow key={userPlant.id.toString()} userPlant={userPlant}/>)
+  const userPlantRows = userPlants.map(userPlant => <UserPlantRow key={userPlant.id.toString()} userPlant={userPlant} setUserPlantToEdit={props.setUserPlantToEdit}/>)
 
   return (
     <React.Fragment>

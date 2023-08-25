@@ -33,6 +33,13 @@ export interface CreateUserPlantRequest {
   notes?: string
 }
 
+export interface EditUserPlantRequest {
+  id: number
+  planttype_id: number
+  plant_name?: string
+  notes?: string
+}
+
 export const CreateAccount = async (req: CreateAccountRequest): Promise<GenericResponse> => {
   await axios.post<string>(
     '/auth/create_user',
@@ -76,6 +83,16 @@ export const UndoCompleteTask = async (req: CompleteTaskRequest): Promise<Generi
 export const CreateUserPlant = async (req: CreateUserPlantRequest): Promise<GenericResponse> => {
   await axios.post(
     '/plants/user/create',
+    [req],
+    AxiosService.getOptionsAuthed()
+  )
+
+  return { status: 'success' }
+}
+
+export const EditUserPlant = async (req: EditUserPlantRequest): Promise<GenericResponse> => {
+  await axios.post(
+    '/plants/user/update',
     [req],
     AxiosService.getOptionsAuthed()
   )
