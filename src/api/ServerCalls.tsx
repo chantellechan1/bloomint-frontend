@@ -33,11 +33,20 @@ export interface CreateUserPlantRequest {
   notes?: string
 }
 
+// this is only for one plant.
+// the API call accepts a list of these
 export interface EditUserPlantRequest {
   id: number
   planttype_id: number
   plant_name?: string
   notes?: string
+}
+
+// this is only for one image.
+// the API call accepts a list of these
+export interface CreateUserPlantImageRequest {
+  userplant_id: number
+  image_base_64: string
 }
 
 export const CreateAccount = async (req: CreateAccountRequest): Promise<GenericResponse> => {
@@ -94,6 +103,16 @@ export const EditUserPlant = async (req: EditUserPlantRequest): Promise<GenericR
   await axios.post(
     '/plants/user/update',
     [req],
+    AxiosService.getOptionsAuthed()
+  )
+
+  return { status: 'success' }
+}
+
+export const CreateUserPlantImages = async (req: CreateUserPlantImageRequest[]): Promise<GenericResponse> => {
+  await axios.post(
+    '/plants/images/create',
+    req,
     AxiosService.getOptionsAuthed()
   )
 
