@@ -8,13 +8,13 @@ import { Routes, Route } from 'react-router-dom'
 
 const UserPlantNavigation = (): JSX.Element => {
   const [plantTypeToAdd, setPlantTypeToAdd] = useState<PlantType>()
-  const [userPlantToEdit, setUserPlantToEdit] = useState<UserPlant>()
+  const [userPlantToUpdate, setUserPlantToUpdate] = useState<UserPlant>()
   return (
     <React.Fragment>
       <Routes>
         <Route
           path=""
-          element={<UserPlants setUserPlantToEdit={setUserPlantToEdit}/>}
+          element={<UserPlants setUserPlantToEdit={setUserPlantToUpdate}/>}
         />
         <Route
           path="plant_types"
@@ -26,7 +26,7 @@ const UserPlantNavigation = (): JSX.Element => {
         />
         <Route
           path="edit_plant"
-          element={<EditPlant userPlantToEdit={userPlantToEdit}/>}
+          element={<EditPlant userPlantToUpdate={userPlantToUpdate}/>}
         />
       </Routes>
     </React.Fragment>

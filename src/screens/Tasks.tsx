@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import axios from 'axios'
-import * as AxiosService from '../api/AxiosService'
 import { type Task as ModelTask } from '../models/TaskModels'
 import UpcomingTasks from '../components/UpcomingTasks'
 import DueTasks from '../components/DueTasks'
 import CompletedTasks from '../components/CompletedTasks'
+import { GetTasks } from '../api/ServerCalls'
 
 function Tasks (): JSX.Element {
   /*
@@ -20,20 +19,18 @@ function Tasks (): JSX.Element {
   useEffect(() => {
     const getTasks = async (): Promise<void> => {
       try {
-        // TODO: move this to api/servercalls for consistency
-        const res = await axios.get('/tasks/get_tasks', AxiosService.getOptionsAuthed())
-
+        const receivedTasks: ModelTask[] = await GetTasks()
         // some fix up: convert the date string into an actual
         // date object
-        for (let i = 0; i < res.data.length; i++) {
-          const task = res.data[i]
-          task.due_at = new Date(task.due_at)
-          if (task.completed_at !== null) {
-            task.completed_at = new Date(task.completed_at)
+        for (let i = 0; i < receivedTasks.length; i++) {
+          const receivedTask = receivedTasks[i]
+          receivedTask.due_at = new Date(receivedTask.due_at)
+          if (receivedTask.completed_at !== null) {
+            receivedTask.completed_at = new Date(receivedTask.completed_at)
           }
         }
 
-        setTasks(res.data)
+        setTasks(receivedTasks)
       } catch (e) {
         console.log(e)
       }

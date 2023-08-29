@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { CreateAccount as ServerCreateAccount } from '../api/ServerCalls'
+import { VerifyEmail } from '../api/ServerCalls'
 
 const CreateAccount = (): JSX.Element => {
   const [email, setEmail] = useState('')
@@ -9,7 +9,7 @@ const CreateAccount = (): JSX.Element => {
 
   const handleCreateAccount = async (): Promise<void> => {
     try {
-      await ServerCreateAccount({ email })
+      await VerifyEmail({ email })
       setShowConfirm(true)
     } catch (error) {
       console.error(error)

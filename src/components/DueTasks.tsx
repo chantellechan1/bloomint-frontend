@@ -2,7 +2,7 @@ import React from 'react'
 import { type Task as ModelTask } from '../models/TaskModels'
 import DueTaskRow from '../components/DueTaskRow'
 import { DatesAreSame } from '../utils/Utils'
-import { CompleteTask, type CompleteTaskRequest } from '../api/ServerCalls'
+import { UpdateTask, type UpdateTaskRequest } from '../api/ServerCalls'
 
 const DueTasks = (props: { dueTasks: ModelTask[], tasks: ModelTask[], setTasks: (tasks: ModelTask[]) => void }): JSX.Element => {
   /*
@@ -13,10 +13,10 @@ const DueTasks = (props: { dueTasks: ModelTask[], tasks: ModelTask[], setTasks: 
     const taskIndex = props.tasks.findIndex(task => task.id === taskID)
 
     if (taskIndex !== -1) {
-      const completeTaskRequest: CompleteTaskRequest = {
-        taskID
+      const updateTaskRequest: UpdateTaskRequest = {
+        completed: true
       }
-      await CompleteTask(completeTaskRequest)
+      await UpdateTask(taskID, updateTaskRequest)
 
       const updatedTasks = [...props.tasks]
       updatedTasks[taskIndex] = { ...updatedTasks[taskIndex], completed_at: new Date() }

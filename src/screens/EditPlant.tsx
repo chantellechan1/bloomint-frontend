@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { type UserPlant } from '../models/PlantModels'
-import { type EditUserPlantRequest, EditUserPlant, type CreateUserPlantImageRequest, CreateUserPlantImages } from '../api/ServerCalls'
+import { type UpdateUserPlantRequest, UpdateUserPlant, type CreateUserPlantImageRequest, CreateUserPlantImages } from '../api/ServerCalls'
 import { useNavigate } from 'react-router-dom'
 
 const readFileAsBase64 = async (file: File): Promise<string> => {
@@ -31,28 +31,27 @@ const readFileAsBase64 = async (file: File): Promise<string> => {
   return await base64StringPromise
 }
 
-const EditPlant = (props: { userPlantToEdit: UserPlant }): JSX.Element => {
+const EditPlant = (props: { userPlantToUpdate: UserPlant }): JSX.Element => {
   const [plantName, setPlantName] = useState<string>('')
   const [plantNotes, setPlantNotes] = useState<string>('')
   const [plantBase64Images, setPlantBase64Images] = useState<string[]>([])
   const navigate = useNavigate()
 
-  const submitEditUserPlantRequest = async (): Promise<void> => {
-    const editUserPlantRequest: EditUserPlantRequest = {
-      id: props.userPlantToEdit.id,
-      planttype_id: props.userPlantToEdit.planttype_id,
+  const submitUpdateUserPlantRequest = async (): Promise<void> => {
+    const updateUserPlantRequest: UpdateUserPlantRequest = {
+      planttype_id: props.userPlantToUpdate.planttype_id,
       plant_name: plantName,
       notes: plantNotes
     }
 
-    await EditUserPlant(editUserPlantRequest)
+    await UpdateUserPlant(updateUserPlantRequest, props.userPlantToUpdate.id)
 
     if (plantBase64Images.length > 0) {
       const imagesRequest: CreateUserPlantImageRequest[] = []
 
       for (const plantBase64Image of plantBase64Images) {
         const imageRequest = {
-          userplant_id: props.userPlantToEdit.id,
+          userplant_id: props.userPlantToUpdate.id,
           image_base_64: plantBase64Image
         }
         imagesRequest.push(imageRequest)
@@ -79,20 +78,20 @@ const EditPlant = (props: { userPlantToEdit: UserPlant }): JSX.Element => {
   }
 
   useEffect(() => {
-    setPlantName(props.userPlantToEdit.plant_name)
+    setPlantName(props.userPlantToUpdate.plant_name)
     // if I fix this by adding !== null,
     // then typscript gives me an error on the setPlantNotes that I can't use
     // a variable of type string | undefined. If i use the ! to tell the compiler
     // that this is never undefined, then eslint complains that I shouldnt use !
     // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-    if (props.userPlantToEdit.notes) {
-      setPlantNotes(props.userPlantToEdit.notes)
+    if (props.userPlantToUpdate.notes) {
+      setPlantNotes(props.userPlantToUpdate.notes)
     }
   }, [])
 
   return (
     <React.Fragment>
-      Edit {props.userPlantToEdit.plant_name}
+      Edit {props.userPlantToUpdate.plant_name}
       <input
         type="text"
         value={plantName}
@@ -112,7 +111,7 @@ const EditPlant = (props: { userPlantToEdit: UserPlant }): JSX.Element => {
         onChange={(event: React.ChangeEvent<HTMLInputElement>): void => { void selectImages(event) }}
         placeholder="Upload photo"
       />
-      <button onClick={() => { void submitEditUserPlantRequest() }}>
+      <button onClick={() => { void submitUpdateUserPlantRequest() }}>
         Update
       </button>
     </React.Fragment>

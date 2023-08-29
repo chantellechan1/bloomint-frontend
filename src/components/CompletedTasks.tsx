@@ -1,6 +1,6 @@
 import React from 'react'
 import { type Task as ModelTask } from '../models/TaskModels'
-import { UndoCompleteTask, type UndoCompleteTaskRequest } from '../api/ServerCalls'
+import { UpdateTask, type UpdateTaskRequest } from '../api/ServerCalls'
 import CompletedTaskRow from '../components/CompletedTaskRow'
 
 const CompletedTasks = (props: { completedTasks: ModelTask[], tasks: ModelTask[], setTasks: (taskID: ModelTask[]) => void }): JSX.Element => {
@@ -13,10 +13,10 @@ const CompletedTasks = (props: { completedTasks: ModelTask[], tasks: ModelTask[]
     const taskIndex = props.tasks.findIndex(task => task.id === taskID)
 
     if (taskIndex !== -1) {
-      const completeTaskRequest: UndoCompleteTaskRequest = {
-        taskID
+      const updateTaskRequest: UpdateTaskRequest = {
+        completed: false
       }
-      await UndoCompleteTask(completeTaskRequest)
+      await UpdateTask(taskID, updateTaskRequest)
       const updatedTasks = [...props.tasks]
       updatedTasks[taskIndex] = { ...updatedTasks[taskIndex], completed_at: null }
       props.setTasks(updatedTasks)

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import axios from 'axios'
-import * as AxiosService from '../api/AxiosService'
+import { GetUserPlants } from '../api/ServerCalls'
 import { type UserPlant } from '../models/PlantModels'
 import UserPlantRow from '../components/UserPlantRow'
 import { useNavigate } from 'react-router-dom'
@@ -10,17 +9,16 @@ const UserPlants = (props: { setUserPlantToEdit: (userPlantToEdit: UserPlant) =>
   const navigate = useNavigate()
 
   useEffect(() => {
-    const getUserPlants = (): void => {
-      // TODO: move this to api/servercalls for consistency
-      axios.get('/plants/user/get_plants', AxiosService.getOptionsAuthed()).then(
-        (res) => {
-          setUserPlants(res.data)
-        }).catch(
-        (err) => { console.log(err) }
-      )
+    const getUserPlants = async (): Promise<void> => {
+      try {
+        const userPlants: UserPlant[] = await GetUserPlants()
+        setUserPlants(userPlants)
+      } catch (e) {
+        console.error(e)
+      }
     }
 
-    getUserPlants()
+    void getUserPlants()
   }, [])
 
   const userPlantRows = userPlants.map(userPlant => <UserPlantRow key={userPlant.id.toString()} userPlant={userPlant} setUserPlantToEdit={props.setUserPlantToEdit}/>)

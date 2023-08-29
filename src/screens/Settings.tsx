@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
-import * as AxiosService from '../api/AxiosService'
 import { RiLogoutBoxLine } from 'react-icons/ri'
+import { GetUser } from '../api/ServerCalls'
+import { type User } from '../models/AuthModels'
 
 const Settings = (props: { setUserToken: any }): JSX.Element => {
   const navigate = useNavigate()
@@ -20,9 +20,9 @@ const Settings = (props: { setUserToken: any }): JSX.Element => {
   useEffect(() => {
     const getUserInfo = async (): Promise<void> => {
       try {
-        const res = await axios.get('/auth/get_user', AxiosService.getOptionsAuthed())
+        const user: User = await GetUser()
 
-        setUserInfo(res.data)
+        setUserInfo(user)
       } catch (e) {
         console.log(e)
       }

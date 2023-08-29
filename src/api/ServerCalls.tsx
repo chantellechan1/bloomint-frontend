@@ -1,12 +1,15 @@
 import * as AxiosService from './AxiosService'
-import axios from 'axios'
+import axios, { type AxiosResponse } from 'axios'
+import { type UserPlant, type PlantType } from '../models/PlantModels'
+import { type User } from '../models/AuthModels'
+import { type Task } from '../models/TaskModels'
 
 export interface GenericResponse {
   status: string
   error?: unknown
 }
 
-export interface CreateAccountRequest {
+export interface VerifyEmailRequest {
   email: string
 }
 
@@ -19,8 +22,17 @@ export interface LoginResponse extends GenericResponse {
   jwt: string
 }
 
-export interface CompleteTaskRequest {
-  taskID: number
+export interface UpdateTaskRequest {
+  completed: boolean
+}
+
+export interface GetTasksResponse {
+  id: number
+  userplant: UserPlant
+  encoded_thumbnail: string
+  due_at: Date
+  completed_at: Date
+  type: string
 }
 
 export interface UndoCompleteTaskRequest {
@@ -35,8 +47,7 @@ export interface CreateUserPlantRequest {
 
 // this is only for one plant.
 // the API call accepts a list of these
-export interface EditUserPlantRequest {
-  id: number
+export interface UpdateUserPlantRequest {
   planttype_id: number
   plant_name?: string
   notes?: string
@@ -49,9 +60,9 @@ export interface CreateUserPlantImageRequest {
   image_base_64: string
 }
 
-export const CreateAccount = async (req: CreateAccountRequest): Promise<GenericResponse> => {
+export const VerifyEmail = async (req: VerifyEmailRequest): Promise<GenericResponse> => {
   await axios.post<string>(
-    '/auth/create_user',
+    '/auth/user/email_verification',
     req,
     AxiosService.getOptions()
   )
@@ -60,8 +71,8 @@ export const CreateAccount = async (req: CreateAccountRequest): Promise<GenericR
 }
 
 export const Login = async (req: LoginRequest): Promise<LoginResponse> => {
-  const res = await axios.post<{ jwt: string }>(
-    '/auth/login',
+  const res: AxiosResponse = await axios.post<{ jwt: string }>(
+    '/auth/user/jwt',
     req,
     AxiosService.getOptions()
   )
@@ -69,40 +80,47 @@ export const Login = async (req: LoginRequest): Promise<LoginResponse> => {
   return { status: 'success', jwt: res.data.jwt }
 }
 
-export const CompleteTask = async (req: CompleteTaskRequest): Promise<GenericResponse> => {
-  await axios.post(
-    '/tasks/complete_tasks',
-    { task_ids: [req.taskID] },
+export const GetUser = async (): Promise<User> => {
+  const res = await axios.get(
+    '/auth/user',
     AxiosService.getOptionsAuthed()
   )
 
-  return { status: 'success' }
+  return res.data
 }
 
-export const UndoCompleteTask = async (req: CompleteTaskRequest): Promise<GenericResponse> => {
-  await axios.post(
-    '/tasks/undo_complete_tasks',
-    { task_ids: [req.taskID] },
+export const GetPlantTypes = async (): Promise<PlantType[]> => {
+  const res = await axios.get(
+    '/planttypes',
     AxiosService.getOptionsAuthed()
   )
 
-  return { status: 'success' }
+  return res.data
+}
+
+export const GetUserPlants = async (): Promise<UserPlant[]> => {
+  const res = await axios.get(
+    '/userplants',
+    AxiosService.getOptionsAuthed()
+  )
+
+  return res.data
 }
 
 export const CreateUserPlant = async (req: CreateUserPlantRequest): Promise<GenericResponse> => {
   await axios.post(
-    '/plants/user/create',
-    [req],
+    'userplants',
+    req,
     AxiosService.getOptionsAuthed()
   )
 
   return { status: 'success' }
 }
 
-export const EditUserPlant = async (req: EditUserPlantRequest): Promise<GenericResponse> => {
-  await axios.post(
-    '/plants/user/update',
-    [req],
+export const UpdateUserPlant = async (req: UpdateUserPlantRequest, userplantID: number): Promise<GenericResponse> => {
+  await axios.put(
+    `userplants?userplant_id=${userplantID}`,
+    req,
     AxiosService.getOptionsAuthed()
   )
 
@@ -111,8 +129,27 @@ export const EditUserPlant = async (req: EditUserPlantRequest): Promise<GenericR
 
 export const CreateUserPlantImages = async (req: CreateUserPlantImageRequest[]): Promise<GenericResponse> => {
   await axios.post(
-    '/plants/images/create',
+    '/userplants/images',
     req,
+    AxiosService.getOptionsAuthed()
+  )
+
+  return { status: 'success' }
+}
+
+export const GetTasks = async (): Promise<Task[]> => {
+  const res = await axios.get(
+    '/tasks',
+    AxiosService.getOptionsAuthed()
+  )
+
+  return res.data
+}
+
+export const UpdateTask = async (taskID: number, updateTaskRequest: UpdateTaskRequest): Promise<GenericResponse> => {
+  await axios.put(
+    `/tasks?task_id=${taskID}`,
+    updateTaskRequest,
     AxiosService.getOptionsAuthed()
   )
 

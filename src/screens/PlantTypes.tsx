@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import axios from 'axios'
-import * as AxiosService from '../api/AxiosService'
 import { type PlantType } from '../models/PlantModels'
 import PlantTypeRow from '../components/PlantTypeRow'
+import { GetPlantTypes } from '../api/ServerCalls'
 
 const PlantTypes = (props: { setPlantTypeToAdd: (id: PlantType) => void }): JSX.Element => {
   const [plantTypes, setPlantTypes] = useState<PlantType[]>([])
@@ -10,11 +9,12 @@ const PlantTypes = (props: { setPlantTypeToAdd: (id: PlantType) => void }): JSX.
   // Get all planttypes from server
   useEffect(() => {
     const getPlantTypes = async (): Promise<void> => {
-      await axios.get('/plants/plant_types/all', AxiosService.getOptionsAuthed()).then(
-        (res) => {
-          setPlantTypes(res.data)
-        })
-        .catch((res) => { setPlantTypes(res.data) }).catch((err) => { console.log(err) })
+      try {
+        const plantTypes: PlantType[] = await GetPlantTypes()
+        setPlantTypes(plantTypes)
+      } catch (e) {
+        console.error(e)
+      }
     }
 
     void getPlantTypes()
