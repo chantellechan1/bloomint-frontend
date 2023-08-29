@@ -1,7 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import { type UserPlant } from '../models/PlantModels'
-import { type UpdateUserPlantRequest, UpdateUserPlant, type CreateUserPlantImageRequest, CreateUserPlantImages } from '../api/ServerCalls'
+import { type UpdateUserPlantRequest, UpdateUserPlant, type CreateUserPlantImageRequest, CreateUserPlantImages, GetUserPlantImages, type GetUserPlantImageResponse } from '../api/ServerCalls'
 import { useNavigate } from 'react-router-dom'
+import 'react-responsive-carousel/lib/styles/carousel.min.css'
+import { Carousel } from 'react-responsive-carousel'
+
+const ImageCarousel = (props: { base64Images: string[] }): JSX.Element => {
+  return (
+    <Carousel width="700px">
+      {props.base64Images.map((base64Image, index) => (
+        <div key={index}>
+          <img src={`data:image/jpeg;base64,${base64Image}`} alt={`Image ${index}`} />
+        </div>
+      ))}
+    </Carousel>
+  )
+}
 
 const readFileAsBase64 = async (file: File): Promise<string> => {
   const base64StringPromise: Promise<string> = new Promise<string>((resolve, reject) => {
@@ -35,6 +49,7 @@ const EditPlant = (props: { userPlantToUpdate: UserPlant }): JSX.Element => {
   const [plantName, setPlantName] = useState<string>('')
   const [plantNotes, setPlantNotes] = useState<string>('')
   const [plantBase64Images, setPlantBase64Images] = useState<string[]>([])
+  const [plantBase64ImagesToUpload, setPlantBase64ImagesToUpload] = useState<string[]>([])
   const navigate = useNavigate()
 
   const submitUpdateUserPlantRequest = async (): Promise<void> => {
@@ -46,10 +61,10 @@ const EditPlant = (props: { userPlantToUpdate: UserPlant }): JSX.Element => {
 
     await UpdateUserPlant(updateUserPlantRequest, props.userPlantToUpdate.id)
 
-    if (plantBase64Images.length > 0) {
+    if (plantBase64ImagesToUpload.length > 0) {
       const imagesRequest: CreateUserPlantImageRequest[] = []
 
-      for (const plantBase64Image of plantBase64Images) {
+      for (const plantBase64Image of plantBase64ImagesToUpload) {
         const imageRequest = {
           userplant_id: props.userPlantToUpdate.id,
           image_base_64: plantBase64Image
@@ -73,8 +88,20 @@ const EditPlant = (props: { userPlantToUpdate: UserPlant }): JSX.Element => {
         base64Strings.push(fileAsBase64)
       }
 
-      setPlantBase64Images(base64Strings)
+      setPlantBase64ImagesToUpload(base64Strings)
     }
+  }
+
+  const getUserPlantImagesFromServer = async (): Promise<void> => {
+    const imageResponses: GetUserPlantImageResponse[] = await GetUserPlantImages(props.userPlantToUpdate.id)
+
+    const recivedImages: string[] = []
+
+    for (const imageResponse of imageResponses) {
+      recivedImages.push(imageResponse.image_data)
+    }
+
+    setPlantBase64Images(recivedImages)
   }
 
   useEffect(() => {
@@ -87,6 +114,8 @@ const EditPlant = (props: { userPlantToUpdate: UserPlant }): JSX.Element => {
     if (props.userPlantToUpdate.notes) {
       setPlantNotes(props.userPlantToUpdate.notes)
     }
+
+    void getUserPlantImagesFromServer()
   }, [])
 
   return (
@@ -114,6 +143,7 @@ const EditPlant = (props: { userPlantToUpdate: UserPlant }): JSX.Element => {
       <button onClick={() => { void submitUpdateUserPlantRequest() }}>
         Update
       </button>
+      <ImageCarousel base64Images={plantBase64Images} />
     </React.Fragment>
   )
 }

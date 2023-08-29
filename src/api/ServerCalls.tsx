@@ -60,6 +60,12 @@ export interface CreateUserPlantImageRequest {
   image_base_64: string
 }
 
+export interface GetUserPlantImageResponse {
+  id: number
+  userplant_id: number
+  image_data: string
+}
+
 export const VerifyEmail = async (req: VerifyEmailRequest): Promise<GenericResponse> => {
   await axios.post<string>(
     '/auth/user/email_verification',
@@ -99,7 +105,7 @@ export const GetPlantTypes = async (): Promise<PlantType[]> => {
 }
 
 export const GetUserPlants = async (): Promise<UserPlant[]> => {
-  const res = await axios.get(
+  const res: AxiosResponse = await axios.get(
     '/userplants',
     AxiosService.getOptionsAuthed()
   )
@@ -140,6 +146,15 @@ export const CreateUserPlantImages = async (req: CreateUserPlantImageRequest[]):
 export const GetTasks = async (): Promise<Task[]> => {
   const res = await axios.get(
     '/tasks',
+    AxiosService.getOptionsAuthed()
+  )
+
+  return res.data
+}
+
+export const GetUserPlantImages = async (userplantID: number): Promise<GetUserPlantImageResponse[]> => {
+  const res: AxiosResponse = await axios.get(
+    `/userplants/images?userplant_id=${userplantID}`,
     AxiosService.getOptionsAuthed()
   )
 
