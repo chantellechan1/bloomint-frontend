@@ -143,18 +143,27 @@ export const CreateUserPlantImages = async (req: CreateUserPlantImageRequest[]):
   return { status: 'success' }
 }
 
-export const GetTasks = async (): Promise<Task[]> => {
-  const res = await axios.get(
-    '/tasks',
+export const GetUserPlantImages = async (userplantID: number): Promise<GetUserPlantImageResponse[]> => {
+  const res: AxiosResponse = await axios.get(
+    `/userplants/images?userplant_id=${userplantID}`,
     AxiosService.getOptionsAuthed()
   )
 
   return res.data
 }
 
-export const GetUserPlantImages = async (userplantID: number): Promise<GetUserPlantImageResponse[]> => {
-  const res: AxiosResponse = await axios.get(
-    `/userplants/images?userplant_id=${userplantID}`,
+export const DeleteUserPlantImage = async (imageID: number): Promise<GenericResponse[]> => {
+  const res: AxiosResponse = await axios.delete(
+    `/userplants/images?userplantimage_id=${imageID}`,
+    AxiosService.getOptionsAuthed()
+  )
+
+  return res.data
+}
+
+export const GetTasks = async (): Promise<Task[]> => {
+  const res = await axios.get(
+    '/tasks',
     AxiosService.getOptionsAuthed()
   )
 

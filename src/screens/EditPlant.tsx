@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { type UserPlant } from '../models/PlantModels'
-import { type UpdateUserPlantRequest, UpdateUserPlant, type CreateUserPlantImageRequest, CreateUserPlantImages, GetUserPlantImages, type GetUserPlantImageResponse } from '../api/ServerCalls'
+import { type UpdateUserPlantRequest, UpdateUserPlant, type CreateUserPlantImageRequest, CreateUserPlantImages, GetUserPlantImages, type GetUserPlantImageResponse, DeleteUserPlantImage } from '../api/ServerCalls'
 import { useNavigate } from 'react-router-dom'
 import 'react-responsive-carousel/lib/styles/carousel.min.css'
 import { Carousel } from 'react-responsive-carousel'
 
-const ImageCarousel = (props: { base64Images: string[] }): JSX.Element => {
+const ImageCarousel = (props: { base64Images: string[], userPlantImages: GetUserPlantImageResponse[], setCarouselUserImageID: (index: number) => void }): JSX.Element => {
   return (
-    <Carousel width="700px">
+    <Carousel
+      width="700px"
+      onChange={ (index: number, item: React.ReactNode) => { props.setCarouselUserImageID(props.userPlantImages[index].id) }}
+      >
       {props.base64Images.map((base64Image, index) => (
         <div key={index}>
           <img src={`data:image/jpeg;base64,${base64Image}`} alt={`Image ${index}`} />
@@ -48,11 +51,14 @@ const readFileAsBase64 = async (file: File): Promise<string> => {
 const EditPlant = (props: { userPlantToUpdate: UserPlant }): JSX.Element => {
   const [plantName, setPlantName] = useState<string>('')
   const [plantNotes, setPlantNotes] = useState<string>('')
-  const [plantBase64Images, setPlantBase64Images] = useState<string[]>([])
+  const [userPlantImages, setUserPlantImages] = useState<GetUserPlantImageResponse[]>([])
   const [plantBase64ImagesToUpload, setPlantBase64ImagesToUpload] = useState<string[]>([])
+  const [carouselSelectedUserImageID, setCarouselSelectedUserImageID] = useState<number>(-1)
   const navigate = useNavigate()
 
   const submitUpdateUserPlantRequest = async (): Promise<void> => {
+    console.log(carouselSelectedUserImageID)
+
     const updateUserPlantRequest: UpdateUserPlantRequest = {
       planttype_id: props.userPlantToUpdate.planttype_id,
       plant_name: plantName,
@@ -78,6 +84,11 @@ const EditPlant = (props: { userPlantToUpdate: UserPlant }): JSX.Element => {
     navigate('/user_plants')
   }
 
+  const deleteSelectedImage = async (): Promise<void> => {
+    await DeleteUserPlantImage(carouselSelectedUserImageID)
+    setUserPlantImages(userPlantImages.filter(x => x.id !== carouselSelectedUserImageID))
+  }
+
   const selectImages = async (event: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
     const files: FileList | null = event.target.files
     if (files !== null) {
@@ -94,14 +105,13 @@ const EditPlant = (props: { userPlantToUpdate: UserPlant }): JSX.Element => {
 
   const getUserPlantImagesFromServer = async (): Promise<void> => {
     const imageResponses: GetUserPlantImageResponse[] = await GetUserPlantImages(props.userPlantToUpdate.id)
+    setUserPlantImages(imageResponses)
 
-    const recivedImages: string[] = []
-
-    for (const imageResponse of imageResponses) {
-      recivedImages.push(imageResponse.image_data)
+    // a hack, but the callback never gets
+    // called until you actually swipe.
+    if (imageResponses.length > 0) {
+      setCarouselSelectedUserImageID(imageResponses[0].id)
     }
-
-    setPlantBase64Images(recivedImages)
   }
 
   useEffect(() => {
@@ -143,7 +153,12 @@ const EditPlant = (props: { userPlantToUpdate: UserPlant }): JSX.Element => {
       <button onClick={() => { void submitUpdateUserPlantRequest() }}>
         Update
       </button>
-      <ImageCarousel base64Images={plantBase64Images} />
+      <button onClick={() => { void deleteSelectedImage() }}>
+        { /* TODO: can this be overlayed over the carousel? */}
+        { /* TODO: ask user for confirmation */}
+        Delete Image
+      </button>
+      <ImageCarousel base64Images={userPlantImages.map(x => x.image_data)} userPlantImages={userPlantImages} setCarouselUserImageID={setCarouselSelectedUserImageID} />
     </React.Fragment>
   )
 }
