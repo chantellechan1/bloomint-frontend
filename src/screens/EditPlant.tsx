@@ -4,6 +4,7 @@ import { type UpdateUserPlantRequest, UpdateUserPlant, type CreateUserPlantImage
 import { useNavigate } from 'react-router-dom'
 import 'react-responsive-carousel/lib/styles/carousel.min.css'
 import { Carousel } from 'react-responsive-carousel'
+import './OverlayButton.css'
 
 const ImageCarousel = (props: { base64Images: string[], userPlantImages: GetUserPlantImageResponse[], setCarouselUserImageID: (index: number) => void }): JSX.Element => {
   return (
@@ -153,12 +154,14 @@ const EditPlant = (props: { userPlantToUpdate: UserPlant }): JSX.Element => {
       <button onClick={() => { void submitUpdateUserPlantRequest() }}>
         Update
       </button>
-      <button onClick={() => { void deleteSelectedImage() }}>
-        { /* TODO: can this be overlayed over the carousel? */}
-        { /* TODO: ask user for confirmation */}
-        Delete Image
-      </button>
-      <ImageCarousel base64Images={userPlantImages.map(x => x.image_data)} userPlantImages={userPlantImages} setCarouselUserImageID={setCarouselSelectedUserImageID} />
+      {userPlantImages.length > 0 &&
+        (<div className="wrapper">
+          <button className="overlay-button" onClick={() => { void deleteSelectedImage() }}>
+            { /* TODO: ask user for confirmation */}
+            Delete Image
+          </button>
+          <ImageCarousel base64Images={userPlantImages.map(x => x.image_data)} userPlantImages={userPlantImages} setCarouselUserImageID={setCarouselSelectedUserImageID} />
+        </div>)}
     </React.Fragment>
   )
 }
