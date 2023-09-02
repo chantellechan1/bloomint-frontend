@@ -3,6 +3,7 @@ import { GetUserPlants } from '../api/ServerCalls'
 import { type UserPlant } from '../models/PlantModels'
 import UserPlantRow from '../components/UserPlantRow'
 import { useNavigate } from 'react-router-dom'
+import { RiAddLine } from 'react-icons/ri'
 
 const UserPlants = (props: { setUserPlantToEdit: (userPlantToEdit: UserPlant) => void }): JSX.Element => {
   const [userPlants, setUserPlants] = useState<UserPlant[]>([])
@@ -26,7 +27,12 @@ const UserPlants = (props: { setUserPlantToEdit: (userPlantToEdit: UserPlant) =>
   return (
     <React.Fragment>
       <ul>{userPlantRows}</ul>
-      <button onClick={ () => { navigate('./plant_types') }}>+</button>
+      <button
+        className="userplant__add-button"
+        onClick={ () => { navigate('./plant_types') }}>
+        <RiAddLine
+          className="userplant__add-button__plus"/>
+      </button>
     </React.Fragment>
   )
 }

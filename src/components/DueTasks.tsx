@@ -37,11 +37,19 @@ const DueTasks = (props: { dueTasks: ModelTask[], tasks: ModelTask[], setTasks: 
     .filter(task => (task.completed_at == null) && !DatesAreSame(task.due_at, today) && task.due_at < today)
     .map(task => <DueTaskRow key={task.id.toString()} task={task} onComplete={onComplete}/>)
 
+  const unfinishedTasksExist: boolean = todaysTaskRows.length > 0 || pastDueTaskRows.length > 0
+
   return (
-    <React.Fragment>
-      {<ul>{todaysTaskRows}</ul>}
-      {<ul>{pastDueTaskRows}</ul>}
-    </React.Fragment>
+          <div className="tasks-list__display-box">
+      {unfinishedTasksExist
+        ? <React.Fragment>
+          <p>Water</p>
+          <ul>{pastDueTaskRows}</ul>
+          <ul>{todaysTaskRows}</ul>
+        </React.Fragment>
+        : <React.Fragment> All tasks are completed </React.Fragment>
+      }
+</div>
   )
 }
 

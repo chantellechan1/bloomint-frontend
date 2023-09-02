@@ -4,6 +4,7 @@ import UpcomingTasks from '../components/UpcomingTasks'
 import DueTasks from '../components/DueTasks'
 import CompletedTasks from '../components/CompletedTasks'
 import { GetTasks } from '../api/ServerCalls'
+import '../index.css'
 
 function Tasks (): JSX.Element {
   /*
@@ -44,46 +45,40 @@ function Tasks (): JSX.Element {
   const getCompletedTasks = (): ModelTask[] => { return tasks.filter((x: ModelTask) => x.completed_at) }
 
   return (
-    <React.Fragment>
-      <div className="row justify-content-evenly">
-        <div className="col-4">
-          <button
-            type="button"
-            className={selectedButton === 'due' ? 'w-100 btn btn-primary' : 'w-100 btn btn-outline'}
-            onClick={() => { setSelectedButton('due') }}>
-            Today
-          </button>
-        </div>
-        <div className="col-4">
-          <button
-            type="button"
-            className={selectedButton === 'upcoming' ? 'w-100 btn btn-primary' : 'w-100 btn btn-outline'}
-            onClick={() => { setSelectedButton('upcoming') }}>
-            Upcoming
-          </button>
-        </div>
-        <div className="col-4">
-          <button
-            type="button"
-            className={selectedButton === 'completed' ? 'w-100 btn btn-primary' : 'w-100 btn btn-outline'}
-            onClick={() => { setSelectedButton('completed') }}>
-            Completed
-          </button>
-        </div>
+    <div>
+      <div className="task-top-decoration">
       </div>
-      <div>
-        {selectedButton === 'due' && <DueTasks
-                                          tasks={tasks}
-                                          dueTasks={getDueTasks()}
-                                          setTasks={setTasks}/>}
-        {selectedButton === 'upcoming' && <UpcomingTasks
-                                          tasks={getUpcomingTasks()}/>}
-        {selectedButton === 'completed' && <CompletedTasks
-                                           tasks={tasks}
-                                           completedTasks={getCompletedTasks()}
-                                           setTasks={setTasks}/>}
+      <div className="task-select-button-container">
+        <button
+          type="button"
+          className={'task-select-button ' +
+            (selectedButton === 'due' ? 'task-select-button--selected' : 'task-select-button--unselected')}
+          onClick={() => { setSelectedButton('due') }}>
+          Today
+        </button>
+        <button
+          type="button"
+          className={'task-select-button ' +
+            (selectedButton === 'upcoming' ? 'task-select-button--selected' : 'task-select-button--unselected')}
+          onClick={() => { setSelectedButton('upcoming') }}>
+          Upcoming
+        </button>
       </div>
-    </React.Fragment>
+      {selectedButton === 'due' &&
+        <React.Fragment>
+          <DueTasks
+            tasks={tasks}
+            dueTasks={getDueTasks()}
+            setTasks={setTasks}/>
+          <CompletedTasks
+            tasks={tasks}
+            completedTasks={getCompletedTasks()}
+            setTasks={setTasks}/>
+        </React.Fragment>}
+      {selectedButton === 'upcoming' &&
+          <UpcomingTasks
+            tasks={getUpcomingTasks()}/>}
+    </div>
   )
 };
 

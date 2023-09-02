@@ -133,10 +133,10 @@ export const UpdateUserPlant = async (req: UpdateUserPlantRequest, userplantID: 
   return { status: 'success' }
 }
 
-export const CreateUserPlantImages = async (req: CreateUserPlantImageRequest[]): Promise<GenericResponse> => {
+export const CreateUserPlantImages = async (req: CreateUserPlantImageRequest): Promise<GenericResponse> => {
   await axios.post(
     '/userplants/images',
-    req,
+    [req],
     AxiosService.getOptionsAuthed()
   )
 

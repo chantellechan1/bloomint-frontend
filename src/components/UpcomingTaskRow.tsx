@@ -1,5 +1,6 @@
 import { type Task as ModelTask } from '../models/TaskModels'
 import React from 'react'
+import '../index.css'
 
 function UpcomingTaskRow (props: { task: ModelTask }): JSX.Element {
   /*
@@ -7,15 +8,16 @@ function UpcomingTaskRow (props: { task: ModelTask }): JSX.Element {
    * image of the plant, the name of the plant,
    */
   return (
-    <React.Fragment>
-      <li>
-        <img
-          src={`data:image/jpg;base64,${props.task.encoded_thumbnail}`}
-          alt=""
-        />
+    <li className="tasks-list__row">
+      <img
+        src={`data:image/jpg;base64,${props.task.encoded_thumbnail}`}
+        alt=""
+        className="round-thumbnail tasks-list__plant-image"
+      />
+      <div className="tasks-list__description">
         {props.task.userplant.plant_name}
-      </li>
-    </React.Fragment>
+      </div>
+    </li>
   )
 };
 

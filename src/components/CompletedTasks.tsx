@@ -26,12 +26,17 @@ const CompletedTasks = (props: { completedTasks: ModelTask[], tasks: ModelTask[]
   const completedTaskRows = props.completedTasks
     .map(task => <CompletedTaskRow key={task.id.toString()} task={task} onUndoComplete={onUndoComplete}/>)
 
+  const completedTasksExist = completedTaskRows.length > 0
+
   return (
-    <React.Fragment>
-      <ul>
-        {completedTaskRows}
-      </ul>
-    </React.Fragment>
+    completedTasksExist
+      ? <div className="tasks-list__display-box">
+          <p>Completed</p>
+          <ul>
+            {completedTaskRows}
+          </ul>
+        </div>
+      : <React.Fragment></React.Fragment>
   )
 }
 

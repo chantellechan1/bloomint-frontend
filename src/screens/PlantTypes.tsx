@@ -26,6 +26,10 @@ const PlantTypes = (props: { setPlantTypeToAdd: (id: PlantType) => void }): JSX.
 
   return (
     <React.Fragment>
+      <div
+        className="padded-div">
+      Select a plant type to add
+      </div>
       <ul>{plantTypeRows}</ul>
     </React.Fragment>
   )

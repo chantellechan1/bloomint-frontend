@@ -2,22 +2,28 @@ import React, { useEffect, useState } from 'react'
 import { type UserPlant } from '../models/PlantModels'
 import { type UpdateUserPlantRequest, UpdateUserPlant, type CreateUserPlantImageRequest, CreateUserPlantImages, GetUserPlantImages, type GetUserPlantImageResponse, DeleteUserPlantImage } from '../api/ServerCalls'
 import { useNavigate } from 'react-router-dom'
+import { RiDeleteBin2Line, RiSave2Line, RiAddLine } from 'react-icons/ri'
+import Loading from '../components/Loading'
 import 'react-responsive-carousel/lib/styles/carousel.min.css'
 import { Carousel } from 'react-responsive-carousel'
-import './OverlayButton.css'
+import '../index.css'
+import missingImage from '../assets/images/no-image.jpeg'
 
-const ImageCarousel = (props: { base64Images: string[], userPlantImages: GetUserPlantImageResponse[], setCarouselUserImageID: (index: number) => void }): JSX.Element => {
+const ImageCarousel = (props: { imageSources: string[], userPlantImages: GetUserPlantImageResponse[], setCarouselUserImageID: (index: number) => void }): JSX.Element => {
   return (
-    <Carousel
-      width="700px"
-      onChange={ (index: number, item: React.ReactNode) => { props.setCarouselUserImageID(props.userPlantImages[index].id) }}
-      >
-      {props.base64Images.map((base64Image, index) => (
-        <div key={index}>
-          <img src={`data:image/jpeg;base64,${base64Image}`} alt={`Image ${index}`} />
-        </div>
-      ))}
-    </Carousel>
+    <div>
+      <Carousel
+        onChange={ (index: number, item: React.ReactNode) => { props.setCarouselUserImageID(props.userPlantImages[index].id) }}
+        showStatus={false}
+        showThumbs={false}
+        >
+        {props.imageSources.map((imageSource, index) => (
+          <div key={index}>
+            <img src={imageSource} alt={`Image ${index}`} />
+          </div>
+        ))}
+      </Carousel>
+    </div>
   )
 }
 
@@ -50,12 +56,19 @@ const readFileAsBase64 = async (file: File): Promise<string> => {
 }
 
 const EditPlant = (props: { userPlantToUpdate: UserPlant }): JSX.Element => {
+  const [imagesLoadedFromServer, setImagesLoadedFromServer] = useState<boolean>(false)
   const [plantName, setPlantName] = useState<string>('')
   const [plantNotes, setPlantNotes] = useState<string>('')
   const [userPlantImages, setUserPlantImages] = useState<GetUserPlantImageResponse[]>([])
-  const [plantBase64ImagesToUpload, setPlantBase64ImagesToUpload] = useState<string[]>([])
   const [carouselSelectedUserImageID, setCarouselSelectedUserImageID] = useState<number>(-1)
   const navigate = useNavigate()
+
+  const plantHasUserImages = (): boolean => {
+    if (!imagesLoadedFromServer) {
+      throw new Error('do not call plantHasNoUserImages before receiving images from server')
+    }
+    return userPlantImages.length > 0
+  }
 
   const submitUpdateUserPlantRequest = async (): Promise<void> => {
     console.log(carouselSelectedUserImageID)
@@ -68,20 +81,6 @@ const EditPlant = (props: { userPlantToUpdate: UserPlant }): JSX.Element => {
 
     await UpdateUserPlant(updateUserPlantRequest, props.userPlantToUpdate.id)
 
-    if (plantBase64ImagesToUpload.length > 0) {
-      const imagesRequest: CreateUserPlantImageRequest[] = []
-
-      for (const plantBase64Image of plantBase64ImagesToUpload) {
-        const imageRequest = {
-          userplant_id: props.userPlantToUpdate.id,
-          image_base_64: plantBase64Image
-        }
-        imagesRequest.push(imageRequest)
-      }
-
-      await CreateUserPlantImages(imagesRequest)
-    }
-
     navigate('/user_plants')
   }
 
@@ -90,17 +89,23 @@ const EditPlant = (props: { userPlantToUpdate: UserPlant }): JSX.Element => {
     setUserPlantImages(userPlantImages.filter(x => x.id !== carouselSelectedUserImageID))
   }
 
-  const selectImages = async (event: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
-    const files: FileList | null = event.target.files
-    if (files !== null) {
-      const base64Strings = []
-      for (let i = 0; i < files.length; i++) {
-        const file: File = files[i]
-        const fileAsBase64: string = await readFileAsBase64(file)
-        base64Strings.push(fileAsBase64)
+  const uploadSingleImage = async (event: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
+    const file: File | null = event.target.files[0]
+    if (file !== null) {
+      const fileAsBase64: string = await readFileAsBase64(file)
+
+      const imageRequest: CreateUserPlantImageRequest = {
+        userplant_id: props.userPlantToUpdate.id,
+        image_base_64: fileAsBase64
       }
 
-      setPlantBase64ImagesToUpload(base64Strings)
+      await CreateUserPlantImages(imageRequest)
+
+      // im lazy and dont feel like coding anymore,
+      // just regrab the images from the server.
+      // we could try to be fancy and generate a GetUserPlantImageResponse client
+      // side and insert it into our list locally
+      await getUserPlantImagesFromServer()
     }
   }
 
@@ -113,6 +118,8 @@ const EditPlant = (props: { userPlantToUpdate: UserPlant }): JSX.Element => {
     if (imageResponses.length > 0) {
       setCarouselSelectedUserImageID(imageResponses[0].id)
     }
+
+    setImagesLoadedFromServer(true)
   }
 
   useEffect(() => {
@@ -131,37 +138,68 @@ const EditPlant = (props: { userPlantToUpdate: UserPlant }): JSX.Element => {
 
   return (
     <React.Fragment>
-      Edit {props.userPlantToUpdate.plant_name}
-      <input
-        type="text"
-        value={plantName}
-        onChange={(event: React.ChangeEvent<HTMLInputElement>): void => { setPlantName(event.target.value) }}
-        placeholder="Enter name or leave blank..."
-      />
-      <input
-        type="text"
-        value={plantNotes}
-        onChange={(event: React.ChangeEvent<HTMLInputElement>): void => { setPlantNotes(event.target.value) }}
-        placeholder="Enter notes or leave blank..."
-      />
-      <input
-        type="file"
-        multiple
-        accept="image/*"
-        onChange={(event: React.ChangeEvent<HTMLInputElement>): void => { void selectImages(event) }}
-        placeholder="Upload photo"
-      />
-      <button onClick={() => { void submitUpdateUserPlantRequest() }}>
-        Update
+      <div className="carousel__wrapper">
+        {imagesLoadedFromServer
+          ? (<div>
+            {plantHasUserImages() && (<button className="carousel__overlay-delete-image-button" onClick={() => { void deleteSelectedImage() }}>
+              { /* TODO: ask user for confirmation */}
+              <RiDeleteBin2Line
+                className="carousel__overlay-delete-image-button__bin" />
+            </button>)}
+            {/* file input looks pretty ugly, so instead im just using a label connected to it, and then hiding it.
+                clicking the label will have the same effect */}
+            <label
+              htmlFor="image-upload"
+              className="carousel__overlay-add-image-button">
+              <RiAddLine
+                className="carousel__overlay-add-image-button__plus"/>
+              <input
+                id="image-upload"
+                type="file"
+                accept="image/*"
+                onChange={(event: React.ChangeEvent<HTMLInputElement>): void => { void uploadSingleImage(event) }}
+              />
+            </label>
+            <ImageCarousel
+              imageSources={plantHasUserImages()
+                ? (userPlantImages.map(x => `data:image/jpeg;base64,${x.image_data}`))
+                : ([missingImage])}
+              userPlantImages={userPlantImages}
+              setCarouselUserImageID={setCarouselSelectedUserImageID} />
+          </div>)
+          : (<div className="carousel__spinner-wrapper">
+            <Loading/>
+          </div>)}
+      </div>
+      <p>
+        Edit {props.userPlantToUpdate.plant_name}
+      </p>
+      <div>
+        <textarea
+          value={plantName}
+          rows="1"
+          cols="32"
+          onChange={(event: React.ChangeEvent<HTMLTextAreaElement>): void => { setPlantName(event.target.value) }}
+          placeholder="Enter name (leave blank for default)..."
+          className="userplant__name-edit-input"
+        />
+      </div>
+      <div>
+        <textarea
+          value={plantNotes}
+          rows="5"
+          cols="32"
+          onChange={(event: React.ChangeEvent<HTMLTextAreaElement>): void => { setPlantNotes(event.target.value) }}
+          placeholder="Enter notes or leave blank..."
+          className="userplant__notes-edit-input"
+        />
+      </div>
+      <button
+        className="userplant__save-edits-button"
+        onClick={() => { void submitUpdateUserPlantRequest() }}>
+        <RiSave2Line
+          className="userplant__save-edits-button__floppy"/>
       </button>
-      {userPlantImages.length > 0 &&
-        (<div className="wrapper">
-          <button className="overlay-button" onClick={() => { void deleteSelectedImage() }}>
-            { /* TODO: ask user for confirmation */}
-            Delete Image
-          </button>
-          <ImageCarousel base64Images={userPlantImages.map(x => x.image_data)} userPlantImages={userPlantImages} setCarouselUserImageID={setCarouselSelectedUserImageID} />
-        </div>)}
     </React.Fragment>
   )
 }

@@ -15,8 +15,8 @@ const BottomNavigationBar = (): JSX.Element => {
 
   return (
     <React.Fragment>
-      <nav className="navbar fixed-bottom navbar-light bg-light">
-        <div className="container-fluid">
+      <nav>
+        <div className="bottom-navigation">
           <Link
             to="/tasks"
             className="nav-link active"
@@ -26,7 +26,7 @@ const BottomNavigationBar = (): JSX.Element => {
             }}
           >
             <IconContext.Provider value={{ size: '2em' }}>
-              <div>
+              <div className="bottom-navigation__button">
                 {selectedBottomNav === 'tasks'
                   ? (
                   <RiCheckboxCircleFill />
@@ -46,7 +46,7 @@ const BottomNavigationBar = (): JSX.Element => {
             }}
           >
             <IconContext.Provider value={{ size: '2em' }}>
-              <div>
+              <div className="bottom-navigation__button">
                 {selectedBottomNav === 'user_plants'
                   ? (
                   <RiPlantFill />
@@ -66,7 +66,7 @@ const BottomNavigationBar = (): JSX.Element => {
             }}
           >
             <IconContext.Provider value={{ size: '2em' }}>
-              <div>
+              <div className="bottom-navigation__button">
                 {selectedBottomNav === 'settings'
                   ? (
                   <RiSettings4Fill />

@@ -30,11 +30,11 @@ const UpcomingTasks = (props: { tasks: ModelTask[] }): JSX.Element => {
     .map(task => <UpcomingTaskRow key={task.id.toString()} task={task}/>)
 
   return (
-    <React.Fragment>
+    <div className="tasks-list__display-box">
       {tomorrowsTaskRows.length > 0 && (<><p>Tomorrow</p><ul>{tomorrowsTaskRows}</ul></>)}
       {twoDaysTaskRows.length > 0 && (<><p>In 2 days</p><ul>{twoDaysTaskRows}</ul></>)}
       {thisWeeksTaskRows.length > 0 && (<><p>This week</p><ul>{thisWeeksTaskRows}</ul></>)}
-    </React.Fragment>
+    </div>
   )
 }
 

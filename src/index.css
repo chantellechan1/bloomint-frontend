@@ -1,3 +1,20 @@
+/*
+ * I'm using the BEM naming convention.
+ */
+:root {
+  --lightgreen: #9cc19b;
+  --lightgray: #E0E0E0;
+  --gray: #606060;
+  --darkgray: #272727;
+  --darkergray: #1B1B1B;
+}
+
+* {
+  margin: 0px;
+  padding: 0px;
+  box-sizing: content-box;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -5,9 +22,394 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  color: white;
+  background-color: var(--darkergray);
+  font-size: 20px;
+  overflow-x: hidden;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+ul {
+  list-style: none;
+  padding-left: 0.5em;
+}
+
+p {
+  padding: 10px;
+}
+
+a:link {
+      text-decoration: none;
+}
+
+a:visited {
+      text-decoration: none;
+}
+
+a:hover {
+      text-decoration: none;
+}
+
+a:active {
+      text-decoration: none;
+}
+
+.padded-div {
+  margin: 15px;
+  padding: 3px;
+}
+
+/* im not going to override button,
+   it messes with all the styles for the round buttons
+   and i dont feel like fixing to now */
+.button {
+  background-color: var(--lightgreen);
+  color: var(--darkgray);
+  border: none;
+  appearance: none;
+  outline: none;
+  padding: 6px;
+  font-size: 16px;
+  border-radius: 16px;
+}
+
+.input {
+  padding: 5px;
+  font-size: 18px;
+  background-color: var(--lightgray);
+  border: none;
+  appearance: none;
+  outline: none;
+  border-radius:5px;
+}
+
+.round-thumbnail {
+  width: 65px;
+  height: 65px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.carousel__wrapper {
+  /* use this in conjunction with the overlay button */
+  position: relative;
+  display: flex;
+  justify-content: center;
+  height: 330px;
+  overflow: hidden;
+  margin-top: -50px;
+}
+
+.carousel__spinner-wrapper {
+  transform: translateY(160px);
+}
+
+.carousel__overlay-delete-image-button {
+  /* positioning */
+  position: absolute;
+  top: 45%;
+  left: 90%;
+  transform: translate(-75%, -50%);
+  z-index: 1;
+
+  /* regular button styling below */
+  background-color: var(--lightgreen);
+  border: none;
+  border-radius:50%;
+  width: 45px;
+  height: 45px;
+  position: absolute;
+  right: 30px;
+}
+
+.carousel__overlay-delete-image-button__bin {
+  color: var(--darkgray);
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 25px;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.carousel__overlay-add-image-button {
+  /* positioning */
+  position: absolute;
+  top: 26%;
+  left: 90%;
+  transform: translate(-75%, -50%);
+  z-index: 1;
+
+  /* regular button styling below */
+  background-color: var(--lightgreen);
+  border: none;
+  border-radius:50%;
+  width: 45px;
+  height: 45px;
+  position: absolute;
+  right: 30px;
+}
+
+.carousel__overlay-add-image-button__plus {
+  color: var(--darkgray);
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 25px;
+}
+
+@keyframes spinner {
+  to { transform: rotate(360deg); }
+}
+
+.spinner {
+  width: 2rem;
+  height: 2rem;
+  border: .25em solid white;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spinner 1s linear infinite;
+}
+
+.spinner-sm {
+  width: ;
+  height: $spinner-height-sm;
+  border-width: $spinner-border-width-sm;
+}
+
+.task-top-decoration {
+  width: 900px;
+  height: 180px;
+  display: block;
+  border-radius: 50%;
+  background-image: url("./assets/images/foliage.jpeg");
+  background-size: 80%;
+  position: absolute;
+  left: 50%;
+  transform: translate(-46%, -35%);
+  z-index: 1;
+  top: 0;
+}
+
+.task-select-button-container {
+  padding-top: 100px;
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  gap: 40px;
+}
+
+.task-select-button {
+  border: none;
+  appearance: none;
+  outline: none;
+  padding: 6px;
+  font-size: 16px;
+  border-radius: 16px;
+  width: 100px;
+}
+
+.task-select-button--selected {
+  background-color: var(--lightgreen);
+  color: var(--darkgray);
+}
+
+.task-select-button--unselected {
+  background-color: var(--darkgray);
+  color: var(--lightgreen);
+}
+
+.tasks-list__display-box {
+  /* on the tasks screen, this is just a box that the tasks show in */
+  background-color: var(--darkgray);
+  border-radius: 2%;
+  padding: 10px;
+  margin: 15px;
+  margin-bottom: 30px;
+}
+
+.tasks-list__task-button {
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  position: absolute;
+  border: none;
+  right: 30px;
+}
+
+.tasks-list__task-button--complete {
+  background-color: var(--gray);
+}
+
+.tasks-list__task-button--uncomplete {
+  background-color: var(--lightgreen);
+}
+
+.tasks-list__task-button__check {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  font-size: 30px;
+}
+
+.tasks-list__task-button__check--complete {
+  color: var(--lightgreen);
+}
+
+.tasks-list__task-button__check--uncomplete {
+  color: var(--darkgray);
+}
+
+.tasks-list__row {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.tasks-list__description {
+  padding-left: 15px;
+  margin-right: 65px;
+}
+
+.tasks-list__notes {
+  padding-left: 15px;
+  font-size: 16px;
+  margin-right: 65px;
+}
+
+.userplant__edit-button {
+  border-radius:50%;
+  width: 45px;
+  height: 45px;
+  position: absolute;
+  border: none;
+  right: 30px;
+  background-color: var(--lightgreen);
+}
+
+.userplant__edit-button__icon {
+  color: var(--darkgray);
+  font-size: 25px;
+}
+
+.userplant__name-edit-input {
+  margin: 15px;
+  padding: 3px;
+  font-size: 18px;
+  background-color: var(--lightgray);
+  border: none;
+  appearance: none;
+  outline: none;
+  border-radius:5px;
+}
+
+.userplant__notes-edit-input {
+  margin: 15px;
+  padding: 3px;
+  font-size: 18px;
+  background-color: var(--lightgray);
+  border: none;
+  appearance: none;
+  outline: none;
+  border-radius:5px;
+}
+
+.userplant__save-edits-button {
+  border-radius:50%;
+  width: 70px;
+  height: 70px;
+  border: none;
+  background-color: var(--lightgreen);
+  position: fixed;
+  right: 5%;
+  bottom: 80px;
+}
+
+.userplant__save-edits-button__floppy {
+  font-size: 35px;
+  color: var(--darkgray);
+  position: absolute;
+  top: 18px;
+  left: 18px;
+}
+
+.userplant__add-button {
+  border-radius:50%;
+  width: 70px;
+  height: 70px;
+  border: none;
+  background-color: var(--lightgreen);
+  position: fixed;
+  right: 5%;
+  bottom: 80px;
+}
+
+.userplant__add-button__plus {
+  font-size: 30px;
+  color: var(--darkgray);
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}
+
+.bottom-navigation {
+  background-color: var(--darkgray);
+  display: flex;
+  position: fixed;
+  bottom: 0%;
+  justify-content: space-evenly;
+  width: 100%;
+}
+
+.bottom-navigation__button {
+  padding: 10px;
+  color: var(--lightgreen)
+}
+
+.plant-type__add-button {
+  background-color: var(--lightgreen);
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  position: absolute;
+  border: none;
+  right: 30px;
+}
+
+.plant-type__add-button__plus {
+  font-size: 30px;
+  color: var(--darkgray);
+  position: absolute;
+  top: 8px;
+  left: 8px;
+}
+
+.login-wrapper {
+  padding-top: 140px;
+  display: inline-block;
+  width: 80%;
+  text-align: center;
+  position: absolute;
+  /* this is not the correct way to center a div */
+  left: 10%
+}
+
+.login-input {
+  box-sizing: border-box;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.login-button {
+  box-sizing: border-box;
+  display: inline-block;
+  width: 100%;
+  margin-bottom: 10px;
 }

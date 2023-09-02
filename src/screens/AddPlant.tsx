@@ -21,23 +21,35 @@ const AddPlant = (props: { plantTypeToAdd: PlantType }): JSX.Element => {
 
   return (
     <React.Fragment>
-      Add a new {props.plantTypeToAdd.name}
-      <input
-        type="text"
-        value={plantName}
-        onChange={(event: React.ChangeEvent<HTMLInputElement>): void => { setPlantName(event.target.value) }}
-        placeholder="Enter name or leave blank..."
-      />
-      <input
-        type="text"
-        value={plantNotes}
-        onChange={(event: React.ChangeEvent<HTMLInputElement>): void => { setPlantNotes(event.target.value) }}
-        placeholder="Enter notes or leave blank..."
-      />
+      <div className="padded-div">
+        Add a new {props.plantTypeToAdd.name}
+      </div>
+      <div className="padded-div">
+        <textarea
+          value={plantName}
+          rows="1"
+          cols="32"
+          onChange={(event: React.ChangeEvent<HTMLInputElement>): void => { setPlantName(event.target.value) }}
+          placeholder="Enter name or leave blank..."
+          className="userplant__name-edit-input"
+        />
+        <textarea
+          value={plantNotes}
+          rows="5"
+          cols="32"
+          onChange={(event: React.ChangeEvent<HTMLInputElement>): void => { setPlantNotes(event.target.value) }}
+          placeholder="Enter notes or leave blank..."
+          className="userplant__notes-edit-input"
+        />
+      </div>
 
-      <button onClick={() => { void submitCreateUserPlantRequest() }}>
-        Add
-      </button>
+      <div className="padded-div">
+        <button
+          className="button"
+          onClick={() => { void submitCreateUserPlantRequest() }}>
+          Add plant to collection
+        </button>
+      </div>
     </React.Fragment>
   )
 }
