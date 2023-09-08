@@ -186,6 +186,7 @@ input[type="file"] {
 .task-top-decoration {
   width: 900px;
   height: 180px;
+  overflow: hidden;
   display: block;
   border-radius: 50%;
   background-image: url("./assets/images/foliage.jpeg");
