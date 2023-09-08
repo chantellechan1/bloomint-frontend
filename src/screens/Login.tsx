@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Login as ServerLogin } from '../api/ServerCalls'
 import { useNavigate } from 'react-router-dom'
 import '../index.css'
+import FoliageImage from '../assets/images/foliage.png'
 
 const ErrorMessage = (props: { loginErr: string }): JSX.Element => {
   return (
@@ -42,10 +43,11 @@ const Login = (props: { setUserToken: any, userToken: string | null }): JSX.Elem
     {
       loginErr !== '' && <ErrorMessage loginErr={loginErr} />
     }
+    <img
+      className="task-top-decoration"
+      src={FoliageImage} />
     <div
       className="login-wrapper">
-      <div className="task-top-decoration">
-      </div>
       <form>
         <h2>Sign In</h2>
         <br/>

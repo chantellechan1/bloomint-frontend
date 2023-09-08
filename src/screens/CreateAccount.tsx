@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { VerifyEmail } from '../api/ServerCalls'
+import FoliageImage from '../assets/images/foliage.png'
 
 const CreateAccount = (): JSX.Element => {
   const [email, setEmail] = useState('')
@@ -19,6 +20,9 @@ const CreateAccount = (): JSX.Element => {
 
   return (
   <React.Fragment>
+    <img
+      className="task-top-decoration"
+      src={FoliageImage} />
     <div
       className="login-wrapper">
       {
@@ -34,8 +38,6 @@ const CreateAccount = (): JSX.Element => {
         </div>
       }
       <div>
-        <div className="task-top-decoration">
-        </div>
         <form>
           <h2>Create New Account</h2>
           <br/>

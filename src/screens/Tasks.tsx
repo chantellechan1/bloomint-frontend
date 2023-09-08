@@ -4,6 +4,7 @@ import UpcomingTasks from '../components/UpcomingTasks'
 import DueTasks from '../components/DueTasks'
 import CompletedTasks from '../components/CompletedTasks'
 import { GetTasks } from '../api/ServerCalls'
+import FoliageImage from '../assets/images/foliage.png'
 import '../index.css'
 
 function Tasks (): JSX.Element {
@@ -46,8 +47,9 @@ function Tasks (): JSX.Element {
 
   return (
     <div>
-      <div className="task-top-decoration">
-      </div>
+      <img
+        className="task-top-decoration"
+        src={FoliageImage} />
       <div className="task-select-button-container">
         <button
           type="button"
