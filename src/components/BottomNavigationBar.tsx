@@ -19,7 +19,6 @@ const BottomNavigationBar = (): JSX.Element => {
         <div className="bottom-navigation">
           <Link
             to="/tasks"
-            className="nav-link active"
             aria-current="page"
             onClick={() => {
               setSelectedBottomNav('tasks')
@@ -40,7 +39,6 @@ const BottomNavigationBar = (): JSX.Element => {
 
           <Link
             to="/user_plants"
-            className="nav-link"
             onClick={() => {
               setSelectedBottomNav('user_plants')
             }}
@@ -60,7 +58,6 @@ const BottomNavigationBar = (): JSX.Element => {
 
           <Link
             to="/settings"
-            className="nav-link"
             onClick={() => {
               setSelectedBottomNav('settings')
             }}

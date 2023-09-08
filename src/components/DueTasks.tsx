@@ -40,7 +40,7 @@ const DueTasks = (props: { dueTasks: ModelTask[], tasks: ModelTask[], setTasks: 
   const unfinishedTasksExist: boolean = todaysTaskRows.length > 0 || pastDueTaskRows.length > 0
 
   return (
-          <div className="tasks-list__display-box">
+    <div className="tasks-list__display-box">
       {unfinishedTasksExist
         ? <React.Fragment>
           <p>Water</p>
@@ -49,7 +49,7 @@ const DueTasks = (props: { dueTasks: ModelTask[], tasks: ModelTask[], setTasks: 
         </React.Fragment>
         : <React.Fragment> All tasks are completed </React.Fragment>
       }
-</div>
+    </div>
   )
 }
 

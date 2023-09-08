@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import jwt_decode from 'jwt-decode'
 import './App.css'
+import './index.css'
 import HomeNavigation from './navigation/HomeNavigation'
 import LoginNavigation from './navigation/LoginNavigation'
 
@@ -9,7 +10,6 @@ const App = (): JSX.Element => {
    * App figures out if the user is currently logged in,
    * and will either display a login page or the home page.
    */
-
   const [userToken, setUserToken] = useState(localStorage.getItem('userToken'))
 
   const isLoggedIn = (token: string | null): boolean => {
@@ -32,8 +32,14 @@ const App = (): JSX.Element => {
     }
   }
 
+  const windowWidth: number = useRef(window.innerWidth).current
+  const isPhone: boolean = windowWidth < 720
+  const className: string = isPhone
+    ? 'screen-div-always-needed'
+    : 'screen-div-always-needed screen-div-browser-mode-only'
+
   return (
-    <React.Fragment>
+    <div className={className}>
       {isLoggedIn(userToken)
         ? (<HomeNavigation
           userToken={userToken}
@@ -44,7 +50,7 @@ const App = (): JSX.Element => {
           setUserToken={setUserToken}
         />
           )}
-    </React.Fragment>
+    </div>
   )
 }
 

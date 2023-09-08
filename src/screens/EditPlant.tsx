@@ -171,24 +171,24 @@ const EditPlant = (props: { userPlantToUpdate: UserPlant }): JSX.Element => {
             <Loading/>
           </div>)}
       </div>
-      <p>
-        Edit {props.userPlantToUpdate.plant_name}
-      </p>
-      <div>
+      <div className="padded-div">
+        <p>
+          Edit {props.userPlantToUpdate.plant_name}
+        </p>
+      </div>
+      <div className="padded-div">
         <textarea
           value={plantName}
           rows="1"
-          cols="32"
+          cols="34"
           onChange={(event: React.ChangeEvent<HTMLTextAreaElement>): void => { setPlantName(event.target.value) }}
           placeholder="Enter name (leave blank for default)..."
           className="userplant__name-edit-input"
         />
-      </div>
-      <div>
         <textarea
           value={plantNotes}
           rows="5"
-          cols="32"
+          cols="34"
           onChange={(event: React.ChangeEvent<HTMLTextAreaElement>): void => { setPlantNotes(event.target.value) }}
           placeholder="Enter notes or leave blank..."
           className="userplant__notes-edit-input"

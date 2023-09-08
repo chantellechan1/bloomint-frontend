@@ -25,7 +25,7 @@ const UserPlants = (props: { setUserPlantToEdit: (userPlantToEdit: UserPlant) =>
   const userPlantRows = userPlants.map(userPlant => <UserPlantRow key={userPlant.id.toString()} userPlant={userPlant} setUserPlantToEdit={props.setUserPlantToEdit}/>)
 
   return (
-    <React.Fragment>
+    <div>
       <ul>{userPlantRows}</ul>
       <button
         className="userplant__add-button"
@@ -33,7 +33,7 @@ const UserPlants = (props: { setUserPlantToEdit: (userPlantToEdit: UserPlant) =>
         <RiAddLine
           className="userplant__add-button__plus"/>
       </button>
-    </React.Fragment>
+    </div>
   )
 }
 
