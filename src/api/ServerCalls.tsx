@@ -116,7 +116,7 @@ export const GetUserPlants = async (): Promise<UserPlant[]> => {
 export const CreateUserPlant = async (req: CreateUserPlantRequest): Promise<GenericResponse> => {
   await axios.post(
     'userplants',
-    req,
+    [req],
     AxiosService.getOptionsAuthed()
   )
 
