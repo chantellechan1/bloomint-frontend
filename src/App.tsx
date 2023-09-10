@@ -4,6 +4,7 @@ import './App.css'
 import './index.css'
 import HomeNavigation from './navigation/HomeNavigation'
 import LoginNavigation from './navigation/LoginNavigation'
+import { MountPoint } from './utils/Utils'
 
 const App = (): JSX.Element => {
   /*
@@ -50,6 +51,7 @@ const App = (): JSX.Element => {
           setUserToken={setUserToken}
         />
           )}
+      <MountPoint />
     </div>
   )
 }

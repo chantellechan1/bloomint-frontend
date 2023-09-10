@@ -133,6 +133,15 @@ export const UpdateUserPlant = async (req: UpdateUserPlantRequest, userplantID: 
   return { status: 'success' }
 }
 
+export const DeleteUserPlant = async (userplantID: number): Promise<GenericResponse> => {
+  await axios.delete(
+    `userplants?userplant_id=${userplantID}`,
+    AxiosService.getOptionsAuthed()
+  )
+
+  return { status: 'success' }
+}
+
 export const CreateUserPlantImages = async (req: CreateUserPlantImageRequest): Promise<GenericResponse> => {
   await axios.post(
     '/userplants/images',

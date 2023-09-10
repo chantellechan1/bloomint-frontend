@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { type UserPlant } from '../models/PlantModels'
-import { type UpdateUserPlantRequest, UpdateUserPlant, type CreateUserPlantImageRequest, CreateUserPlantImages, GetUserPlantImages, type GetUserPlantImageResponse, DeleteUserPlantImage } from '../api/ServerCalls'
+import { type UpdateUserPlantRequest, UpdateUserPlant, type CreateUserPlantImageRequest, CreateUserPlantImages, GetUserPlantImages, type GetUserPlantImageResponse, DeleteUserPlantImage, DeleteUserPlant } from '../api/ServerCalls'
 import { useNavigate } from 'react-router-dom'
-import { RiDeleteBin2Line, RiSave2Line, RiAddLine } from 'react-icons/ri'
+import { RiArrowLeftLine, RiDeleteBin2Line, RiSave2Line, RiAddLine } from 'react-icons/ri'
 import Loading from '../components/Loading'
 import 'react-responsive-carousel/lib/styles/carousel.min.css'
 import { Carousel } from 'react-responsive-carousel'
 import '../index.css'
 import missingImage from '../assets/images/no-image.jpeg'
+import { confirm } from '../utils/Utils'
 
 const ImageCarousel = (props: { imageSources: string[], userPlantImages: GetUserPlantImageResponse[], setCarouselUserImageID: (index: number) => void }): JSX.Element => {
   return (
@@ -70,9 +71,18 @@ const EditPlant = (props: { userPlantToUpdate: UserPlant }): JSX.Element => {
     return userPlantImages.length > 0
   }
 
-  const submitUpdateUserPlantRequest = async (): Promise<void> => {
-    console.log(carouselSelectedUserImageID)
+  const goBack = (): void => {
+    navigate('/user_plants')
+  }
 
+  const submitDeleteUserPlantRequest = async (): Promise<void> => {
+    if (await confirm('Delete this plant?')) {
+      await DeleteUserPlant(props.userPlantToUpdate.id)
+      navigate('/user_plants')
+    }
+  }
+
+  const submitUpdateUserPlantRequest = async (): Promise<void> => {
     const updateUserPlantRequest: UpdateUserPlantRequest = {
       planttype_id: props.userPlantToUpdate.planttype_id,
       plant_name: plantName,
@@ -194,10 +204,24 @@ const EditPlant = (props: { userPlantToUpdate: UserPlant }): JSX.Element => {
           className="userplant__notes-edit-input"
         />
       </div>
+      <br />
+      <div className="padded-div">
+        <button
+          className="warning-button userplant__delete-button"
+          onClick={() => { void submitDeleteUserPlantRequest() }}>
+          Delete This Plant
+        </button>
+      </div>
       <button
         className="userplant__save-edits-button"
         onClick={() => { void submitUpdateUserPlantRequest() }}>
         <RiSave2Line
+          className="userplant__save-edits-button__floppy"/>
+      </button>
+      <button
+        className="userplant__back-button"
+        onClick={goBack}>
+        <RiArrowLeftLine
           className="userplant__save-edits-button__floppy"/>
       </button>
     </React.Fragment>

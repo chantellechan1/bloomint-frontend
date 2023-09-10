@@ -7,7 +7,7 @@ import { GetTasks } from '../api/ServerCalls'
 import FoliageImage from '../assets/images/foliage.png'
 import '../index.css'
 
-function Tasks (): JSX.Element {
+const Tasks = (): JSX.Element => {
   /*
    * This is the screen for tasks, things that need to be done
    * for you plant(s), including watering, fertilizing, etc
@@ -85,6 +85,6 @@ function Tasks (): JSX.Element {
             tasks={getUpcomingTasks()}/>}
     </div>
   )
-};
+}
 
 export default Tasks
