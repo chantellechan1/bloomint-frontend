@@ -3,8 +3,9 @@ import { type Task as ModelTask } from '../models/TaskModels'
 import DueTaskRow from '../components/DueTaskRow'
 import { DatesAreSame } from '../utils/Utils'
 import { UpdateTask, type UpdateTaskRequest } from '../api/ServerCalls'
+import Loading from '../components/Loading'
 
-const DueTasks = (props: { dueTasks: ModelTask[], tasks: ModelTask[], setTasks: (tasks: ModelTask[]) => void }): JSX.Element => {
+const DueTasks = (props: { dueTasks: ModelTask[], tasks: ModelTask[], loadedTasksFromServer: boolean, setTasks: (tasks: ModelTask[]) => void }): JSX.Element => {
   /*
    * Displays all tasks that are due.
    * Tasks from today, and tasks from the past that werent done
@@ -41,14 +42,15 @@ const DueTasks = (props: { dueTasks: ModelTask[], tasks: ModelTask[], setTasks: 
 
   return (
     <div className="tasks-list__display-box">
-      {unfinishedTasksExist
-        ? <React.Fragment>
-          <p>Water</p>
-          <ul>{pastDueTaskRows}</ul>
-          <ul>{todaysTaskRows}</ul>
-        </React.Fragment>
-        : <React.Fragment> All tasks are completed </React.Fragment>
-      }
+      {props.loadedTasksFromServer
+        ? (unfinishedTasksExist
+            ? (<div>
+            <p>Water</p>
+            <ul>{pastDueTaskRows}</ul>
+            <ul>{todaysTaskRows}</ul>
+          </div>)
+            : (<div> All tasks are completed </div>))
+        : (<div className="centered-div"><Loading/></div>)}
     </div>
   )
 }

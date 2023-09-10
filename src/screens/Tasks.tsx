@@ -15,6 +15,7 @@ function Tasks (): JSX.Element {
   // TODO: remove hardcoded strings
   const [selectedButton, setSelectedButton] = useState('due')
   const [tasks, setTasks] = useState<ModelTask[]>([])
+  const [loadedTasksFromServer, setLoadedTasksFromServer] = useState<boolean>(false)
   const currentDate: Date = new Date()
 
   // Get all tasks from server, for today and upcoming
@@ -33,6 +34,7 @@ function Tasks (): JSX.Element {
         }
 
         setTasks(receivedTasks)
+        setLoadedTasksFromServer(true)
       } catch (e) {
         console.log(e)
       }
@@ -71,6 +73,7 @@ function Tasks (): JSX.Element {
           <DueTasks
             tasks={tasks}
             dueTasks={getDueTasks()}
+            loadedTasksFromServer={loadedTasksFromServer}
             setTasks={setTasks}/>
           <CompletedTasks
             tasks={tasks}

@@ -63,6 +63,12 @@ a:active {
   padding: 3px;
 }
 
+.centered-div {
+  text-align: center;
+  margin: 0 auto;
+  width: 0;
+}
+
 /* im not going to override button,
    it messes with all the styles for the round buttons
    and i dont feel like fixing to now */
@@ -234,7 +240,7 @@ input[type="file"] {
 .tasks-list__display-box {
   /* on the tasks screen, this is just a box that the tasks show in */
   background-color: var(--darkgray);
-  border-radius: 2%;
+  border-radius: 10px;
   padding: 10px;
   margin: 15px;
 }
