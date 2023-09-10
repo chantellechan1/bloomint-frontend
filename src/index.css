@@ -406,6 +406,7 @@ input[type="file"] {
   appearance: none;
   outline: none;
   border-radius:5px;
+  resize: none;
 }
 
 .userplant__notes-edit-input {
@@ -416,6 +417,7 @@ input[type="file"] {
   appearance: none;
   outline: none;
   border-radius:5px;
+  resize: none;
 }
 
 .userplant__save-edits-button {
