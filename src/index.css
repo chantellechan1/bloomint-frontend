@@ -311,8 +311,8 @@ input[type="file"] {
 }
 
 .userplant__name-edit-input {
-  margin-bottom: 15px;
-  padding: 3px;
+  margin-bottom: 40px;
+  padding: 8px;
   font-size: 18px;
   background-color: var(--lightgray);
   border: none;
@@ -322,8 +322,7 @@ input[type="file"] {
 }
 
 .userplant__notes-edit-input {
-  margin-bottom: 15px;
-  padding: 3px;
+  padding: 8px;
   font-size: 18px;
   background-color: var(--lightgray);
   border: none;
