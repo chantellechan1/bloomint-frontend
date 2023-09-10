@@ -505,7 +505,7 @@ input[type="file"] {
 
 .login-wrapper {
   margin-top:160px;
-  width: 80%;
+  width: 75%;
   text-align: center;
   margin: 0 auto;
 }
@@ -513,12 +513,12 @@ input[type="file"] {
 .login-input {
   box-sizing: border-box;
   width: 100%;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 .login-button {
   box-sizing: border-box;
   display: inline-block;
   width: 100%;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
