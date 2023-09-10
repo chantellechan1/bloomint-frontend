@@ -27,17 +27,19 @@ const AddPlant = (props: { plantTypeToAdd: PlantType }): JSX.Element => {
       <div className="padded-div">
         <textarea
           value={plantName}
-          rows="1"
-          cols="32"
-          onChange={(event: React.ChangeEvent<HTMLInputElement>): void => { setPlantName(event.target.value) }}
+          rows={1}
+          cols={34}
+          maxLength={34}
+          onChange={(event: React.ChangeEvent<HTMLTextAreaElement>): void => { setPlantName(event.target.value) }}
           placeholder="Enter name or leave blank..."
           className="userplant__name-edit-input"
         />
         <textarea
           value={plantNotes}
-          rows="5"
-          cols="32"
-          onChange={(event: React.ChangeEvent<HTMLInputElement>): void => { setPlantNotes(event.target.value) }}
+          rows={5}
+          cols={34}
+          maxLength={170}
+          onChange={(event: React.ChangeEvent<HTMLTextAreaElement>): void => { setPlantNotes(event.target.value) }}
           placeholder="Enter notes or leave blank..."
           className="userplant__notes-edit-input"
         />
