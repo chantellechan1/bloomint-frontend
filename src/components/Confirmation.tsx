@@ -20,8 +20,8 @@ const Confirmation = (props: Props): React.FC<ConfirmDialogProps<Props, boolean>
 
         {props.confirmation}
 
-        <button className="button modal__ok-button" onClick={() => { props.proceed(false) }}>{props.cancelLabel ?? 'cancel'}</button>
-        <button className="button modal__cancel-button" onClick={() => { props.proceed(true) }}>{props.okLabel ?? 'ok'}</button>
+        <button className="button modal__cancel-button" onClick={() => { props.proceed(false) }}>{props.cancelLabel ?? 'cancel'}</button>
+        <button className="button modal__ok-button" onClick={() => { props.proceed(true) }}>{props.okLabel ?? 'ok'}</button>
       </div>
     </div>)
 }

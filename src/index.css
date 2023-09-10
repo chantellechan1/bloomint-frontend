@@ -109,14 +109,14 @@ a:active {
 .modal__ok-button {
   position: absolute;
   bottom: 20px;
-  left: 20px;
+  right: 20px;
   min-width: 80px;
 }
 
 .modal__cancel-button {
   position: absolute;
   bottom: 20px;
-  right: 20px;
+  left: 20px;
   min-width: 80px;
 }
 

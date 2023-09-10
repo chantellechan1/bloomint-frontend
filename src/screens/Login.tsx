@@ -3,21 +3,11 @@ import { Login as ServerLogin } from '../api/ServerCalls'
 import { useNavigate } from 'react-router-dom'
 import '../index.css'
 import FoliageImage from '../assets/images/foliage.png'
-
-const ErrorMessage = (props: { loginErr: string }): JSX.Element => {
-  return (
-    <React.Fragment>
-      <div className="" role="alert">
-        {props.loginErr}
-      </div>
-    </React.Fragment>
-  )
-}
+import { notify } from '../utils/Utils'
 
 const Login = (props: { setUserToken: any, userToken: string | null }): JSX.Element => {
   const [email, setEmail] = useState('')
   const [password, setPw] = useState('')
-  const [loginErr, setLoginErr] = useState('')
   const navigate = useNavigate()
 
   const handleLogin = async (): Promise<void> => {
@@ -29,8 +19,7 @@ const Login = (props: { setUserToken: any, userToken: string | null }): JSX.Elem
       localStorage.setItem('userToken', jwt)
       props.setUserToken(localStorage.getItem('userToken'))
     } catch (error) {
-      console.error(error)
-      setLoginErr('Error Logging In: ' + (error as Error).toString())
+      await notify('Failed to log in, please try again')
     }
   }
 
@@ -40,9 +29,6 @@ const Login = (props: { setUserToken: any, userToken: string | null }): JSX.Elem
 
   return (
   <React.Fragment>
-    {
-      loginErr !== '' && <ErrorMessage loginErr={loginErr} />
-    }
     <img
       className="task-top-decoration"
       src={FoliageImage} />
