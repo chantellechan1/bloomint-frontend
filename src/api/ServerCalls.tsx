@@ -67,11 +67,15 @@ export interface GetUserPlantImageResponse {
 }
 
 export const VerifyEmail = async (req: VerifyEmailRequest): Promise<GenericResponse> => {
-  await axios.post<string>(
-    '/auth/user/email_verification',
-    req,
-    AxiosService.getOptions()
-  )
+  try {
+    await axios.post<string>(
+      '/auth/user/email_verification',
+      req,
+      AxiosService.getOptions()
+    )
+  } catch (error) {
+    console.log(error)
+  }
 
   return { status: 'success' }
 }

@@ -360,7 +360,7 @@ input[type="file"] {
 .userplant__delete-button {
   position: absolute;
   left: 5%;
-  bottom: 100px;
+  bottom: 30px;
 }
 
 .userplant__back-button {
@@ -371,7 +371,7 @@ input[type="file"] {
   background-color: var(--lightgreen);
   position: absolute;
   right: 5%;
-  bottom: 200px;
+  bottom: 120px;
 }
 
 .userplant__back-button__arrow {
@@ -428,7 +428,7 @@ input[type="file"] {
   background-color: var(--lightgreen);
   position: absolute;
   right: 5%;
-  bottom: 100px;
+  bottom: 30px;
 }
 
 .userplant__save-edits-button__floppy {
@@ -447,7 +447,7 @@ input[type="file"] {
   background-color: var(--lightgreen);
   position: absolute;
   right: 5%;
-  bottom: 100px;
+  bottom: 30px;
 }
 
 .userplant__add-button__plus {

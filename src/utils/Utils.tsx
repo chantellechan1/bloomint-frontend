@@ -23,5 +23,5 @@ export async function confirm (confirmation: string, options: ConfirmationProps)
 }
 
 export async function notify (notification: string, options: NotificationProps): Promise<void> {
-  return await defaultNotify({ notification, ...options })
+  await defaultNotify({ notification, ...options })
 }
