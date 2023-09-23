@@ -44,3 +44,11 @@ To run on android [follow this guide](https://capacitorjs.com/docs/android#addin
     4. `npx cap run android`  
     
 Once Android Studio is open, navigate to Build > Build Bundle(s) / APK (s) > Build APK(s). This will build an APK file and creates a notification when the build process is complete.
+
+
+#### Docker
+To generate docker images:  
+```# docker build -t bloomint-frontend .```
+
+To run docker image:  
+```# docker run -d -p 0.0.0.0:443:3000 bloomint-frontend```
