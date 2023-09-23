@@ -10,8 +10,10 @@ const axiosOptions: Options = {
   headers: {
     'Content-Type': 'application/json'
   },
-  // baseURL: 'https://api.bloomint.net'
-  baseURL: 'http://localhost:5000'
+  baseURL: 'http://localhost:3009'
+  // when deploying, uncomment this
+  // TODO: find a better way to do this
+  // baseURL: 'https://bloomint.xyz:3009'
 }
 
 export const getOptions = (): Options => axiosOptions

@@ -51,4 +51,4 @@ To generate docker images:
 ```# docker build -t bloomint-frontend .```
 
 To run docker image:  
-```# docker run -d -p 0.0.0.0:443:3000 bloomint-frontend```
+```# docker run -v /home/bloomint/bloomint.xyz-ssl-bundle/:/letsencrypt -d -p 0.0.0.0:443:3000 bloomint-frontend```
