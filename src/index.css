@@ -340,10 +340,10 @@ input[type="file"] {
 }
 
 .tasks-list__row {
-  padding: 10px;
-  display: inline-flex;
+  margin-left: 20px;
+  margin-top: 20px;
+  display: flex;
   align-items: center;
-  width: 100%;
 }
 
 .tasks-list__description {
