@@ -18,7 +18,7 @@ const App = (): JSX.Element => {
       return false
     }
     try {
-      // get jwt token exipry time in seconds
+      // get jwt token expiry time in seconds
       // no idea why eslint thinks this is unneccesary
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
       const { exp } = jwt_decode(token) as {
@@ -41,6 +41,7 @@ const App = (): JSX.Element => {
 
   return (
     <div className={className}>
+      <MountPoint />
       {isLoggedIn(userToken)
         ? (<HomeNavigation
           userToken={userToken}
@@ -51,7 +52,6 @@ const App = (): JSX.Element => {
           setUserToken={setUserToken}
         />
           )}
-      <MountPoint />
     </div>
   )
 }

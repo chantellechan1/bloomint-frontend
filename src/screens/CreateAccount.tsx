@@ -1,21 +1,17 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { VerifyEmail } from '../api/ServerCalls'
 import FoliageImage from '../assets/images/foliage.png'
+import { notify } from '../utils/Utils'
 
 const CreateAccount = (): JSX.Element => {
   const [email, setEmail] = useState('')
-  const [errorText, setErrorText] = useState('')
-  const [showConfirm, setShowConfirm] = useState(false)
+  const navigate = useNavigate()
 
   const handleCreateAccount = async (): Promise<void> => {
-    try {
-      await VerifyEmail({ email })
-      setShowConfirm(true)
-    } catch (error) {
-      console.error(error)
-      setErrorText('Account creation failed, check console for details.')
-    }
+    void VerifyEmail({ email })
+    await notify('Thanks for signing up! Please check your email for next steps.')
+    navigate('/')
   }
 
   return (
@@ -25,18 +21,6 @@ const CreateAccount = (): JSX.Element => {
       src={FoliageImage} />
     <div
       className="login-wrapper">
-      {
-        errorText !== '' &&
-        <div role="alert">
-          {errorText}
-        </div>
-      }
-      {
-        showConfirm &&
-        <div role="alert">
-          Thanks for signing up! Please check your email for next steps.
-        </div>
-      }
       <div>
         <form>
           <h2>Create New Account</h2>
