@@ -45,7 +45,7 @@ const DueTasks = (props: { dueTasks: ModelTask[], tasks: ModelTask[], loadedTask
       {props.loadedTasksFromServer
         ? (unfinishedTasksExist
             ? (<div>
-            <p>Water</p>
+            <p>Plants to water</p>
             <ul>{pastDueTaskRows}</ul>
             <ul>{todaysTaskRows}</ul>
           </div>)

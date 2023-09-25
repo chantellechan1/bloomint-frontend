@@ -4,6 +4,7 @@ import { type UserPlant } from '../models/PlantModels'
 import UserPlantRow from '../components/UserPlantRow'
 import { useNavigate } from 'react-router-dom'
 import { RiAddLine } from 'react-icons/ri'
+import FoliageImage from '../assets/images/foliage.png'
 
 const UserPlants = (props: { setUserPlantToEdit: (userPlantToEdit: UserPlant) => void }): JSX.Element => {
   const [userPlants, setUserPlants] = useState<UserPlant[]>([])
@@ -26,6 +27,12 @@ const UserPlants = (props: { setUserPlantToEdit: (userPlantToEdit: UserPlant) =>
 
   return (
     <div>
+      <img
+        className="task-top-decoration"
+        src={FoliageImage} />
+      <div className="padded-div">
+      <p>My plants</p>
+      </div>
       <ul>{userPlantRows}</ul>
       <button
         className="userplant__add-button"

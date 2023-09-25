@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { RiLogoutBoxLine } from 'react-icons/ri'
 import { GetUser } from '../api/ServerCalls'
 import { type User } from '../models/AuthModels'
+import FoliageImage from '../assets/images/foliage.png'
 import '../index.css'
 
 const Settings = (props: { setUserToken: any }): JSX.Element => {
@@ -34,6 +35,9 @@ const Settings = (props: { setUserToken: any }): JSX.Element => {
 
   return (
     <React.Fragment>
+      <img
+        className="task-top-decoration"
+        src={FoliageImage} />
       <div className="padded-div">
         <h1>Settings</h1>
       </div>
