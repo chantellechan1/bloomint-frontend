@@ -108,6 +108,15 @@ export const GetPlantTypes = async (): Promise<PlantType[]> => {
   return res.data
 }
 
+export const GetPlantType = async (planttypeID: number): Promise<PlantType> => {
+  const res = await axios.get(
+    `/planttypes?planttype_id=${planttypeID}`,
+    AxiosService.getOptionsAuthed()
+  )
+
+  return res.data[0]
+}
+
 export const GetUserPlants = async (): Promise<UserPlant[]> => {
   const res: AxiosResponse = await axios.get(
     '/userplants',

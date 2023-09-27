@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { type UserPlant } from '../models/PlantModels'
-import { type UpdateUserPlantRequest, UpdateUserPlant, type CreateUserPlantImageRequest, CreateUserPlantImages, GetUserPlantImages, type GetUserPlantImageResponse, DeleteUserPlantImage, DeleteUserPlant } from '../api/ServerCalls'
+import { type UserPlant, type PlantType } from '../models/PlantModels'
+import { type UpdateUserPlantRequest, UpdateUserPlant, type CreateUserPlantImageRequest, CreateUserPlantImages, GetUserPlantImages, type GetUserPlantImageResponse, DeleteUserPlantImage, DeleteUserPlant, GetPlantType } from '../api/ServerCalls'
 import { useNavigate } from 'react-router-dom'
 import { RiArrowLeftLine, RiDeleteBin2Line, RiSave2Line, RiAddLine } from 'react-icons/ri'
 import Loading from '../components/Loading'
@@ -59,10 +59,24 @@ const readFileAsBase64 = async (file: File): Promise<string> => {
 const EditPlant = (props: { userPlantToUpdate: UserPlant }): JSX.Element => {
   const [imagesLoadedFromServer, setImagesLoadedFromServer] = useState<boolean>(false)
   const [plantName, setPlantName] = useState<string>('')
+  const [plantType, setPlantType] = useState<PlantType>()
   const [plantNotes, setPlantNotes] = useState<string>('')
   const [userPlantImages, setUserPlantImages] = useState<GetUserPlantImageResponse[]>([])
   const [carouselSelectedUserImageID, setCarouselSelectedUserImageID] = useState<number>(-1)
   const navigate = useNavigate()
+
+  useEffect(() => {
+    const getPlantType = async (): Promise<void> => {
+      try {
+        const plantType: PlantType = await GetPlantType(props.userPlantToUpdate.planttype_id)
+        setPlantType(plantType)
+      } catch (e) {
+        console.error(e)
+      }
+    }
+
+    void getPlantType()
+  }, [])
 
   const plantHasUserImages = (): boolean => {
     if (!imagesLoadedFromServer) {
@@ -182,8 +196,11 @@ const EditPlant = (props: { userPlantToUpdate: UserPlant }): JSX.Element => {
           </div>)}
       </div>
       <div className="padded-div">
-        <p>
+        <h3>
           Edit {props.userPlantToUpdate.plant_name}
+        </h3>
+        <p>
+          {plantType?.name}
         </p>
       </div>
       <div className="padded-div">
