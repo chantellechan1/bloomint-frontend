@@ -39,12 +39,6 @@ export interface UndoCompleteTaskRequest {
   taskID: number
 }
 
-export interface CreateUserPlantRequest {
-  planttype_id: number
-  plant_name?: string
-  notes?: string
-}
-
 // this is only for one plant.
 // the API call accepts a list of these
 export interface UpdateUserPlantRequest {
@@ -55,14 +49,12 @@ export interface UpdateUserPlantRequest {
 
 // this is only for one image.
 // the API call accepts a list of these
-export interface CreateUserPlantImageRequest {
-  userplant_id: number
-  image_base_64: string
+export interface SetUserPlantImagesRequest {
+  images_base_64: string[]
 }
 
 export interface GetUserPlantImageResponse {
   id: number
-  userplant_id: number
   image_data: string
 }
 
@@ -155,10 +147,10 @@ export const DeleteUserPlant = async (userplantID: number): Promise<GenericRespo
   return { status: 'success' }
 }
 
-export const CreateUserPlantImages = async (req: CreateUserPlantImageRequest): Promise<GenericResponse> => {
-  await axios.post(
-    '/userplants/images',
-    [req],
+export const SetUserPlantImages = async (req: SetUserPlantImagesRequest, userplantID: number): Promise<GenericResponse> => {
+  await axios.put(
+    `/userplants/images?userplant_id=${userplantID}`,
+    req,
     AxiosService.getOptionsAuthed()
   )
 
@@ -168,15 +160,6 @@ export const CreateUserPlantImages = async (req: CreateUserPlantImageRequest): P
 export const GetUserPlantImages = async (userplantID: number): Promise<GetUserPlantImageResponse[]> => {
   const res: AxiosResponse = await axios.get(
     `/userplants/images?userplant_id=${userplantID}`,
-    AxiosService.getOptionsAuthed()
-  )
-
-  return res.data
-}
-
-export const DeleteUserPlantImage = async (imageID: number): Promise<GenericResponse[]> => {
-  const res: AxiosResponse = await axios.delete(
-    `/userplants/images?userplantimage_id=${imageID}`,
     AxiosService.getOptionsAuthed()
   )
 

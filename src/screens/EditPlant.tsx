@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { type UserPlant, type PlantType } from '../models/PlantModels'
-import { type UpdateUserPlantRequest, UpdateUserPlant, type CreateUserPlantImageRequest, CreateUserPlantImages, GetUserPlantImages, type GetUserPlantImageResponse, DeleteUserPlantImage, DeleteUserPlant, GetPlantType } from '../api/ServerCalls'
+import { type UpdateUserPlantRequest, UpdateUserPlant, SetUserPlantImages, type SetUserPlantImagesRequest, GetUserPlantImages, type GetUserPlantImageResponse, DeleteUserPlant, GetPlantType } from '../api/ServerCalls'
 import { useNavigate } from 'react-router-dom'
 import { RiArrowLeftLine, RiDeleteBin2Line, RiSave2Line, RiAddLine } from 'react-icons/ri'
 import Loading from '../components/Loading'
@@ -61,6 +61,7 @@ const EditPlant = (props: { userPlantToUpdate: UserPlant }): JSX.Element => {
   const [plantName, setPlantName] = useState<string>('')
   const [plantType, setPlantType] = useState<PlantType>()
   const [plantNotes, setPlantNotes] = useState<string>('')
+  // GetUserPlantImageResponse doesnt really feel right for this
   const [userPlantImages, setUserPlantImages] = useState<GetUserPlantImageResponse[]>([])
   const [carouselSelectedUserImageID, setCarouselSelectedUserImageID] = useState<number>(-1)
   const navigate = useNavigate()
@@ -103,13 +104,19 @@ const EditPlant = (props: { userPlantToUpdate: UserPlant }): JSX.Element => {
       notes: plantNotes
     }
 
-    await UpdateUserPlant(updateUserPlantRequest, props.userPlantToUpdate.id)
+    const setUserPlantImagesRequest: SetUserPlantImagesRequest = {
+      images_base_64: userPlantImages.map(x => x.image_data)
+    }
+
+    await Promise.all([
+      UpdateUserPlant(updateUserPlantRequest, props.userPlantToUpdate.id),
+      SetUserPlantImages(setUserPlantImagesRequest, props.userPlantToUpdate.id)
+    ])
 
     navigate('/user_plants')
   }
 
   const deleteSelectedImage = async (): Promise<void> => {
-    await DeleteUserPlantImage(carouselSelectedUserImageID)
     setUserPlantImages(userPlantImages.filter(x => x.id !== carouselSelectedUserImageID))
   }
 
@@ -118,18 +125,20 @@ const EditPlant = (props: { userPlantToUpdate: UserPlant }): JSX.Element => {
     if (file !== null) {
       const fileAsBase64: string = await readFileAsBase64(file)
 
-      const imageRequest: CreateUserPlantImageRequest = {
-        userplant_id: props.userPlantToUpdate.id,
-        image_base_64: fileAsBase64
+      // make a fake ID for this...
+      let newID: number
+      if (userPlantImages.length > 0) {
+        newID = Math.max(...userPlantImages.map(x => x.id)) + 1
+      } else {
+        newID = 0
+      }
+      const userPlantImage: GetUserPlantImageResponse = {
+        id: newID,
+        image_data: fileAsBase64
       }
 
-      await CreateUserPlantImages(imageRequest)
-
-      // im lazy and dont feel like coding anymore,
-      // just regrab the images from the server.
-      // we could try to be fancy and generate a GetUserPlantImageResponse client
-      // side and insert it into our list locally
-      await getUserPlantImagesFromServer()
+      setUserPlantImages([...userPlantImages, userPlantImage])
+      setCarouselSelectedUserImageID(newID)
     }
   }
 
