@@ -82,6 +82,7 @@ const Tasks = (): JSX.Element => {
         </React.Fragment>}
       {selectedButton === 'upcoming' &&
           <UpcomingTasks
+            loadedTasksFromServer={loadedTasksFromServer}
             tasks={getUpcomingTasks()}/>}
     </div>
   )

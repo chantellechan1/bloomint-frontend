@@ -2,8 +2,9 @@ import React from 'react'
 import { type Task as ModelTask } from '../models/TaskModels'
 import UpcomingTaskRow from './UpcomingTaskRow'
 import { DatesAreSame } from '../utils/Utils'
+import Loading from '../components/Loading'
 
-const UpcomingTasks = (props: { tasks: ModelTask[] }): JSX.Element => {
+const UpcomingTasks = (props: { tasks: ModelTask[], loadedTasksFromServer: boolean }): JSX.Element => {
   /*
    * Displays all the upcoming tasks.
    */
@@ -29,11 +30,19 @@ const UpcomingTasks = (props: { tasks: ModelTask[] }): JSX.Element => {
     .filter(task => DatesAreSame(task.due_at, threeDaysFromNow) || task.due_at > threeDaysFromNow)
     .map(task => <UpcomingTaskRow key={task.id.toString()} task={task}/>)
 
+  const upcomingTasksExist: boolean = tomorrowsTaskRows.length > 0 || twoDaysTaskRows.length > 0 || thisWeeksTaskRows.length > 0
+
   return (
     <div className="tasks-list__display-box">
-      {tomorrowsTaskRows.length > 0 && (<><p>Tomorrow</p><ul>{tomorrowsTaskRows}</ul></>)}
-      {twoDaysTaskRows.length > 0 && (<><p>In 2 days</p><ul>{twoDaysTaskRows}</ul></>)}
-      {thisWeeksTaskRows.length > 0 && (<><p>This week</p><ul>{thisWeeksTaskRows}</ul></>)}
+      {props.loadedTasksFromServer
+        ? (upcomingTasksExist
+            ? (<div>
+              {tomorrowsTaskRows.length > 0 && (<><p>Tomorrow</p><ul>{tomorrowsTaskRows}</ul></>)}
+              {twoDaysTaskRows.length > 0 && (<><p>In 2 days</p><ul>{twoDaysTaskRows}</ul></>)}
+              {thisWeeksTaskRows.length > 0 && (<><p>This week</p><ul>{thisWeeksTaskRows}</ul></>)}
+            </div>)
+            : (<div> No upcoming tasks </div>))
+        : (<div className="centered-div"><Loading/></div>)}
     </div>
   )
 }
