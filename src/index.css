@@ -181,9 +181,9 @@ a:active {
 
 .screen-div-browser-mode-only {
   width: 520px;
-  height: 850px;
+  height: 80vh;
   margin: 0 auto;
-  margin-top: 5%;
+  margin-top: 2%;
   border-radius: 15px;
 }
 

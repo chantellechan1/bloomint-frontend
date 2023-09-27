@@ -200,7 +200,9 @@ const EditPlant = (props: { userPlantToUpdate: UserPlant }): JSX.Element => {
           Edit {props.userPlantToUpdate.plant_name}
         </h3>
         <p>
-          {plantType?.name}
+          {/* Only display the plant type if its different from the name, otherwise it looks a bit redundant */}
+          {plantType?.name.toLowerCase() !== props.userPlantToUpdate.plant_name.toLowerCase() &&
+           plantType?.name}
         </p>
       </div>
       <div className="padded-div">
