@@ -60,7 +60,8 @@ a:active {
 }
 
 .padded-div {
-  margin: 25px;
+  margin-top: 10px;
+  margin-left: 25px;
   padding: 3px;
 }
 

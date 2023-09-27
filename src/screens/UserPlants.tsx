@@ -31,7 +31,7 @@ const UserPlants = (props: { setUserPlantToEdit: (userPlantToEdit: UserPlant) =>
         className="task-top-decoration"
         src={FoliageImage} />
       <div className="padded-div">
-      <p>My plants</p>
+        <p>My plants</p>
       </div>
       <ul>{userPlantRows}</ul>
       <button
