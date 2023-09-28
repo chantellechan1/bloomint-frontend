@@ -218,7 +218,7 @@ const EditPlant = (props: { userPlantToUpdate: UserPlant }): JSX.Element => {
         <textarea
           value={plantName}
           rows={1}
-          cols={34}
+          cols={30}
           maxLength={34}
           onChange={(event: React.ChangeEvent<HTMLTextAreaElement>): void => { setPlantName(event.target.value) }}
           placeholder="Name (blank for default)"
@@ -227,7 +227,7 @@ const EditPlant = (props: { userPlantToUpdate: UserPlant }): JSX.Element => {
         <textarea
           value={plantNotes}
           rows={5}
-          cols={34}
+          cols={30}
           maxLength={170}
           onChange={(event: React.ChangeEvent<HTMLTextAreaElement>): void => { setPlantNotes(event.target.value) }}
           placeholder="Enter notes or leave blank..."
