@@ -10,19 +10,72 @@ import '../index.css'
 import missingImage from '../assets/images/no-image.jpeg'
 import { confirm } from '../utils/Utils'
 
-const ImageCarousel = (props: { imageSources: string[], userPlantImages: GetUserPlantImageResponse[], setCarouselUserImageID: (index: number) => void }): JSX.Element => {
+const ImageCarousel = (props: { imageSources: string[], setImageSources: (imageSources: string[]) => void, plantHasUserImages: boolean }): JSX.Element => {
+  const [selectedUserImageIndex, setSelectedUserImageIndex] = useState<number>(0)
+
+  const addSingleImage = async (event: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
+    const file: File | null = event.target.files[0]
+    if (file !== null) {
+      const fileAsBase64: string = await readFileAsBase64(file)
+
+      props.setImageSources([...props.imageSources, fileAsBase64])
+      const lastIndex: number = props.imageSources.length
+      setSelectedUserImageIndex(lastIndex)
+    }
+  }
+
+  const deleteSelectedImage = async (): Promise<void> => {
+    props.setImageSources(props.imageSources.slice(0, selectedUserImageIndex).concat(props.imageSources.slice(selectedUserImageIndex + 1)))
+
+    // if were deleted the last image, we gotta reselect an image
+    // or else we'll be left looking at a black box>
+    if (selectedUserImageIndex === props.imageSources.length - 1) {
+      const lastIndex: number = Math.max(0, props.imageSources.length - 2)
+      setSelectedUserImageIndex(lastIndex)
+    }
+  }
+
+  let imagesList
+  if (props.plantHasUserImages && props.imageSources.length > 0) {
+    imagesList = props.imageSources.map((imageSource, index) => (
+      <div key={index}>
+        <img src={`data:image/jpeg;base64,${imageSource}`} alt={`Image ${index}`} />
+      </div>
+    ))
+  } else {
+    imagesList = <img src={missingImage}/>
+  }
+
   return (
     <div>
+      {props.plantHasUserImages && (<button className="carousel__overlay-delete-image-button" onClick={() => { void deleteSelectedImage() }}>
+        { /* TODO: ask user for confirmation */}
+        <RiDeleteBin2Line
+          className="carousel__overlay-delete-image-button__bin" />
+      </button>)}
+      {/* file input looks pretty ugly, so instead im just using a label connected to it, and then hiding it.
+          clicking the label will have the same effect */}
+      <label
+        htmlFor="image-upload"
+        className="carousel__overlay-add-image-button">
+        <RiAddLine
+          className="carousel__overlay-add-image-button__plus"/>
+        <input
+          id="image-upload"
+          type="file"
+          accept="image/*"
+          onChange={(event: React.ChangeEvent<HTMLInputElement>): void => { void addSingleImage(event) }}
+        />
+      </label>
       <Carousel
-        onChange={ (index: number, item: React.ReactNode) => { props.setCarouselUserImageID(props.userPlantImages[index].id) }}
+        onChange={ (index: number, item: React.ReactNode) => {
+          setSelectedUserImageIndex(index)
+        }}
         showStatus={false}
         showThumbs={false}
+        selectedItem={selectedUserImageIndex}
         >
-        {props.imageSources.map((imageSource, index) => (
-          <div key={index}>
-            <img src={imageSource} alt={`Image ${index}`} />
-          </div>
-        ))}
+        {imagesList}
       </Carousel>
     </div>
   )
@@ -58,12 +111,11 @@ const readFileAsBase64 = async (file: File): Promise<string> => {
 
 const EditPlant = (props: { userPlantToUpdate: UserPlant }): JSX.Element => {
   const [imagesLoadedFromServer, setImagesLoadedFromServer] = useState<boolean>(false)
+  const [imageSources, setImageSources] = useState<string[]>([])
   const [plantName, setPlantName] = useState<string>('')
   const [plantType, setPlantType] = useState<PlantType>()
   const [plantNotes, setPlantNotes] = useState<string>('')
   // GetUserPlantImageResponse doesnt really feel right for this
-  const [userPlantImages, setUserPlantImages] = useState<GetUserPlantImageResponse[]>([])
-  const [carouselSelectedUserImageID, setCarouselSelectedUserImageID] = useState<number>(-1)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -83,7 +135,7 @@ const EditPlant = (props: { userPlantToUpdate: UserPlant }): JSX.Element => {
     if (!imagesLoadedFromServer) {
       throw new Error('do not call plantHasNoUserImages before receiving images from server')
     }
-    return userPlantImages.length > 0
+    return imageSources.length > 0
   }
 
   const goBack = (): void => {
@@ -105,7 +157,7 @@ const EditPlant = (props: { userPlantToUpdate: UserPlant }): JSX.Element => {
     }
 
     const setUserPlantImagesRequest: SetUserPlantImagesRequest = {
-      images_base_64: userPlantImages.map(x => x.image_data)
+      images_base_64: imageSources
     }
 
     await Promise.all([
@@ -116,40 +168,14 @@ const EditPlant = (props: { userPlantToUpdate: UserPlant }): JSX.Element => {
     navigate('/user_plants')
   }
 
-  const deleteSelectedImage = async (): Promise<void> => {
-    setUserPlantImages(userPlantImages.filter(x => x.id !== carouselSelectedUserImageID))
-  }
-
-  const uploadSingleImage = async (event: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
-    const file: File | null = event.target.files[0]
-    if (file !== null) {
-      const fileAsBase64: string = await readFileAsBase64(file)
-
-      // make a fake ID for this...
-      let newID: number
-      if (userPlantImages.length > 0) {
-        newID = Math.max(...userPlantImages.map(x => x.id)) + 1
-      } else {
-        newID = 0
-      }
-      const userPlantImage: GetUserPlantImageResponse = {
-        id: newID,
-        image_data: fileAsBase64
-      }
-
-      setUserPlantImages([...userPlantImages, userPlantImage])
-      setCarouselSelectedUserImageID(newID)
-    }
-  }
-
   const getUserPlantImagesFromServer = async (): Promise<void> => {
     const imageResponses: GetUserPlantImageResponse[] = await GetUserPlantImages(props.userPlantToUpdate.id)
-    setUserPlantImages(imageResponses)
+    setImageSources(imageResponses.map(x => x.image_data))
 
     // a hack, but the callback never gets
     // called until you actually swipe.
     if (imageResponses.length > 0) {
-      setCarouselSelectedUserImageID(imageResponses[0].id)
+      // setUserImageIndex(imageResponses.length)
     }
 
     setImagesLoadedFromServer(true)
@@ -174,31 +200,10 @@ const EditPlant = (props: { userPlantToUpdate: UserPlant }): JSX.Element => {
       <div className="carousel__wrapper">
         {imagesLoadedFromServer
           ? (<div>
-            {plantHasUserImages() && (<button className="carousel__overlay-delete-image-button" onClick={() => { void deleteSelectedImage() }}>
-              { /* TODO: ask user for confirmation */}
-              <RiDeleteBin2Line
-                className="carousel__overlay-delete-image-button__bin" />
-            </button>)}
-            {/* file input looks pretty ugly, so instead im just using a label connected to it, and then hiding it.
-                clicking the label will have the same effect */}
-            <label
-              htmlFor="image-upload"
-              className="carousel__overlay-add-image-button">
-              <RiAddLine
-                className="carousel__overlay-add-image-button__plus"/>
-              <input
-                id="image-upload"
-                type="file"
-                accept="image/*"
-                onChange={(event: React.ChangeEvent<HTMLInputElement>): void => { void uploadSingleImage(event) }}
-              />
-            </label>
             <ImageCarousel
-              imageSources={plantHasUserImages()
-                ? (userPlantImages.map(x => `data:image/jpeg;base64,${x.image_data}`))
-                : ([missingImage])}
-              userPlantImages={userPlantImages}
-              setCarouselUserImageID={setCarouselSelectedUserImageID} />
+              plantHasUserImages={plantHasUserImages()}
+              setImageSources={setImageSources}
+              imageSources={imageSources} />
           </div>)
           : (<div className="carousel__spinner-wrapper">
             <Loading/>
