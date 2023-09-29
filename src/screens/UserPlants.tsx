@@ -29,7 +29,7 @@ const UserPlants = (props: { setUserPlantToEdit: (userPlantToEdit: UserPlant) =>
   const userPlantRows = userPlants.map(userPlant => <UserPlantRow key={userPlant.id.toString()} userPlant={userPlant} setUserPlantToEdit={props.setUserPlantToEdit}/>)
 
   return (
-    <div>
+    <React.Fragment>
       <img
         className="task-top-decoration"
         src={FoliageImage} />
@@ -46,7 +46,7 @@ const UserPlants = (props: { setUserPlantToEdit: (userPlantToEdit: UserPlant) =>
         <RiAddLine
           className="userplant__add-button__plus"/>
       </button>
-    </div>
+    </React.Fragment>
   )
 }
 

@@ -462,6 +462,12 @@ input[type="file"] {
 .home-navigation__content-container {
   height: 93%;
   overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.home-navigation__content-container::-webkit-scrollbar {
+    display: none; /* Hide the scrollbar for webkit-based browsers */
 }
 
 .home-navigation__bottom-bar-container {
