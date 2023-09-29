@@ -446,8 +446,9 @@ input[type="file"] {
   height: 70px;
   border: none;
   background-color: var(--lightgreen);
-  position: absolute;
-  right: 5%;
+  position: sticky;
+  /* this is a hack to stick it in the bottom right. it moves as screen size changes though*/
+  left: 80%;
   bottom: 30px;
 }
 
