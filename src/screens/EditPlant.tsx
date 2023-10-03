@@ -2,112 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { type UserPlant, type PlantType } from '../models/PlantModels'
 import { type UpdateUserPlantRequest, UpdateUserPlant, SetUserPlantImages, type SetUserPlantImagesRequest, GetUserPlantImages, type GetUserPlantImageResponse, DeleteUserPlant, GetPlantType } from '../api/ServerCalls'
 import { useNavigate } from 'react-router-dom'
-import { RiArrowLeftLine, RiDeleteBin2Line, RiSave2Line, RiAddLine } from 'react-icons/ri'
+import { RiArrowLeftLine, RiSave2Line } from 'react-icons/ri'
 import Loading from '../components/Loading'
+import ImageCarousel from '../components/ImageCarousel'
 import 'react-responsive-carousel/lib/styles/carousel.min.css'
-import { Carousel } from 'react-responsive-carousel'
 import '../index.css'
-import missingImage from '../assets/images/no-image.jpeg'
 import { confirm } from '../utils/Utils'
-
-const ImageCarousel = (props: { imageSources: string[], setImageSources: (imageSources: string[]) => void, plantHasUserImages: boolean }): JSX.Element => {
-  const [selectedUserImageIndex, setSelectedUserImageIndex] = useState<number>(0)
-
-  const addSingleImage = async (event: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
-    const file: File | null = event.target.files[0]
-    if (file !== null) {
-      const fileAsBase64: string = await readFileAsBase64(file)
-
-      props.setImageSources([...props.imageSources, fileAsBase64])
-      const lastIndex: number = props.imageSources.length
-      setSelectedUserImageIndex(lastIndex)
-    }
-  }
-
-  const deleteSelectedImage = async (): Promise<void> => {
-    props.setImageSources(props.imageSources.slice(0, selectedUserImageIndex).concat(props.imageSources.slice(selectedUserImageIndex + 1)))
-
-    // if were deleted the last image, we gotta reselect an image
-    // or else we'll be left looking at a black box>
-    if (selectedUserImageIndex === props.imageSources.length - 1) {
-      const lastIndex: number = Math.max(0, props.imageSources.length - 2)
-      setSelectedUserImageIndex(lastIndex)
-    }
-  }
-
-  let imagesList
-  if (props.plantHasUserImages && props.imageSources.length > 0) {
-    imagesList = props.imageSources.map((imageSource, index) => (
-      <div key={index}>
-        <img src={`data:image/jpeg;base64,${imageSource}`} alt={`Image ${index}`} />
-      </div>
-    ))
-  } else {
-    imagesList = <img src={missingImage}/>
-  }
-
-  return (
-    <div>
-      {props.plantHasUserImages && (<button className="carousel__overlay-delete-image-button" onClick={() => { void deleteSelectedImage() }}>
-        { /* TODO: ask user for confirmation */}
-        <RiDeleteBin2Line
-          className="carousel__overlay-delete-image-button__bin" />
-      </button>)}
-      {/* file input looks pretty ugly, so instead im just using a label connected to it, and then hiding it.
-          clicking the label will have the same effect */}
-      <label
-        htmlFor="image-upload"
-        className="carousel__overlay-add-image-button">
-        <RiAddLine
-          className="carousel__overlay-add-image-button__plus"/>
-        <input
-          id="image-upload"
-          type="file"
-          accept="image/*"
-          onChange={(event: React.ChangeEvent<HTMLInputElement>): void => { void addSingleImage(event) }}
-        />
-      </label>
-      <Carousel
-        onChange={ (index: number, item: React.ReactNode) => {
-          setSelectedUserImageIndex(index)
-        }}
-        showStatus={false}
-        showThumbs={false}
-        selectedItem={selectedUserImageIndex}
-        >
-        {imagesList}
-      </Carousel>
-    </div>
-  )
-}
-
-const readFileAsBase64 = async (file: File): Promise<string> => {
-  const base64StringPromise: Promise<string> = new Promise<string>((resolve, reject) => {
-    const reader = new FileReader()
-
-    reader.onload = function (event: ProgressEvent<FileReader>) {
-      // ping pong between typescript and eslint errors.
-      // start with event.target !== null && event.target.result !== null
-      // and eslint says i should do event.target?.result !== null,
-      // then typescript complains that event.target could possibly be null.
-      // so i add the !. then eslint compains that i should use non-null assertion.
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      if (event.target?.result !== null && typeof event.target!.result === 'string') {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const base64String = event.target!.result.split(',')[1]
-        resolve(base64String)
-      }
-    }
-
-    reader.onerror = function (error) {
-      reject(error)
-    }
-
-    reader.readAsDataURL(file)
-  })
-
-  return await base64StringPromise
-}
 
 const EditPlant = (props: { userPlantToUpdate: UserPlant }): JSX.Element => {
   const [imagesLoadedFromServer, setImagesLoadedFromServer] = useState<boolean>(false)
@@ -115,6 +15,8 @@ const EditPlant = (props: { userPlantToUpdate: UserPlant }): JSX.Element => {
   const [plantName, setPlantName] = useState<string>('')
   const [plantType, setPlantType] = useState<PlantType>()
   const [plantNotes, setPlantNotes] = useState<string>('')
+  const [selectedUserImageIndex, setSelectedUserImageIndex] = useState<number>(0)
+
   // GetUserPlantImageResponse doesnt really feel right for this
   const navigate = useNavigate()
 
@@ -130,6 +32,14 @@ const EditPlant = (props: { userPlantToUpdate: UserPlant }): JSX.Element => {
 
     void getPlantType()
   }, [])
+
+  const addSingleImage = (imageBase64: string | undefined): void => {
+    if (imageBase64 !== undefined) {
+      setImageSources([...imageSources, imageBase64])
+      const lastIndex: number = imageSources.length
+      setSelectedUserImageIndex(lastIndex)
+    }
+  }
 
   const plantHasUserImages = (): boolean => {
     if (!imagesLoadedFromServer) {
@@ -201,6 +111,9 @@ const EditPlant = (props: { userPlantToUpdate: UserPlant }): JSX.Element => {
         {imagesLoadedFromServer
           ? (<div>
             <ImageCarousel
+              onAddImage={addSingleImage}
+              selectedUserImageIndex={selectedUserImageIndex}
+              setSelectedUserImageIndex={setSelectedUserImageIndex}
               plantHasUserImages={plantHasUserImages()}
               setImageSources={setImageSources}
               imageSources={imageSources} />
