@@ -440,6 +440,10 @@ input[type="file"] {
   left: 18px;
 }
 
+.userplant__row-container {
+  min-height: 460px;
+}
+
 .userplant__add-button {
   border-radius:50%;
   width: 70px;

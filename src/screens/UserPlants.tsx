@@ -37,8 +37,8 @@ const UserPlants = (props: { setUserPlantToEdit: (userPlantToEdit: UserPlant) =>
         <p>My plants</p>
       </div>
       {loadedUserPlantsFromServer
-        ? (<ul>{userPlantRows}</ul>)
-        : (<div className="centered-div"><Loading/></div>)
+        ? (<ul className="userplant__row-container">{userPlantRows}</ul>)
+        : (<div className="centered-div userplant__row-container"><Loading/></div>)
       }
       <button
         className="userplant__add-button"
