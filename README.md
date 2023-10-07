@@ -1,12 +1,27 @@
 # Bloomint (Frontend)
 
-With the increase of time spent at home during the pandemic, many people have turned to houseplants to greenify their living spaces. Bloomint aims to assist new plant owners by providing an easy way to catalogue houseplants, find care instructions, and receive reminders of when to water or fertilize their plants. Project is currently at MVP stage, future planned releases include handling image upload, push notifications to mobile devices for watering, and search functionality for plant types.
+<h1>
+  <a href="https://bloomint.xyz" target="_blank" style="font-size: 36px;">Live Demo</a>
+</h1>
 
+With the increase of time spent at home during the pandemic, many people have turned to houseplants to greenify their living spaces. Bloomint aims to assist new plant owners by providing an easy way to catalogue houseplants, find care instructions, and receive reminders of when to water or fertilize their plants. Project is currently at MVP stage, future planned releases include handling image upload, push notifications to mobile devices for watering, and search functionality for plant types.  
+
+## How to use
+ - Sign in using username: alex@gmail.com password: bloomint
+ - The "Tasks" page will show you what plants you need to water. You can also view upcoming tasks by clicking the toggle button near the top of the screen.
+ - The "User Owned Plants" page will show you all plants you can own. You can also edit and add plants on this page.
+ - On the "Edit Plant" page, you can upload images using the image carousel at the top. Just click the plus button. After making any edits, including adding/deleting images, make sure to click the save button on the bottom right.
+
+| Sign In | Tasks | User Owned Plants | Edit Plant |
+| :---: | :---: | :---: | :---: |
+| ![sign in page](./docs/images/sign_in.png) | ![task page](./docs/images/tasks.png) | ![user plants](./docs/images/userplants.png) | ![edit plant page](./docs/images/editplant.png) |
+
+## Pain points
+- Signing up with a new account is currently disabled. Can't seem to get it working on the server.
+- The server hardware is limited, resulting in slow loading times.
+
+## Backend code repository
 See the sister repository containing backend code [here](https://github.com/chantellechan1/bloomint-backend).
-
-| Sign In | Home | All Plants | Single Plant | Edit Plant |
-| :---: | :---: | :---: | :---: | :---: |
-| ![sign in page](https://github.com/chantellechan1/bloomint-frontend/blob/main/docs/images/sign_in.png) | ![home page](https://github.com/chantellechan1/bloomint-frontend/blob/main/docs/images/home.png) | ![all plants page](https://github.com/chantellechan1/bloomint-frontend/blob/main/docs/images/all_plants.png) | ![single plant page](https://github.com/chantellechan1/bloomint-frontend/blob/main/docs/images/single_plant.png) | ![edit page](https://github.com/chantellechan1/bloomint-frontend/blob/main/docs/images/edit_plant.png) |
 
 ## Available Scripts
 
