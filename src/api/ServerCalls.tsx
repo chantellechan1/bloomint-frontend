@@ -6,7 +6,7 @@ import { type Task } from '../models/TaskModels'
 
 export interface GenericResponse {
   status: string
-  error?: unknown
+  error?: string
 }
 
 export interface VerifyEmailRequest {
@@ -47,6 +47,12 @@ export interface UpdateUserPlantRequest {
   notes?: string
 }
 
+export interface CreateUserPlantRequest {
+  planttype_id: number
+  plant_name?: string
+  notes?: string
+}
+
 // this is only for one image.
 // the API call accepts a list of these
 export interface SetUserPlantImagesRequest {
@@ -65,8 +71,13 @@ export const VerifyEmail = async (req: VerifyEmailRequest): Promise<GenericRespo
       req,
       AxiosService.getOptions()
     )
-  } catch (error) {
-    console.log(error)
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      return { status: 'error', error: error.response.data }
+    } else {
+      console.log(error)
+      return { status: 'error' }
+    }
   }
 
   return { status: 'success' }

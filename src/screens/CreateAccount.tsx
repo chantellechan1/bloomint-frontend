@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { VerifyEmail } from '../api/ServerCalls'
+import { VerifyEmail, type GenericResponse } from '../api/ServerCalls'
 import FoliageImage from '../assets/images/foliage.png'
 import { notify } from '../utils/Utils'
 
@@ -9,8 +9,12 @@ const CreateAccount = (): JSX.Element => {
   const navigate = useNavigate()
 
   const handleCreateAccount = async (): Promise<void> => {
-    void VerifyEmail({ email })
-    await notify('Thanks for signing up! Please check your email for next steps.')
+    const response: GenericResponse = await VerifyEmail({ email })
+    if (response.status === 'success') {
+      await notify('Thanks for signing up! Please check your email for next steps.')
+    } else if (response.status === 'error') {
+      await notify(response.error)
+    }
     navigate('/')
   }
 
